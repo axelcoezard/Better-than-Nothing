@@ -13,20 +13,26 @@ add_subdirectory("libs/glfw")
 add_subdirectory("libs/glew")
 
 file(GLOB ALL_SRCS
-	"${PROJECT_SOURCE_DIR}/src/*.h"
-	"${PROJECT_SOURCE_DIR}/src/*.cpp"
+	"${PROJECT_SOURCE_DIR}/includes/*.h"
+	"${PROJECT_SOURCE_DIR}/includes/Core/*.h"
+	"${PROJECT_SOURCE_DIR}/includes/Events/*.h"
+	"${PROJECT_SOURCE_DIR}/sources/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.cpp"
+)
+
+include_directories(
+	${PROJECT_SOURCE_DIR}/includes
+	${PROJECT_SOURCE_DIR}/sources
 )
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
 target_link_libraries(${PROJECT_NAME} glfw libglew_static)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/includes/glfw/include
-)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/includes/glew/include
-)
 
 
