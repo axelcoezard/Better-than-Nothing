@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+better-than-nothing
+
+# Folders
+build/
+CMakeFiles/
+.vscode/
+
+# Cmake
+test_fs_support_CASE_sensitivity
+test_fs_support_case_sensitivity
+CMakeCache.txt
+*.cmake
+Makefile
