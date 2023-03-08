@@ -55,7 +55,7 @@ float Vector3::operator[](unsigned int index) {
 	if (index > 2) {
 		throw new std::runtime_error("Color index out of bounds exception");
 	}
-	return m_coords[index];
+	return m_values[index];
 }
 
 Vector3& Vector3::Normalize(void) {
@@ -86,16 +86,28 @@ float Vector3::Distance(const Vector3& b) const {
 	return (*this - b).Magnitude();
 }
 
+Vector3& Vector3::Cross(const Vector3& b) const {
+	return *(&Vector3(
+		m_y * b.m_z - m_z * b.m_y,
+		m_z * b.m_x - m_x * b.m_z,
+		m_x * b.m_y - m_y * b.m_x
+	));
+}
+
 Vector3& Vector3::Min(const Vector3& a, const Vector3& b) {
-	return *(&Vector3(a.m_x > b.m_x ? b.m_x : a.m_x,
+	return *(&Vector3(
+		a.m_x > b.m_x ? b.m_x : a.m_x,
 		a.m_y > b.m_y ? b.m_y : a.m_y,
-		a.m_z > b.m_z ? b.m_z : a.m_z));
+		a.m_z > b.m_z ? b.m_z : a.m_z
+	));
 }
 
 Vector3& Vector3::Max(const Vector3& a, const Vector3& b) {
-	return *(&Vector3(a.m_x < b.m_x ? b.m_x : a.m_x,
+	return *(&Vector3(
+		a.m_x < b.m_x ? b.m_x : a.m_x,
 		a.m_y < b.m_y ? b.m_y : a.m_y,
-		a.m_z < b.m_z ? b.m_z : a.m_z));
+		a.m_z < b.m_z ? b.m_z : a.m_z
+	));
 }
 
 Vector3& Vector3::Add(float x, float y, float z) {
@@ -136,7 +148,7 @@ Vector3& Vector3::operator-=(const Vector3& b) {
 	return *this;
 }
 
-Vector3& Vector3::operator*=(const float& b) {
+Vector3& Vector3::operator*=(const float b) {
 	m_x *= b;
 	m_y *= b;
 	m_z *= b;

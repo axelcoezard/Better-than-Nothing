@@ -49,7 +49,7 @@ float Vector2::operator[](unsigned int index) {
 	if (index > 1) {
 		throw new std::runtime_error("Color index out of bounds exception");
 	}
-	return m_coords[index];
+	return m_values[index];
 }
 
 Vector2& Vector2::Normalize(void) {
@@ -123,7 +123,7 @@ Vector2& Vector2::operator-=(const Vector2& b) {
 	return *this;
 }
 
-Vector2& Vector2::operator*=(const float& b) {
+Vector2& Vector2::operator*=(const float b) {
 	m_x *= b;
 	m_y *= b;
 	return *this;

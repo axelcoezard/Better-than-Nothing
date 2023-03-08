@@ -16,7 +16,7 @@ class Vector2 {
 				float m_x;
 				float m_y;
 			};
-			float m_coords[2];
+			float m_values[2];
 		};
 
 	public:
@@ -54,7 +54,7 @@ class Vector2 {
 
 		Vector2& operator+=(const Vector2& b);
 		Vector2& operator-=(const Vector2& b);
-		Vector2& operator*=(const float& b);
+		Vector2& operator*=(const float b);
 
 		friend bool operator==(const Vector2& a, const Vector2& b);
 		friend bool operator!=(const Vector2& a, const Vector2& b);

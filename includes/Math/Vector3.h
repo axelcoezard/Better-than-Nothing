@@ -17,7 +17,7 @@ class Vector3 {
 				float m_y;
 				float m_z;
 			};
-			float m_coords[2];
+			float m_values[2];
 		};
 
 	public:
@@ -47,10 +47,10 @@ class Vector3 {
 		static Vector3& GetNormalized(const Vector3& vector);
 
 		float Dot(const Vector3& b) const;
-		Vector3& Cross(const Vector3& b) const;
 		float Angle(const Vector3& b) const;
 		float Magnitude(void) const;
 		float Distance(const Vector3& b) const;
+		Vector3& Cross(const Vector3& b) const;
 
 		static Vector3& Min(const Vector3& a, const Vector3& b);
 		static Vector3& Max(const Vector3& a, const Vector3& b);
@@ -66,7 +66,7 @@ class Vector3 {
 
 		Vector3& operator+=(const Vector3& b);
 		Vector3& operator-=(const Vector3& b);
-		Vector3& operator*=(const float& b);
+		Vector3& operator*=(const float b);
 
 		friend bool operator==(const Vector3& a, const Vector3& b);
 		friend bool operator!=(const Vector3& a, const Vector3& b);
