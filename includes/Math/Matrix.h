@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <iostream>
+#include "Math/Vector3.h"
 
 class Matrix {
 	private:
@@ -75,16 +75,15 @@ class Matrix {
 
 		Matrix& Translate(float x, float y, float z);
 		static void Translate(Matrix& matrix, float x, float y, float z);
-		//static Matrix LookAt(Vector3& position, Vector3& target, Vector3& up);
+		static Matrix LookAt(Vector3& position, Vector3& target, Vector3& up);
 
 		static Matrix& GetFrustrum(float left, float right, float bottom, float top, float near, float far);
 		static Matrix& GetOrtho(float left, float right, float bottom, float top, float near, float far);
 		static Matrix& GetPerspective(float fov, float aspect, float near, float far);
 
-		friend bool operator==(const Matrix& lhs, const Matrix& rhs);
-		friend bool operator!=(const Matrix& lhs, const Matrix& rhs);
-		friend Matrix& operator+(const Matrix& lhs, const Matrix& rhs);
-		friend Matrix& operator-(const Matrix& lhs, const Matrix& rhs);
-		friend Matrix& operator*(const Matrix& lhs, const Matrix& rhs);
-		friend std::ostream& operator<<(std::ostream& os, const Matrix& rhs);
+		bool operator==(const Matrix& rhs);
+		bool operator!=(const Matrix& rhs);
+		Matrix& operator+(const Matrix& rhs);
+		Matrix& operator-(const Matrix& rhs);
+		Matrix& operator*(const Matrix& rhs);
 };
