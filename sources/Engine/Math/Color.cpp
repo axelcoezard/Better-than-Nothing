@@ -12,17 +12,14 @@
 #include <stdexcept>
 #include "Math/Color.h"
 
-Color::Color(void)
-	: m_rgba(0xFFFFFFFF) {}
+Color::Color(void): m_rgba(0xFFFFFFFF) {}
+Color::Color(unsigned int rgba) : m_rgba(rgba) {}
 
 Color::Color(unsigned char red, unsigned char green, unsigned char blue)
 	: m_red(red), m_green(green), m_blue(blue), m_alpha(255) {}
 
 Color::Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
 	: m_red(red), m_green(green), m_blue(blue), m_alpha(alpha) {}
-
-Color::Color(unsigned int rgba)
-	: m_rgba(rgba) {}
 
 Color& Color::SetRed(unsigned char red) {
 	m_red = red;

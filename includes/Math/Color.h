@@ -24,9 +24,9 @@ struct Color {
 
 	public:
 		Color(void);
+		Color(unsigned int rgba);
 		Color(unsigned char red, unsigned char green, unsigned char blue);
 		Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
-		Color(unsigned int rgba);
 
 		Color& SetRed(unsigned char red);
 		Color& SetGreen(unsigned char green);
