@@ -12,11 +12,11 @@
 #include "Math/Matrix.h"
 
 Matrix::Matrix(void) {
-
+	Matrix::Identity(*this);
 }
 
 Matrix::Matrix(const float copy[16]) {
-
+	this->Set(copy);
 }
 
 Matrix::Matrix(float m00, float m01, float m02, float m03,
@@ -112,17 +112,14 @@ void Matrix::Identity(Matrix& matrix) {
 	matrix.m_values[1]  = 0.0f;
 	matrix.m_values[2]  = 0.0f;
 	matrix.m_values[3]  = 0.0f;
-
 	matrix.m_values[4]  = 0.0f;
 	matrix.m_values[5]  = 1.0f;
 	matrix.m_values[6]  = 0.0f;
 	matrix.m_values[7]  = 0.0f;
-
 	matrix.m_values[8]  = 0.0f;
 	matrix.m_values[9]  = 0.0f;
 	matrix.m_values[10] = 1.0f;
 	matrix.m_values[11] = 0.0f;
-
 	matrix.m_values[12] = 0.0f;
 	matrix.m_values[13] = 0.0f;
 	matrix.m_values[14] = 0.0f;
@@ -287,8 +284,7 @@ Matrix& Matrix::GetOrtho(float left, float right, float bottom, float top, float
 }
 
 Matrix& Matrix::GetPerspective(float fov, float aspect, float near, float far) {
-	float tangent = tanf(fov / 2.0f);
-	float height = near * tangent;
+	float height = near * tanf(fov / 2.0f);
 	float width = height * aspect;
 	return GetFrustrum(-width, width, -height, height, near, far);
 }
