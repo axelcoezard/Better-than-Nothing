@@ -42,7 +42,7 @@ Color& Color::SetAlpha(unsigned char alpha) {
 }
 
 float Color::operator[](unsigned int index) const {
-	if (index < 0 || index > 4) {
+	if (index > 3) {
 		throw new std::runtime_error("Color index out of bounds exception");
 	}
 	return static_cast<float>(m_colors[index]) / 255.0f;

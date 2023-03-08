@@ -11,9 +11,14 @@
 
 class Vector3 {
 	private:
-		float m_x;
-		float m_y;
-		float m_z;
+		union {
+			struct {
+				float m_x;
+				float m_y;
+				float m_z;
+			};
+			float m_coords[2];
+		};
 
 	public:
 		static Vector3 Zero;
@@ -27,8 +32,8 @@ class Vector3 {
 
 		Vector3(void);
 		Vector3(float value);
-		Vector3(const Vector3& copy);
 		Vector3(float x, float y, float z);
+		Vector3(const Vector3& copy);
 		Vector3& operator=(const Vector3& copy);
 
 		Vector3& Set(float x, float y, float z);
@@ -38,53 +43,36 @@ class Vector3 {
 		float GetZ(void);
 		float operator[](unsigned int index);
 
-		bool Equals(const Vector3& b) const;
-		static bool Compare(const Vector3& a, const Vector3& b);
-
-		Vector3& Scale(float scale);
-		static Vector3& Scale(const Vector3& vector, float scale);
-
-		Vector3& GetNormalized(void);
+		Vector3& Normalize(void);
 		static Vector3& GetNormalized(const Vector3& vector);
 
 		float Dot(const Vector3& b) const;
-		static float Dot(const Vector3& a, const Vector3& b);
-
 		Vector3& Cross(const Vector3& b) const;
-		static Vector3& Cross(const Vector3& a, const Vector3& b);
-
 		float Angle(const Vector3& b) const;
-		static float Angle(const Vector3& a, const Vector3& b);
-
 		float Magnitude(void) const;
-		static float Magnitude(const Vector3& a);
-
 		float Distance(const Vector3& b) const;
-		static float Distance(const Vector3& a, const Vector3& b);
 
-		Vector3& Min(const Vector3& b) const;
 		static Vector3& Min(const Vector3& a, const Vector3& b);
-
-		Vector3& Max(const Vector3& b) const;
 		static Vector3& Max(const Vector3& a, const Vector3& b);
 
 		Vector3& Add(float x, float y, float z);
 		Vector3& Add(Vector3& b);
 		static Vector3& Add(const Vector3& a, float x, float y, float z);
-		static Vector3& Add(const Vector3& a, const Vector3& b);
 
 
 		Vector3& Sub(float x, float y, float z);
 		Vector3& Sub(Vector3& b);
 		static Vector3& Sub(const Vector3& a, float x, float y, float z);
-		static Vector3& Sub(const Vector3& a, const Vector3& b);
 
-		bool operator==(const Vector3& rhs);
-		bool operator!=(const Vector3& rhs);
-		Vector3& operator+=(const Vector3& rhs);
-		Vector3& operator-=(const Vector3& rhs);
-		Vector3& operator*=(const float& rhs);
-		Vector3& operator+(const Vector3& rhs);
-		Vector3& operator-(const Vector3& rhs);
-		Vector3& operator*(const float& rhs);
+		Vector3& operator+=(const Vector3& b);
+		Vector3& operator-=(const Vector3& b);
+		Vector3& operator*=(const float& b);
+
+		friend bool operator==(const Vector3& a, const Vector3& b);
+		friend bool operator!=(const Vector3& a, const Vector3& b);
+		friend Vector3& operator+(const Vector3& a, const Vector3& b);
+		friend Vector3& operator-(const Vector3& a, const Vector3& b);
+
+		friend Vector3& operator*(const Vector3& a, const float b);
+		friend Vector3& operator*(const float a, const Vector3& b);
 };
