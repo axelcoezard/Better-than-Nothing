@@ -48,10 +48,10 @@ float Color::operator[](unsigned int index) const {
 	return static_cast<float>(m_colors[index]) / 255.0f;
 }
 
-bool Color::operator==(const Color& rhs) const {
-	return m_red == rhs.m_red && m_green == rhs.m_green && m_blue == rhs.m_blue && m_alpha == rhs.m_alpha;
+bool Color::operator==(const Color& b) const {
+	return m_red == b.m_red && m_green == b.m_green && m_blue == b.m_blue && m_alpha == b.m_alpha;
 }
 
-bool Color::operator!=(const Color& rhs) const {
-	return m_red != rhs.m_red || m_green != rhs.m_green || m_blue != rhs.m_blue || m_alpha != rhs.m_alpha;
+bool Color::operator!=(const Color& b) const {
+	return m_red != b.m_red || m_green != b.m_green || m_blue != b.m_blue || m_alpha != b.m_alpha;
 }

@@ -34,6 +34,6 @@ struct Color {
 		Color& SetAlpha(unsigned char alpha);
 
 		float operator[](unsigned int index) const;
-		bool operator==(const Color& rhs) const;
-		bool operator!=(const Color& rhs) const;
+		bool operator==(const Color& b) const;
+		bool operator!=(const Color& b) const;
 };
