@@ -10,7 +10,7 @@
 #pragma once
 
 struct Color {
-	private:
+	protected:
 		union {
 			struct {
 				unsigned char m_red;
@@ -18,15 +18,14 @@ struct Color {
 				unsigned char m_blue;
 				unsigned char m_alpha;
 			};
-			unsigned char m_rgba[4];
 			unsigned int m_rgba;
+			unsigned char m_colors[4];
 		};
 
 	public:
 		Color(void);
 		Color(unsigned char red, unsigned char green, unsigned char blue);
 		Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
-		Color(unsigned char rgba[4]);
 		Color(unsigned int rgba);
 
 		Color& SetRed(unsigned char red);
