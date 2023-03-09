@@ -29,6 +29,8 @@ include_directories(
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
+add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=true)
+
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(${PROJECT_NAME} glfw libglew_static)

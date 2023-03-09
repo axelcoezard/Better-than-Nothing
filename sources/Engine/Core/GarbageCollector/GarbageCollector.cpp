@@ -7,7 +7,9 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
+#if GARBAGE_COLLECTOR_VERBOSE
 #include <iostream>
+#endif
 
 #include "Core/GarbageCollector/GarbageCollector.h"
 #include "Core/GarbageCollector/GCObject.h"
@@ -26,23 +28,26 @@ void GarbageCollector::Collect(void) {
 	std::set<GCObject*>::iterator current = m_objects.begin();
 	std::set<GCObject*>::iterator end = m_objects.end();
 
+#if GARBAGE_COLLECTOR_VERBOSE
 	unsigned int freedCount = 0;
 	unsigned int freedSize = 0;
+#endif
 	while (current != end) {
 		GCObject* object = *current;
 
 		if (object->IsMarked()) {
 			object->SetMarked(false);
 		} else {
+#if GARBAGE_COLLECTOR_VERBOSE
 			freedCount++;
 			freedSize += object->GetSize();
+#endif
 			this->RemoveObject(object);
 			delete object;
 		}
 		current++;
 	}
-
-#ifdef GARBAGE_COLLECTOR_VERBOSE
+#if GARBAGE_COLLECTOR_VERBOSE
 	std::cout << "Freed memory: " << std::endl;
 	std::cout << " - objects count = " << freedCount << std::endl;
 	std::cout << " - total size = " << freedSize / 8.0f << " bytes" << std::endl;
