@@ -10,13 +10,8 @@
 #include "Core/GarbageCollector/GarbageCollector.h"
 #include "Core/GarbageCollector/GCObject.h"
 
-
 GCObject::GCObject(void): m_marked(false) {
 	GarbageCollector::Get()->AddObject(this);
-}
-
-GCObject::~GCObject(void) {
-	GarbageCollector::Get()->RemoveObject(this);
 }
 
 void GCObject::SetMarked(bool marked) {
@@ -32,7 +27,9 @@ size_t GCObject::GetSize(void) {
 }
 
 void* GCObject::operator new(size_t size) {
-	return (void*) std::malloc(size);
+	void* ptr = std::malloc(size);
+	static_cast<GCObject*>(ptr)->m_size = size;
+	return ptr;
 }
 
 void GCObject::operator delete(void* ptr) {

@@ -14,12 +14,11 @@
 #include <new>
 
 struct GCObject {
-	private:
+	protected:
 		size_t	m_size;
 		bool	m_marked;
 	public:
 		GCObject(void);
-		~GCObject(void);
 
 		void SetMarked(bool marked);
 		bool IsMarked(void);

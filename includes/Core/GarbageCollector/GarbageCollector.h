@@ -21,8 +21,8 @@ struct GarbageCollector {
 		void AddObject(GCObject* object);
 		void RemoveObject(GCObject* object);
 
-		void Collect(void);
+		void Collect(bool verbose);
 
 		static GarbageCollector* Get(void);
-		static void Destroy(void);
+		static void Destroy(bool verbose);
 };
