@@ -44,3 +44,7 @@ void Window::Clear(void) {
 void Window::SwapBuffers(void) {
 	glfwSwapBuffers(m_window);
 }
+
+WindowBuilder* Window::GetBuilder(void) {
+	return new WindowBuilder();
+}

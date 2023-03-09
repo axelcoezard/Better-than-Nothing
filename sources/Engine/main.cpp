@@ -18,10 +18,10 @@
 #include "Events/EventDispatcher.h"
 
 int main(void) {
-	WindowBuilder windowBuilder;
-	windowBuilder.WithTitle("better than nothing");
-	windowBuilder.WithSize(720, 720);
-	Window* window = windowBuilder.Build();
+	Window* window = Window::GetBuilder()
+		->WithTitle("better than nothing")
+		->WithSize(720, 720)
+		->Build();
 
 	while (!window->ShouldClose()) {
 		glfwPollEvents();
