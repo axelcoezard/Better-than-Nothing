@@ -12,11 +12,9 @@
 
 #include "Core/GarbageCollector/GarbageCollector.h"
 
+#include "Core/Renderer.h"
 #include "Core/WindowBuilder.h"
 #include "Core/Window.h"
-
-#include "Events/EventDispatcher.h"
-
 int main(void) {
 	Window* window = Window::GetBuilder()
 		->WithTitle("better than nothing")

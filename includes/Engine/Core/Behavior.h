@@ -11,8 +11,10 @@
 
 #include "Core/GarbageCollector/GCObject.h"
 
-struct GameBehavior: public GCObject {
-	virtual ~GameBehavior(void) {}
+struct Behavior: public GCObject {
+
+	Behavior(void);
+	~Behavior(void);
 
 	virtual void OnEnable(void) = 0;
 	virtual void OnDisabled(void) = 0;
