@@ -13,7 +13,7 @@ add_subdirectory("libs/glfw")
 add_subdirectory("libs/glew")
 
 file(GLOB ALL_SRCS
-	"${PROJECT_SOURCE_DIR}/sources/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/GarbageCollector/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.cpp"
