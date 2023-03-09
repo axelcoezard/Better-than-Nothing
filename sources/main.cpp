@@ -29,6 +29,6 @@ int main(void) {
 		window->SwapBuffers();
 	}
 
-	GarbageCollector::Destroy(true);
+	GarbageCollector::Destroy(false);
 	return 0;
 }
