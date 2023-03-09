@@ -10,6 +10,8 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+#include "Core/GarbageCollector/GarbageCollector.h"
+
 #include "Core/WindowBuilder.h"
 #include "Core/Window.h"
 
@@ -27,7 +29,7 @@ int main(void) {
 		window->SwapBuffers();
 	}
 
-	delete window;
 	EventDispatcher::Destroy();
+	GarbageCollector::Destroy();
 	return 0;
 }
