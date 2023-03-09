@@ -22,7 +22,7 @@ void GarbageCollector::RemoveObject(GCObject* object) {
 	m_objects.erase(object);
 }
 
-void GarbageCollector::Collect(bool verbose) {
+void GarbageCollector::Collect(void) {
 	std::set<GCObject*>::iterator current = m_objects.begin();
 	std::set<GCObject*>::iterator end = m_objects.end();
 
@@ -42,11 +42,11 @@ void GarbageCollector::Collect(bool verbose) {
 		current++;
 	}
 
-	if (verbose) {
-		std::cout << "Freed memory: " << std::endl;
-		std::cout << " - objects count = " << freedCount << std::endl;
-		std::cout << " - total size = " << freedSize / 8.0f << " bytes" << std::endl;
-	}
+#ifdef GARBAGE_COLLECTOR_VERBOSE
+	std::cout << "Freed memory: " << std::endl;
+	std::cout << " - objects count = " << freedCount << std::endl;
+	std::cout << " - total size = " << freedSize / 8.0f << " bytes" << std::endl;
+#endif
 }
 
 GarbageCollector* GarbageCollector::Get(void) {
@@ -56,9 +56,9 @@ GarbageCollector* GarbageCollector::Get(void) {
 	return m_instance;
 }
 
-void GarbageCollector::Destroy(bool verbose) {
+void GarbageCollector::Destroy(void) {
 	if (m_instance != nullptr) {
-		m_instance->Collect(verbose);
+		m_instance->Collect();
 		delete m_instance;
 	}
 }
