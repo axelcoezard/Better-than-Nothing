@@ -9,7 +9,9 @@
 
 #pragma once
 
-struct GameBehavior {
+#include "Core/GarbageCollector/GCObject.h"
+
+struct GameBehavior: public GCObject {
 	virtual ~GameBehavior(void) {}
 
 	virtual void OnEnable(void) = 0;

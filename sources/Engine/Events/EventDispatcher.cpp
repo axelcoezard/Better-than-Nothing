@@ -11,7 +11,7 @@
 
 EventDispatcher* EventDispatcher::m_instance = nullptr;
 
-EventDispatcher::EventDispatcher(void) = default;
+EventDispatcher::EventDispatcher(void) { };
 EventDispatcher::~EventDispatcher(void)	{ m_listeners.clear(); }
 
 void EventDispatcher::RegisterListener(std::string_view eventName, EventListener* eventListener) {
@@ -30,10 +30,4 @@ EventDispatcher* EventDispatcher::Get(void) {
 		m_instance = new EventDispatcher();
 	}
 	return m_instance;
-}
-
-void EventDispatcher::Destroy(void) {
-	if (m_instance != nullptr) {
-		delete m_instance;
-	}
 }
