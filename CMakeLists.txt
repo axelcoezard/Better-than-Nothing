@@ -13,9 +13,6 @@ add_subdirectory("libs/glfw")
 add_subdirectory("libs/glew")
 
 file(GLOB ALL_SRCS
-	"${PROJECT_SOURCE_DIR}/includes/*.h"
-	"${PROJECT_SOURCE_DIR}/includes/Core/*.h"
-	"${PROJECT_SOURCE_DIR}/includes/Events/*.h"
 	"${PROJECT_SOURCE_DIR}/sources/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/GarbageCollector/*.cpp"
@@ -29,7 +26,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
-add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=true)
+add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=false)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
