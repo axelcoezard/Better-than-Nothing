@@ -13,10 +13,12 @@
 #include <string_view>
 #include <map>
 
+#include "Core/GarbageCollector/GCObject.h"
+
 #include "Events/Event.h"
 #include "Events/EventListener.h"
 
-struct EventDispatcher {
+struct EventDispatcher: public GCObject {
 	private:
 		static EventDispatcher* m_instance;
 
@@ -33,5 +35,4 @@ struct EventDispatcher {
 		void DispatchEvent(std::string_view eventName, Event* event);
 
 		static EventDispatcher* Get(void);
-		static void Destroy(void);
 };

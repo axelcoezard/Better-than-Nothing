@@ -13,9 +13,11 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+#include "Core/GarbageCollector/GCObject.h"
+
 struct WindowBuilder;
 
-struct Window {
+struct Window: public GCObject {
 	private:
 		GLFWwindow* m_window;
 
