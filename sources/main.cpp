@@ -13,6 +13,8 @@
 #include "Core/WindowBuilder.h"
 #include "Core/Window.h"
 
+#include "Events/EventDispatcher.h"
+
 int main(void) {
 	WindowBuilder windowBuilder;
 	windowBuilder.WithTitle("better than nothing");
@@ -22,10 +24,10 @@ int main(void) {
 	while (!window->ShouldClose()) {
 		glfwPollEvents();
 
-
 		window->SwapBuffers();
 	}
 
 	delete window;
+	EventDispatcher::Destroy();
 	return 0;
 }
