@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Build",
+            "type": "command",
+            "workingDir": "./build/",
+            "program": "/usr/bin/cmake",
+            "args": [".."]
+        },
+        {
+            "name": "Run",
+            "type": "command",
+            "dependsOn": ["Build"],
+            "workingDir": "./build/",
+            "program": "./better-than-nothing",
+        },
+    ]
+}
