@@ -3,7 +3,7 @@
         {
             "name": "Build",
             "type": "command",
-            "workingDir": "./build/",
+            "workingDir": "$WORKSPACE_DIR$/build/",
             "program": "/usr/bin/cmake",
             "args": [".."]
         },
@@ -11,7 +11,7 @@
             "name": "Run",
             "type": "command",
             "dependsOn": ["Build"],
-            "workingDir": "./build/",
+            "workingDir": "$WORKSPACE_DIR$/build/",
             "program": "./better-than-nothing",
         },
     ]
