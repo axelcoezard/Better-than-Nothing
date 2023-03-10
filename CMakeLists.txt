@@ -16,6 +16,9 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/sources/Engine/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/GarbageCollector/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Window/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/Objects/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.cpp"
 )
 
@@ -26,7 +29,8 @@ include_directories(
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
-add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=true)
+add_compile_definitions(ENGINE_EDITOR_MODE=false)
+add_compile_definitions(ENGINE_VERBOSE_MODE=true)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 

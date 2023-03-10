@@ -9,25 +9,21 @@
 
 #pragma once
 
-#include <set>
+#include <vector>
 
 #include "Core/GarbageCollector/GCObject.h"
-#include "Core/Behavior.h"
+#include "Core/Render/Objects/FrameBufferObject.h"
+
+struct Window;
 
 struct Renderer: public GCObject {
 	private:
-		static Renderer* m_instance;
-
-		std::set<Behavior*> m_behaviors;
+		Window* m_window;
+		FrameBufferObject* m_fbo;
 	public:
-		Renderer(void);
+		Renderer(Window* window);
 		~Renderer(void);
-
-		void RegisterBehavior(Behavior* object);
-		void UnregisterBehavior(Behavior* object);
 
 		void Update(void);
 		void Render(void);
-
-		static Renderer* Get(void);
 };
