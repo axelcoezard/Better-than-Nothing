@@ -15,7 +15,6 @@
 #include "Core/Renderer.h"
 #include "Core/WindowBuilder.h"
 #include "Core/Window.h"
-#include "Core/Clock.h"
 
 int main(void) {
 	Window* window = Window::GetBuilder()
