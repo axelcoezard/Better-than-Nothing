@@ -20,13 +20,13 @@ file(GLOB ALL_SRCS
 )
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/includes
-	${PROJECT_SOURCE_DIR}/sources
+	${PROJECT_SOURCE_DIR}/includes/Engine
+	${PROJECT_SOURCE_DIR}/sources/Engine
 )
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
-add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=false)
+add_compile_definitions(GARBAGE_COLLECTOR_VERBOSE=true)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
