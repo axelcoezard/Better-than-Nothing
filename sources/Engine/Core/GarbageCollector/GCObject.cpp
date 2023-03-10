@@ -34,6 +34,7 @@ void* GCObject::operator new(size_t size) {
 
 void GCObject::operator delete(void* ptr) {
 	if (ptr != nullptr) {
+		GarbageCollector::Get()->RemoveObject(static_cast<GCObject*>( ptr));
 		std::free(ptr);
 	}
 }

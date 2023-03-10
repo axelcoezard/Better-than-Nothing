@@ -7,7 +7,7 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#if GARBAGE_COLLECTOR_VERBOSE
+#if ENGINE_VERBOSE_MODE
 #include <iostream>
 #endif
 
@@ -28,7 +28,7 @@ void GarbageCollector::Collect(void) {
 	std::set<GCObject*>::iterator current = m_objects.begin();
 	std::set<GCObject*>::iterator end = m_objects.end();
 
-#if GARBAGE_COLLECTOR_VERBOSE
+#if ENGINE_VERBOSE_MODE
 	unsigned int freedCount = 0;
 	unsigned int freedSize = 0;
 #endif
@@ -38,16 +38,15 @@ void GarbageCollector::Collect(void) {
 		if (object->IsMarked()) {
 			object->SetMarked(false);
 		} else {
-#if GARBAGE_COLLECTOR_VERBOSE
+#if ENGINE_VERBOSE_MODE
 			freedCount++;
 			freedSize += object->GetSize();
 #endif
-			this->RemoveObject(object);
 			delete object;
 		}
 		current++;
 	}
-#if GARBAGE_COLLECTOR_VERBOSE
+#if ENGINE_VERBOSE_MODE
 	std::cout << "Freed memory: " << std::endl;
 	std::cout << " - objects count = " << freedCount << std::endl;
 	std::cout << " - total size = " << freedSize / 8.0f << " bytes" << std::endl;

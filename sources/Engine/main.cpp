@@ -12,9 +12,10 @@
 
 #include "Core/GarbageCollector/GarbageCollector.h"
 
-#include "Core/Renderer.h"
-#include "Core/WindowBuilder.h"
-#include "Core/Window.h"
+#include "Core/Window/WindowBuilder.h"
+#include "Core/Window/Window.h"
+
+#include "Core/Render/Renderer.h"
 
 int main(void) {
 	Window* window = Window::GetBuilder()
@@ -22,8 +23,13 @@ int main(void) {
 		->WithSize(720, 720)
 		->Build();
 
+	Renderer* renderer = new Renderer(window);
+
 	while (!window->ShouldClose()) {
 		glfwPollEvents();
+                
+		renderer->Update();
+		renderer->Render();
 
 		window->SwapBuffers();
 	}

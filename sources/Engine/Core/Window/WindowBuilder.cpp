@@ -7,8 +7,8 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Core/WindowBuilder.h"
-#include "Core/Window.h"
+#include "Core/Window/WindowBuilder.h"
+#include "Core/Window/Window.h"
 
 WindowBuilder* WindowBuilder::WithTitle(std::string_view title) {
 	m_title = title;

@@ -7,8 +7,8 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Core/Window.h"
-#include "Core/WindowBuilder.h"
+#include "Core/Window/Window.h"
+#include "Core/Window/WindowBuilder.h"
 
 Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	: m_title(title), m_width(width), m_height(height) {
