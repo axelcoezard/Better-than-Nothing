@@ -9,6 +9,20 @@
 
 #pragma once
 
-struct Event {
-	virtual ~Event(void) {}
+#include "Core/GarbageCollector/GCObject.h"
+
+class Event: public GCObject {
+	private:
+		bool m_handled = false;
+	public:
+		virtual ~Event(void) = default;
+
+		virtual const char* GetName(void) const = 0;
+
+		void SetHandled(bool handled) { m_handled = handled; }
+		bool IsHandled(void) { return m_handled; }
 };
+
+#define DECLARE_EVENT_NAME(name)\
+	static const char* GetStaticName() { return #name; }\
+	virtual const char* GetName() const override { return GetStaticName(); }

@@ -11,11 +11,12 @@
 #include "GLFW/glfw3.h"
 
 #include "Core/GarbageCollector/GarbageCollector.h"
-
 #include "Core/Window/WindowBuilder.h"
 #include "Core/Window/Window.h"
-
 #include "Core/Render/Renderer.h"
+
+#include "Events/EventDispatcher.h"
+#include "Events/WindowCloseEvent.h"
 
 int main(void) {
 	Window* window = Window::GetBuilder()
@@ -25,9 +26,10 @@ int main(void) {
 
 	Renderer* renderer = new Renderer(window);
 
+	window->Open();
 	while (!window->ShouldClose()) {
 		glfwPollEvents();
-                
+
 		renderer->Update();
 		renderer->Render();
 

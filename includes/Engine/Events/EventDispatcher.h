@@ -14,25 +14,24 @@
 #include <map>
 
 #include "Core/GarbageCollector/GCObject.h"
-
 #include "Events/Event.h"
-#include "Events/EventListener.h"
 
-struct EventDispatcher: public GCObject {
+#define EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+struct EventDispatcher {
 	private:
-		static EventDispatcher* m_instance;
-
-		std::map<std::string, EventListener*> m_listeners;
-
+		Event* m_event;
 	public:
-		EventDispatcher(void);
-		~EventDispatcher(void);
+		EventDispatcher(Event* event) : m_event(event) { };
 
-		EventDispatcher(EventDispatcher&) = delete;
-		void operator=(const EventDispatcher&) = delete;
-
-		void RegisterListener(std::string_view eventName, EventListener* eventListener);
-		void DispatchEvent(std::string_view eventName, Event* event);
-
-		static EventDispatcher* Get(void);
+		template<typename T, typename F>
+		bool Dispatch(const F& listener) {
+			if (m_event->GetName() == T::GetStaticName()) {
+				bool handled = listener(static_cast<T*>(m_event));
+				m_event->SetHandled(handled);
+				return handled;
+			}
+			return false;
+		}
 };
+
