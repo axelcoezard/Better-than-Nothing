@@ -16,7 +16,9 @@
 #include "Core/GarbageCollector/GCObject.h"
 #include "Events/Event.h"
 
-#define EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+#define BIND_EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) {\
+									return this->fn(std::forward<decltype(args)>(args)...);\
+								}
 
 struct EventDispatcher {
 	private:

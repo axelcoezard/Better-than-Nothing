@@ -14,18 +14,13 @@
 #include "Events/EventDispatcher.h"
 #include "Events/WindowCloseEvent.h"
 
-Window::Window(std::string_view title, uint32_t width, uint32_t height) {
-	m_data.m_title = std::string(title);
-	m_data.m_width = width;
-	m_data.m_height = height;
-
+Window::Window(std::string_view title, uint32_t width, uint32_t height)
+	: m_title(title), m_width(width), m_height(height) {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
-	SetEventCallback(EVENT_LISTENER(onEvent));
 }
 
 Window::~Window(void) {
@@ -34,16 +29,19 @@ Window::~Window(void) {
 }
 
 void Window::Open(void) {
-	m_window = glfwCreateWindow(m_data.m_width, m_data.m_height, m_data.m_title.c_str(), nullptr, nullptr);
+	m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_window);
-	glfwSetWindowUserPointer(m_window, &m_data);
+	glfwSetWindowUserPointer(m_window, this);
 
 	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-		WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
 		(void) scancode;
 		(void) mods;
+
+		Window& instance = *(Window*) glfwGetWindowUserPointer(window);
+		Event* event = new WindowCloseEvent();
+		EventDispatcher* dispatcher = new EventDispatcher(event);
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-			data.m_eventCallback(new WindowCloseEvent());
+			instance.m_eventCallback(dispatcher, event);
 		}
 	});
 
@@ -56,27 +54,20 @@ void Window::Open(void) {
 	glfwSwapInterval(1);
 }
 
-void Window::onEvent(Event* event)  {
-	EventDispatcher dispatcher(event);
-	dispatcher.Dispatch<WindowCloseEvent>(EVENT_LISTENER(onWindowCloseEvent));
-}
-
-bool Window::onWindowCloseEvent(WindowCloseEvent* event) {
-	(void) event;
-	std::cout << "closing window" << std::endl;
-	return true;
+void Window::Close(void) {
+	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 
 bool Window::ShouldClose(void)  {
 	return glfwWindowShouldClose(m_window) ==  GLFW_TRUE;
 }
 
-void Window::Clear(void) {
+void Window::Clear(float red, float green, float blue, float alpha) {
 	int width;
 	int height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	glViewport(0, 0, width, height);
-	// TODO: Add clear color
+	glClearColor(red, green, blue, alpha);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -84,12 +75,8 @@ void Window::SwapBuffers(void) {
 	glfwSwapBuffers(m_window);
 }
 
-void Window::Close(void) {
-	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
-}
-
-void Window::SetEventCallback(std::function<void(Event*)> eventcallback) {
-	m_data.m_eventCallback = eventcallback;
+void Window::SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback) {
+	m_eventCallback = eventcallback;
 }
 
 WindowBuilder* Window::GetBuilder(void) {

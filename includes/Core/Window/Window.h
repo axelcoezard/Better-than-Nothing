@@ -15,6 +15,8 @@
 #include "GLFW/glfw3.h"
 
 #include "Core/GarbageCollector/GCObject.h"
+
+#include "Events/EventDispatcher.h"
 #include "Events/Event.h"
 #include "Events/WindowCloseEvent.h"
 
@@ -24,25 +26,21 @@ struct Window: public GCObject {
 	private:
 		GLFWwindow* m_window;
 
-		struct WindowData {
-			std::string m_title;
-			uint32_t m_width, m_height;
-			std::function<void(Event*)> m_eventCallback;
-		} m_data;
+		std::string m_title;
+		uint32_t m_width, m_height;
+		std::function<void(EventDispatcher*, Event*)> m_eventCallback;
 	public:
 		Window(std::string_view title, uint32_t width, uint32_t height);
 		~Window(void);
 
 		void Open(void);
-		bool ShouldClose(void);
-		void Clear(void);
-		void SwapBuffers(void);
 		void Close(void);
 
-		void onEvent(Event* event);
-		bool onWindowCloseEvent(WindowCloseEvent* event);
+		bool ShouldClose(void);
+		void SwapBuffers(void);
+		void Clear(float red, float green, float blue, float alpha);
 
-		void SetEventCallback(std::function<void(Event*)> eventcallback);
+		void SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback);
 
 		static WindowBuilder* GetBuilder(void);
 };
