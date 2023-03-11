@@ -24,11 +24,3 @@ void Game::OnEvent(EventDispatcher* dispatcher, Event* event) {
 	(void) dispatcher;
 	std::cout << event->GetName() << std::endl;
 }
-
-void Game::OnUpdate(void) {
-
-}
-
-void Game::OnRender(void) {
-
-}

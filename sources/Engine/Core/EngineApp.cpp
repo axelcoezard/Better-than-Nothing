@@ -25,12 +25,8 @@ void EngineApp::Run(void) {
 		glfwPollEvents();
 
 		m_renderer->Update();
-		this->OnUpdate();
-
 		m_window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
-
 		m_renderer->Render();
-		this->OnRender();
 
 		m_window->SwapBuffers();
 	}

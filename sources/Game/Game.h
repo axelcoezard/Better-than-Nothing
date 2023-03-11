@@ -20,8 +20,4 @@ class Game: public EngineApp {
 		void OnDisable(void);
 
 		void OnEvent(EventDispatcher* dispatcher, Event* event);
-
-		void OnUpdate(void);
-
-		void OnRender(void);
 };

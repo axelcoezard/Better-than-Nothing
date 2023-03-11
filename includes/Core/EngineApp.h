@@ -31,6 +31,4 @@ class EngineApp: public GCObject {
 		virtual void OnEnable(void) = 0;
 		virtual void OnDisable(void) = 0;
 		virtual void OnEvent(EventDispatcher* dispatcher, Event* event) = 0;
-		virtual void OnUpdate(void) = 0;
-		virtual void OnRender(void) = 0;
 };
