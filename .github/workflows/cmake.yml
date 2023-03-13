@@ -44,16 +44,10 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build
       
-    #- name: Test
-    #  working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-    #  run: ctest -C ${{env.BUILD_TYPE}}
-    
-    - name: Generate Release Artifact
+    - name: Test
+      if: ${{ false }}
       working-directory: ${{github.workspace}}/build
-      run: |
-        zip release-artifact better-than-nothing
+      run: ctest -C ${{env.BUILD_TYPE}}
         
     - name: Create Release
       id: create_release
@@ -67,14 +61,15 @@ jobs:
         prerelease: false
         
     - name: Upload Release with Artifact
+      if: ${{ false }}
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ${{github.workspace}}/build/release-artifact.zip
-        asset_name: release-linux-${{ github.ref }}.zip
+        asset_path: ${{github.workspace}}/build/better-than-nothing
+        asset_name: release-linux
         asset_content_type: application/zip
       
     - name: Remove Build folder
