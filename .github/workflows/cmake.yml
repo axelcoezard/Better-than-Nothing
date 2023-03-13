@@ -55,7 +55,7 @@ jobs:
     - name: Generate Release Artifact
       working-directory: ${{github.workspace}}/build
       run: |
-        zip release-artifact betther-than-nothing
+        zip release-artifact better-than-nothing
         
     - name: Create Release
       id: create_release
