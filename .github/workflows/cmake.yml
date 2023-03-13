@@ -53,9 +53,8 @@ jobs:
     #  run: ctest -C ${{env.BUILD_TYPE}}
     
     - name: Generate Release Artifact
-      working-directory: ${{github.workspace}}/build
       run: |
-        zip --junk-paths release-artifact betther-than-nothing
+        zip --junk-paths ${{github.workspace}}/release-artifact ${{github.workspace}}/betther-than-nothing
         
     - name: Create Release
       id: create_release
