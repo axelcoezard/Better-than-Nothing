@@ -44,7 +44,7 @@ jobs:
 
     - name: Build Sources
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build -S ${{github.workspace}}/sources/Engine
+      run: cmake --build ${{github.workspace}}/build
       
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
