@@ -27,6 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
           sudo apt update
+          sudo apt install libegl1-mesa-dev libgl-dev
           sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
       
     - name: Setup Opengl
