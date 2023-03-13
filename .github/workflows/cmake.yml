@@ -47,8 +47,35 @@ jobs:
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
     #  run: ctest -C ${{env.BUILD_TYPE}}
+    
+    - name: Generate Release Artifact
+      working-directory: ${{github.workspace}}/build
+      run: |
+        zip --junk-paths release-artifact betther-than-nothing
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release with Artifact
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ${{github.workspace}}/build/release-artifact.zip
+        asset_name: release-linux-${{ github.ref }}.zip
+        asset_content_type: application/zip
       
     - name: Remove Build folder
       uses: JesseTG/rm@v1.0.3
       with:
-          path: /path/to/something/you/want/to/delete
+          path: ${{github.workspace}}/build
