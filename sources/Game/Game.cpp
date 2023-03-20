@@ -9,9 +9,6 @@
 
 #include "Game.h"
 
-Game::Game(std::string_view title, uint32_t width, uint32_t height)
-	: EngineApp(title, width, height) {}
-
 void Game::OnEnable(void) {
 
 }
@@ -23,4 +20,8 @@ void Game::OnDisable(void) {
 void Game::OnEvent(EventDispatcher* dispatcher, Event* event) {
 	(void) dispatcher;
 	std::cout << event->GetName() << std::endl;
+}
+
+EngineApp* CreateEngineApplication(void) {
+	return new Game("better-than-nothing", 700, 700);
 }

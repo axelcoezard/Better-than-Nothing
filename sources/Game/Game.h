@@ -13,7 +13,8 @@
 
 class Game: public EngineApp {
 	public:
-		Game(std::string_view title, uint32_t width, uint32_t height);
+		Game(std::string_view title, uint32_t width, uint32_t height)
+			: EngineApp(title, width, height) {};
 
 		void OnEnable(void);
 
