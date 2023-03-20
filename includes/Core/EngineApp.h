@@ -11,14 +11,12 @@
 
 #include <iostream>
 
-#include "Core/GarbageCollector/GCObject.h"
-
 #include "Core/Window/WindowBuilder.h"
 #include "Core/Window/Window.h"
 #include "Core/Render/Renderer.h"
 #include "Events/EventDispatcher.h"
 
-class EngineApp: public GCObject {
+class EngineApp {
 	private:
 		Window* m_window;
 		Renderer* m_renderer;

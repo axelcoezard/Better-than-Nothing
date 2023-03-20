@@ -12,9 +12,7 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/GarbageCollector/GCObject.h"
-
-struct FrameBufferObject: public GCObject {
+struct FrameBufferObject {
 	private:
 		unsigned int m_id;
 		unsigned int m_texture;

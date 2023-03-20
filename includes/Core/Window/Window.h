@@ -14,15 +14,13 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/GarbageCollector/GCObject.h"
-
 #include "Events/EventDispatcher.h"
 #include "Events/Event.h"
 #include "Events/WindowCloseEvent.h"
 
 struct WindowBuilder;
 
-struct Window: public GCObject {
+struct Window {
 	private:
 		GLFWwindow* m_window;
 

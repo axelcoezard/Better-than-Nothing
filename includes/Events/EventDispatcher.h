@@ -13,7 +13,6 @@
 #include <string_view>
 #include <map>
 
-#include "Core/GarbageCollector/GCObject.h"
 #include "Events/Event.h"
 
 #define BIND_EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) {\

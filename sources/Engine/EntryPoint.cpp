@@ -10,7 +10,6 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/GarbageCollector/GarbageCollector.h"
 #include "Core/EngineApp.h"
 
 extern EngineApp* CreateEngineApplication(void);
@@ -18,6 +17,6 @@ extern EngineApp* CreateEngineApplication(void);
 int main(void) {
 	EngineApp* app = CreateEngineApplication();
 	app->Run();
-	GarbageCollector::Destroy();
+	delete app;
 	return 0;
 }

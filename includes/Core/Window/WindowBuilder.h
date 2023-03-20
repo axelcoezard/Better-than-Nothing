@@ -10,11 +10,9 @@
 #include <string>
 #include <string_view>
 
-#include "Core/GarbageCollector/GCObject.h"
-
 struct Window;
 
-struct WindowBuilder: public GCObject {
+struct WindowBuilder {
 	private:
 		static WindowBuilder* m_instance;
 		std::string m_title;

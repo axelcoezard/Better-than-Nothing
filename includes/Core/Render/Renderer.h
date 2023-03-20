@@ -11,12 +11,11 @@
 
 #include <vector>
 
-#include "Core/GarbageCollector/GCObject.h"
 #include "Core/Render/Objects/FrameBufferObject.h"
 
 struct Window;
 
-struct Renderer: public GCObject {
+struct Renderer {
 	private:
 		Window* m_window;
 #if ENGINE_EDITOR_MODE

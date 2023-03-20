@@ -12,9 +12,7 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/GarbageCollector/GCObject.h"
-
-struct VertexArrayObject: public GCObject {
+struct VertexArrayObject {
 	private:
 		unsigned int m_id;
 	public:

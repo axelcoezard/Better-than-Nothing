@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "Core/GarbageCollector/GCObject.h"
-
-class Event: public GCObject {
+class Event {
 	private:
 		bool m_handled = false;
 	public:
