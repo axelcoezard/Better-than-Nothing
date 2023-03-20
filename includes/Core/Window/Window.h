@@ -9,11 +9,16 @@
 
 #include <string>
 #include <string_view>
+#include <functional>
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 #include "Core/GarbageCollector/GCObject.h"
+
+#include "Events/EventDispatcher.h"
+#include "Events/Event.h"
+#include "Events/WindowCloseEvent.h"
 
 struct WindowBuilder;
 
@@ -22,16 +27,20 @@ struct Window: public GCObject {
 		GLFWwindow* m_window;
 
 		std::string m_title;
-		uint32_t m_width;
-		uint32_t m_height;
-
+		uint32_t m_width, m_height;
+		std::function<void(EventDispatcher*, Event*)> m_eventCallback;
 	public:
 		Window(std::string_view title, uint32_t width, uint32_t height);
 		~Window(void);
 
+		void Open(void);
+		void Close(void);
+
 		bool ShouldClose(void);
-		void Clear(void);
 		void SwapBuffers(void);
+		void Clear(float red, float green, float blue, float alpha);
+
+		void SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback);
 
 		static WindowBuilder* GetBuilder(void);
 };

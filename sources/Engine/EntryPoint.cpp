@@ -11,29 +11,13 @@
 #include "GLFW/glfw3.h"
 
 #include "Core/GarbageCollector/GarbageCollector.h"
+#include "Core/EngineApp.h"
 
-#include "Core/Window/WindowBuilder.h"
-#include "Core/Window/Window.h"
-
-#include "Core/Render/Renderer.h"
+extern EngineApp* CreateEngineApplication(void);
 
 int main(void) {
-	Window* window = Window::GetBuilder()
-		->WithTitle("better than nothing")
-		->WithSize(720, 720)
-		->Build();
-
-	Renderer* renderer = new Renderer(window);
-
-	while (!window->ShouldClose()) {
-		glfwPollEvents();
-
-		renderer->Update();
-		renderer->Render();
-
-		window->SwapBuffers();
-	}
-
+	EngineApp* app = CreateEngineApplication();
+	app->Run();
 	GarbageCollector::Destroy();
 	return 0;
 }

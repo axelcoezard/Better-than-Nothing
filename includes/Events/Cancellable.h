@@ -10,7 +10,7 @@
 #pragma once
 
 struct Cancellable {
-	virtual ~Cancellable(void) {}
+	virtual ~Cancellable(void) = default;
 
 	virtual bool IsCancelled(void) = 0;
 	virtual void SetCancelled(bool cancel) = 0;

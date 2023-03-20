@@ -20,11 +20,16 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/Objects/*.cpp"
 	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.hpp"
+
+	"${PROJECT_SOURCE_DIR}/sources/Game/*.cpp"
+	"${PROJECT_SOURCE_DIR}/sources/Game/*.hpp"
 )
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/includes/Engine
 	${PROJECT_SOURCE_DIR}/sources/Engine
+	${PROJECT_SOURCE_DIR}/sources/Game
 )
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
@@ -38,7 +43,8 @@ target_link_libraries(${PROJECT_NAME} glfw libglew_static)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes/Engine)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/Game)
 
 
 

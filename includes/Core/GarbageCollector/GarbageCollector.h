@@ -19,7 +19,6 @@ struct GarbageCollector {
 		std::set<GCObject*> m_objects;
 	public:
 		void AddObject(GCObject* object);
-		void RemoveObject(GCObject* object);
 
 		void Collect(void);
 

@@ -20,10 +20,6 @@ void GarbageCollector::AddObject(GCObject* object) {
 	m_objects.insert(object);
 }
 
-void GarbageCollector::RemoveObject(GCObject* object) {
-	m_objects.erase(object);
-}
-
 void GarbageCollector::Collect(void) {
 	std::set<GCObject*>::iterator current = m_objects.begin();
 	std::set<GCObject*>::iterator end = m_objects.end();

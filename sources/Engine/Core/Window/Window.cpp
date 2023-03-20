@@ -6,9 +6,13 @@
  * Last Modified: Tuesday, 7th March 2023 7:50:48 pm
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
+#include <iostream>
 
 #include "Core/Window/Window.h"
 #include "Core/Window/WindowBuilder.h"
+
+#include "Events/EventDispatcher.h"
+#include "Events/WindowCloseEvent.h"
 
 Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	: m_title(title), m_width(width), m_height(height) {
@@ -28,21 +32,55 @@ Window::~Window(void) {
 	glfwTerminate();
 }
 
+void Window::Open(void) {
+	m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
+	glfwMakeContextCurrent(m_window);
+	glfwSetWindowUserPointer(m_window, this);
+
+	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		(void) scancode;
+		(void) mods;
+
+		Window& instance = *(Window*) glfwGetWindowUserPointer(window);
+		Event* event = new WindowCloseEvent();
+		EventDispatcher* dispatcher = new EventDispatcher(event);
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			instance.m_eventCallback(dispatcher, event);
+		}
+	});
+
+	glewInit();
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+
+	glDepthFunc(GL_LESS);
+	glfwSwapInterval(1);
+}
+
+void Window::Close(void) {
+	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+}
+
 bool Window::ShouldClose(void)  {
 	return glfwWindowShouldClose(m_window) ==  GLFW_TRUE;
 }
 
-void Window::Clear(void) {
+void Window::Clear(float red, float green, float blue, float alpha) {
 	int width;
 	int height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	glViewport(0, 0, width, height);
-	// TODO: Add clear color
+	glClearColor(red, green, blue, alpha);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::SwapBuffers(void) {
 	glfwSwapBuffers(m_window);
+}
+
+void Window::SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback) {
+	m_eventCallback = eventcallback;
 }
 
 WindowBuilder* Window::GetBuilder(void) {
