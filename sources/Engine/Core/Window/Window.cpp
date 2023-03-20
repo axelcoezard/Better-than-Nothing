@@ -18,7 +18,7 @@ Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
-	m_window = glfwCreateWindow(width, height, m_title.c_str(), nullptr, nullptr);
+	m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_window);
 	glewInit();
 }

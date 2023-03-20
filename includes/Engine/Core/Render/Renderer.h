@@ -19,7 +19,9 @@ struct Window;
 struct Renderer: public GCObject {
 	private:
 		Window* m_window;
+#if ENGINE_EDITOR_MODE
 		FrameBufferObject* m_fbo;
+#endif
 	public:
 		Renderer(Window* window);
 		~Renderer(void);
