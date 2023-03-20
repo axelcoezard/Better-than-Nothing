@@ -27,7 +27,7 @@ int main(void) {
 
 	while (!window->ShouldClose()) {
 		glfwPollEvents();
-                
+
 		renderer->Update();
 		renderer->Render();
 
