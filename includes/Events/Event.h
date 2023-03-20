@@ -10,15 +10,15 @@
 #pragma once
 
 class Event {
-	private:
-		bool m_handled = false;
-	public:
-		virtual ~Event(void) = default;
+private:
+	bool m_handled = false;
+public:
+	virtual ~Event(void) = default;
 
-		virtual const char* GetName(void) const = 0;
+	virtual const char* GetName(void) const = 0;
 
-		void SetHandled(bool handled) { m_handled = handled; }
-		bool IsHandled(void) { return m_handled; }
+	void SetHandled(bool handled) { m_handled = handled; }
+	bool IsHandled(void) { return m_handled; }
 };
 
 #define DECLARE_EVENT_NAME(name)\
