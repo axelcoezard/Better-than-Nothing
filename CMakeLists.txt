@@ -9,9 +9,9 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-add_subdirectory("libs/glfw")
-add_subdirectory("libs/glew")
-add_subdirectory("libs/glm")
+add_subdirectory("Engine/libs/glfw")
+add_subdirectory("Engine/libs/glew")
+add_subdirectory("Engine/libs/glm")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
@@ -28,9 +28,9 @@ file(GLOB ALL_SRCS
 )
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/includes/Engine
-	${PROJECT_SOURCE_DIR}/sources/Engine
-	${PROJECT_SOURCE_DIR}/sources/Game
+	${PROJECT_SOURCE_DIR}/Engine/includes
+	${PROJECT_SOURCE_DIR}/Engine/sources
+	${PROJECT_SOURCE_DIR}/Sandbox
 )
 
 add_executable(${PROJECT_NAME} ${ALL_SRCS})
@@ -42,9 +42,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(${PROJECT_NAME} glfw libglew_static)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glfw/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glew/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glm/include)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/includes)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
