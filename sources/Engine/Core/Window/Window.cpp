@@ -18,13 +18,13 @@ Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	: m_title(title), m_width(width), m_height(height) {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+#if __APPLE__
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+#else
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
-	m_Window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
-	glfwMakeContextCurrent(m_Window);
-	glewInit();
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
 Window::~Window(void) {

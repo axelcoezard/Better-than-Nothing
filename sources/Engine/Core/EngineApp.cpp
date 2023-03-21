@@ -31,4 +31,7 @@ void EngineApp::Run(void) {
 		m_window->SwapBuffers();
 	}
 	this->OnDisable();
+
+	delete m_renderer;
+	delete m_window;
 }
