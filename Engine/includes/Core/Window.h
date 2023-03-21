@@ -19,25 +19,25 @@
 #include "Events/WindowCloseEvent.h"
 
 struct Window {
-	private:
-		GLFWwindow* m_Window;
+private:
+	GLFWwindow* m_Window;
 
-		std::string m_Title;
-		uint32_t m_Width, m_Height;
-		std::function<void(Event*)> m_eventCallback;
-	public:
-		Window(std::string_view title, uint32_t width, uint32_t height);
-		~Window(void);
+	std::string m_Title;
+	uint32_t m_Width, m_Height;
+	std::function<void(Event*)> m_eventCallback;
+public:
+	Window(std::string_view title, uint32_t width, uint32_t height);
+	~Window(void);
 
-		void Open(void);
-		void Close(void);
+	void Open(void);
+	void Close(void);
 
-		bool ShouldClose(void);
-		void SwapBuffers(void);
-		void Clear(float red, float green, float blue, float alpha);
+	bool ShouldClose(void);
+	void SwapBuffers(void);
+	void Clear(float red, float green, float blue, float alpha);
 
-		void SetEventCallback(std::function<void(Event*)> eventcallback);
+	void SetEventCallback(std::function<void(Event*)> eventcallback);
 
-		uint32_t GetWidth(void);
-		uint32_t GetHeight(void);
+	uint32_t GetWidth(void);
+	uint32_t GetHeight(void);
 };

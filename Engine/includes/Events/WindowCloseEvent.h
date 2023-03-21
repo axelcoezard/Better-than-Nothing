@@ -11,6 +11,6 @@
 #include "Events/Event.h"
 
 class WindowCloseEvent: public Event {
-	public:
-		DECLARE_EVENT_NAME(WindowCloseEvent)
+public:
+	DECLARE_EVENT_NAME(WindowCloseEvent)
 };

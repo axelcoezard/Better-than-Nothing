@@ -20,19 +20,19 @@
 								}
 
 struct EventDispatcher {
-	private:
-		Event* m_Event;
-	public:
-		EventDispatcher(Event* event) : m_Event(event) { };
+private:
+	Event* m_Event;
+public:
+	EventDispatcher(Event* event) : m_Event(event) { };
 
-		template<typename T, typename F>
-		bool Dispatch(const F& listener) {
-			if (m_Event->GetName() == T::GetStaticName()) {
-				bool handled = listener(static_cast<T*>(m_Event));
-				m_Event->SetHandled(handled);
-				return handled;
-			}
-			return false;
+	template<typename T, typename F>
+	bool Dispatch(const F& listener) {
+		if (m_Event->GetName() == T::GetStaticName()) {
+			bool handled = listener(static_cast<T*>(m_Event));
+			m_Event->SetHandled(handled);
+			return handled;
 		}
+		return false;
+	}
 };
 

@@ -15,18 +15,18 @@
 #include "Renderer/Renderer.h"
 
 class EngineApp {
-	protected:
-		Window* m_Window;
-		Renderer* m_Renderer;
-	public:
-		EngineApp(std::string_view title, uint32_t width, uint32_t height);
-		virtual ~EngineApp(void) = default;
+protected:
+	Window* m_Window;
+	Renderer* m_Renderer;
+public:
+	EngineApp(std::string_view title, uint32_t width, uint32_t height);
+	virtual ~EngineApp(void) = default;
 
-		void Run(void);
+	void Run(void);
 
-		virtual void OnEnable(void) = 0;
-		virtual void OnDisable(void) = 0;
-		virtual void OnEvent(Event* event) = 0;
-		virtual void OnUpdate(void) = 0;
-		virtual void OnRender(Renderer* renderer) = 0;
+	virtual void OnEnable(void) = 0;
+	virtual void OnDisable(void) = 0;
+	virtual void OnEvent(Event* event) = 0;
+	virtual void OnUpdate(void) = 0;
+	virtual void OnRender(Renderer* renderer) = 0;
 };
