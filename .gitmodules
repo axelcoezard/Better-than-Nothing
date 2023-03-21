@@ -1,12 +1,12 @@
-[submodule "glfw"]
+[submodule "Engine/libs/glfw"]
 	path = Engine/libs/glfw
 	url = https://github.com/axelcoezard/better-than-nothing-glfw.git
-[submodule "glew"]
+[submodule "Engine/libs/glew"]
 	path = Engine/libs/glew
 	url = https://github.com/axelcoezard/better-than-nothing-glew.git
-[submodule "entt"]
-	path = Engine/libs/entt
-	url = https://github.com/axelcoezard/better-than-nothing-entt.git
-[submodule "glm"]
+[submodule "Engine/libs/glm"]
 	path = Engine/libs/glm
 	url = https://github.com/axelcoezard/better-than-nothing-glm.git
+[submodule "Engine/libs/entt"]
+	path = Engine/libs/entt
+	url = https://github.com/axelcoezard/better-than-nothing-entt.git
