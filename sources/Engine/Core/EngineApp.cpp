@@ -18,12 +18,13 @@ EngineApp::EngineApp(std::string_view title, uint32_t width, uint32_t height) {
 void EngineApp::Run(void) {
 	m_Window->Open();
 	this->OnEnable();
+
 	while (!m_Window->ShouldClose()) {
 		glfwPollEvents();
 
-		m_Renderer->Update();
+		this->OnUpdate();
 		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
-		m_Renderer->Render();
+		this->OnRender(m_Renderer);
 
 		m_Window->SwapBuffers();
 	}

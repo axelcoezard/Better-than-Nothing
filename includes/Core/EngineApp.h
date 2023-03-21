@@ -15,7 +15,7 @@
 #include "Core/Renderer.h"
 
 class EngineApp {
-	private:
+	protected:
 		Window* m_Window;
 		Renderer* m_Renderer;
 	public:
@@ -27,4 +27,6 @@ class EngineApp {
 		virtual void OnEnable(void) = 0;
 		virtual void OnDisable(void) = 0;
 		virtual void OnEvent(Event* event) = 0;
+		virtual void OnUpdate(void) = 0;
+		virtual void OnRender(Renderer* renderer) = 0;
 };

@@ -64,10 +64,10 @@ void Window::Open(void) {
 
 	glewInit();
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_MULTISAMPLE);
 
-	glDepthFunc(GL_LESS);
+	//glDepthFunc(GL_LESS);
 	glfwSwapInterval(1);
 }
 
@@ -84,8 +84,12 @@ void Window::Clear(float red, float green, float blue, float alpha) {
 	int height;
 	glfwGetFramebufferSize(m_Window, &width, &height);
 	glViewport(0, 0, width, height);
-	glClearColor(red, green, blue, alpha);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	(void) red;
+	(void) green;
+	(void) blue;
+	(void) alpha;
+	//glClearColor(red, green, blue, alpha);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Window::SwapBuffers(void) {
@@ -94,4 +98,11 @@ void Window::SwapBuffers(void) {
 
 void Window::SetEventCallback(std::function<void(Event*)> eventcallback) {
 	m_eventCallback = eventcallback;
+}
+
+uint32_t Window::GetWidth(void) {
+	return m_Width;
+}
+uint32_t Window::GetHeight(void) {
+	return m_Height;
 }
