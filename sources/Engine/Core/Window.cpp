@@ -8,13 +8,13 @@
  */
 #include <iostream>
 
-#include "Core/Window/Window.h"
+#include "Core/Window.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyEvent.h"
 
 Window::Window(std::string_view title, uint32_t width, uint32_t height)
-	: m_title(title), m_width(width), m_height(height) {
+	: m_Title(title), m_Width(width), m_Height(height) {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 #if __APPLE__
@@ -32,7 +32,7 @@ Window::~Window(void) {
 }
 
 void Window::Open(void) {
-	m_Window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
+	m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
 

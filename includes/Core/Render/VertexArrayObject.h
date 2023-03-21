@@ -14,7 +14,7 @@
 
 struct VertexArrayObject {
 	private:
-		unsigned int m_id;
+		unsigned int m_Id;
 	public:
 		VertexArrayObject(void);
 		~VertexArrayObject(void);

@@ -8,10 +8,10 @@
  */
 
 #include <stdexcept>
-#include "Core/Render/Objects/VertexArrayObject.h"
+#include "Core/Render/VertexArrayObject.h"
 
 VertexArrayObject::VertexArrayObject(void) {
-	glGenVertexArrays(1, &m_id);
+	glGenVertexArrays(1, &m_Id);
 }
 
 VertexArrayObject::~VertexArrayObject(void) {
@@ -19,7 +19,7 @@ VertexArrayObject::~VertexArrayObject(void) {
 }
 
 void VertexArrayObject::Bind(void) {
-    glBindVertexArray(m_id);
+    glBindVertexArray(m_Id);
 }
 
 void VertexArrayObject::UnBind(void) {

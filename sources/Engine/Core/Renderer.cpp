@@ -9,12 +9,12 @@
 
 #include <iostream>
 
-#include "Core/Render/Renderer.h"
-#include "Core/Render/Objects/FrameBufferObject.h"
-#include "Core/Window/Window.h"
+#include "Core/Renderer.h"
+#include "Core/Render/FrameBufferObject.h"
+#include "Core/Window.h"
 
 Renderer::Renderer(Window* window) {
-	m_window = window;
+	m_Window = window;
 #if ENGINE_EDITOR_MODE
 	m_fbo = new FrameBufferObject();
 #endif

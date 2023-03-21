@@ -14,7 +14,7 @@
 
 struct VertexBufferObject {
 	private:
-		unsigned int m_id;
+		unsigned int m_Id;
 	public:
 		VertexBufferObject(void);
 		~VertexBufferObject(void);

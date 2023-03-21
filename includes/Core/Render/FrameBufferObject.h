@@ -14,8 +14,8 @@
 
 struct FrameBufferObject {
 	private:
-		unsigned int m_id;
-		unsigned int m_texture;
+		unsigned int m_Id;
+		unsigned int m_TextureId;
 	public:
 		FrameBufferObject(void);
 		~FrameBufferObject(void);

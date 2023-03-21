@@ -18,14 +18,12 @@
 #include "Events/Event.h"
 #include "Events/WindowCloseEvent.h"
 
-struct WindowBuilder;
-
 struct Window {
 	private:
 		GLFWwindow* m_Window;
 
-		std::string m_title;
-		uint32_t m_width, m_height;
+		std::string m_Title;
+		uint32_t m_Width, m_Height;
 		std::function<void(Event*)> m_eventCallback;
 	public:
 		Window(std::string_view title, uint32_t width, uint32_t height);

@@ -12,7 +12,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 add_subdirectory("libs/glfw")
 add_subdirectory("libs/glew")
 add_subdirectory("libs/glm")
-add_subdirectory("libs/entt")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/sources/Engine/*.cpp"
@@ -46,7 +45,6 @@ target_link_libraries(${PROJECT_NAME} glfw libglew_static)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/entt/include)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/Game)

@@ -8,18 +8,18 @@
  */
 
 #include <stdexcept>
-#include "Core/Render/Objects/FrameBufferObject.h"
+#include "Core/Render/FrameBufferObject.h"
 
 FrameBufferObject::FrameBufferObject(void) {
-	glGenFramebuffers(1, &m_id);
+	glGenFramebuffers(1, &m_Id);
 }
 
 FrameBufferObject::~FrameBufferObject(void) {
-	glDeleteFramebuffers(1, &m_id);
+	glDeleteFramebuffers(1, &m_Id);
 }
 
 void FrameBufferObject::Bind(void) {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Id);
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::runtime_error("Cannot bind frame buffer");
 }
@@ -29,12 +29,12 @@ void FrameBufferObject::UnBind(void) {
 }
 
 unsigned int FrameBufferObject::GetTexture(int width, int height) {
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glGenTextures(1, &m_TextureId);
+	glBindTexture(GL_TEXTURE_2D, m_TextureId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	return m_texture;
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureId, 0);
+	return m_TextureId;
 }

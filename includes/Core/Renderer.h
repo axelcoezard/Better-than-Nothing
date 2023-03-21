@@ -11,13 +11,13 @@
 
 #include <vector>
 
-#include "Core/Render/Objects/FrameBufferObject.h"
+#include "Core/Render/FrameBufferObject.h"
 
 struct Window;
 
 struct Renderer {
 	private:
-		Window* m_window;
+		Window* m_Window;
 #if ENGINE_EDITOR_MODE
 		FrameBufferObject* m_fbo;
 #endif

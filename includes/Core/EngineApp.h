@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include "Core/Window/Window.h"
-#include "Core/Render/Renderer.h"
+#include "Core/Window.h"
+#include "Core/Renderer.h"
 
 class EngineApp {
 	private:
