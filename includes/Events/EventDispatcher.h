@@ -24,7 +24,6 @@ struct EventDispatcher {
 		Event* m_Event;
 	public:
 		EventDispatcher(Event* event) : m_Event(event) { };
-		~EventDispatcher(void) { delete m_Event; }
 
 		template<typename T, typename F>
 		bool Dispatch(const F& listener) {

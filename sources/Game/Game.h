@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Core/EngineApp.h"
+#include "Events/KeyEvent.h"
 
 class Game: public EngineApp {
 	public:
@@ -17,8 +18,8 @@ class Game: public EngineApp {
 			: EngineApp(title, width, height) {};
 
 		void OnEnable(void);
-
 		void OnDisable(void);
+		void OnEvent(Event* event);
 
-		void OnEvent(EventDispatcher* dispatcher, Event* event);
+		static bool OnKeyPress(KeyPressEvent* event);
 };

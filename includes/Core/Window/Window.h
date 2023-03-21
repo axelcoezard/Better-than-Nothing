@@ -26,7 +26,7 @@ struct Window {
 
 		std::string m_title;
 		uint32_t m_width, m_height;
-		std::function<void(EventDispatcher*, Event*)> m_eventCallback;
+		std::function<void(Event*)> m_eventCallback;
 	public:
 		Window(std::string_view title, uint32_t width, uint32_t height);
 		~Window(void);
@@ -38,7 +38,7 @@ struct Window {
 		void SwapBuffers(void);
 		void Clear(float red, float green, float blue, float alpha);
 
-		void SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback);
+		void SetEventCallback(std::function<void(Event*)> eventcallback);
 
 		static WindowBuilder* GetBuilder(void);
 };

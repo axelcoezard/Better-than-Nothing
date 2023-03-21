@@ -49,15 +49,17 @@ void Window::Open(void) {
 			case GLFW_PRESS:
 				event = new KeyPressEvent(key, scancode, mods);
 				break;
+			case GLFW_REPEAT:
+				event = new KeyPressEvent(key, scancode, mods);
+				break;
 			case GLFW_RELEASE:
 				event = new KeyReleaseEvent(key, scancode, mods);
 				break;
 		};
 
 		if (event != nullptr) {
-			EventDispatcher* dispatcher = new EventDispatcher(event);
-			instance.m_eventCallback(dispatcher, event);
-			delete dispatcher;
+			instance.m_eventCallback(event);
+			delete event;
 		}
 	});
 
@@ -91,7 +93,7 @@ void Window::SwapBuffers(void) {
 	glfwSwapBuffers(m_Window);
 }
 
-void Window::SetEventCallback(std::function<void(EventDispatcher*, Event*)> eventcallback) {
+void Window::SetEventCallback(std::function<void(Event*)> eventcallback) {
 	m_eventCallback = eventcallback;
 }
 

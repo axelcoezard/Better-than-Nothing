@@ -28,5 +28,5 @@ class EngineApp {
 
 		virtual void OnEnable(void) = 0;
 		virtual void OnDisable(void) = 0;
-		virtual void OnEvent(EventDispatcher* dispatcher, Event* event) = 0;
+		virtual void OnEvent(Event* event) = 0;
 };

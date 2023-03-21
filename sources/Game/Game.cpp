@@ -8,6 +8,7 @@
  */
 
 #include "Game.h"
+#include "Events/EventDispatcher.h"
 
 void Game::OnEnable(void) {
 
@@ -17,9 +18,14 @@ void Game::OnDisable(void) {
 
 }
 
-void Game::OnEvent(EventDispatcher* dispatcher, Event* event) {
-	(void) dispatcher;
-	std::cout << event->GetName() << std::endl;
+void Game::OnEvent(Event* event) {
+	EventDispatcher dispatcher(event);
+	dispatcher.Dispatch<KeyPressEvent>(Game::OnKeyPress);
+}
+
+bool Game::OnKeyPress(KeyPressEvent* event) {
+	std::cout << event->GetName() << " => " << event->GetKey() << std::endl;
+	return true;
 }
 
 EngineApp* CreateEngineApplication(void) {
