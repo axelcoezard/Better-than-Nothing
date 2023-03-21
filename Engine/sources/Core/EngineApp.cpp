@@ -8,7 +8,7 @@
  */
 
 #include "Core/EngineApp.h"
-#include "Renderer/Buffer.h"
+#include "Core/Buffer.h"
 
 EngineApp::EngineApp(std::string_view title, uint32_t width, uint32_t height) {
 	m_Window = new Window(title, width, height);

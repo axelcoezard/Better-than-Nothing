@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "Core/Window.h"
-#include "Renderer/Renderer.h"
+#include "Core/Renderer.h"
 
 class EngineApp {
 protected:
