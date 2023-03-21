@@ -6,7 +6,6 @@
  * Last Modified: Thursday, 9th March 2023 1:18:36 pm
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
-
 #pragma once
 
 #include <vector>

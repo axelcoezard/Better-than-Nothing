@@ -6,6 +6,7 @@
  * Last Modified: Saturday, 11th March 2023 12:33:31 am
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
+
 #pragma once
 
 #include "Events/Event.h"

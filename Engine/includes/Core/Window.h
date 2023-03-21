@@ -6,6 +6,7 @@
  * Last Modified: Tuesday, 7th March 2023 7:30:16 pm
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
+#pragma once
 
 #include <string>
 #include <string_view>
