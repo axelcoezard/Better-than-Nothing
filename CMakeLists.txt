@@ -14,17 +14,17 @@ add_subdirectory("libs/glew")
 add_subdirectory("libs/glm")
 
 file(GLOB ALL_SRCS
-	"${PROJECT_SOURCE_DIR}/sources/Engine/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/GarbageCollector/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Window/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Core/Render/Objects/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Engine/Events/*.hpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/GarbageCollector/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/Window/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/Render/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/Render/Objects/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/includes/Events/*.hpp"
 
-	"${PROJECT_SOURCE_DIR}/sources/Game/*.cpp"
-	"${PROJECT_SOURCE_DIR}/sources/Game/*.hpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.hpp"
 )
 
 include_directories(
@@ -46,8 +46,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/li
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includes)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/Game)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/includes)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
 
 
 
