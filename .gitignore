@@ -33,6 +33,6 @@
 
 better-than-nothing
 
-# Cmake
+# Folders
 build/
-
+.vscode/
