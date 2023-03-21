@@ -11,15 +11,13 @@
 
 #include <iostream>
 
-#include "Core/Window/WindowBuilder.h"
 #include "Core/Window/Window.h"
 #include "Core/Render/Renderer.h"
-#include "Events/EventDispatcher.h"
 
 class EngineApp {
 	private:
-		Window* m_window;
-		Renderer* m_renderer;
+		Window* m_Window;
+		Renderer* m_Renderer;
 	public:
 		EngineApp(std::string_view title, uint32_t width, uint32_t height);
 		virtual ~EngineApp(void) = default;

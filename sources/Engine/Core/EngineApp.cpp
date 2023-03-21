@@ -10,28 +10,25 @@
 #include "Core/EngineApp.h"
 
 EngineApp::EngineApp(std::string_view title, uint32_t width, uint32_t height) {
-	m_window = Window::GetBuilder()
-		->WithTitle(title)
-		->WithSize(width, height)
-		->Build();
-	m_window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
-	m_renderer = new Renderer(m_window);
+	m_Window = new Window(title, width, height);
+	m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
+	m_Renderer = new Renderer(m_Window);
 }
 
 void EngineApp::Run(void) {
-	m_window->Open();
+	m_Window->Open();
 	this->OnEnable();
-	while (!m_window->ShouldClose()) {
+	while (!m_Window->ShouldClose()) {
 		glfwPollEvents();
 
-		m_renderer->Update();
-		m_window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
-		m_renderer->Render();
+		m_Renderer->Update();
+		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
+		m_Renderer->Render();
 
-		m_window->SwapBuffers();
+		m_Window->SwapBuffers();
 	}
 	this->OnDisable();
 
-	delete m_renderer;
-	delete m_window;
+	delete m_Renderer;
+	delete m_Window;
 }

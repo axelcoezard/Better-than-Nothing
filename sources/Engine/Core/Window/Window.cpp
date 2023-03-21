@@ -9,7 +9,6 @@
 #include <iostream>
 
 #include "Core/Window/Window.h"
-#include "Core/Window/WindowBuilder.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyEvent.h"
@@ -95,8 +94,4 @@ void Window::SwapBuffers(void) {
 
 void Window::SetEventCallback(std::function<void(Event*)> eventcallback) {
 	m_eventCallback = eventcallback;
-}
-
-WindowBuilder* Window::GetBuilder(void) {
-	return new WindowBuilder();
 }

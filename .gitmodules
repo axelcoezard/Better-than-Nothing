@@ -1,6 +1,21 @@
 [submodule "libs/glfw"]
 	path = libs/glfw
-	url = https://github.com/glfw/glfw.git
+	url = https://github.com/axelcoezard/better-than-nothing-glfw.git
 [submodule "libs/glew"]
 	path = libs/glew
-	url = https://github.com/Perlmint/glew-cmake.git
+	url = https://github.com/axelcoezard/better-than-nothing-glew.git
+[submodule "libs/entt"]
+	path = libs/entt
+	url = https://github.com/axelcoezard/better-than-nothing-entt.git
+[submodule "libs/soloud"]
+	path = libs/soloud
+	url = https://github.com/axelcoezard/better-than-nothing-soloud.git
+[submodule "libs/glm"]
+	path = libs/glm
+	url = https://github.com/axelcoezard/better-than-nothing-glm.git
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/axelcoezard/better-than-nothing-imgui.git
+[submodule "libs/freetype"]
+	path = libs/freetype
+	url = https://github.com/axelcoezard/better-than-nothing-freetype.git

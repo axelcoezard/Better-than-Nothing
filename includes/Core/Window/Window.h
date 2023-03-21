@@ -39,6 +39,4 @@ struct Window {
 		void Clear(float red, float green, float blue, float alpha);
 
 		void SetEventCallback(std::function<void(Event*)> eventcallback);
-
-		static WindowBuilder* GetBuilder(void);
 };
