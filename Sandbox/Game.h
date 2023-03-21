@@ -14,13 +14,6 @@
 
 class Game: public EngineApp {
 	public:
-		float vertices[12] = {
-			300, 300, 0.0, // top right corner
-			0, 300, 0.0, // top left corner
-			0, 0, 0.0, // bottom left corner
-			300, 0, 0.0 // bottom right corner
-		};
-
 		Game(std::string_view title, uint32_t width, uint32_t height)
 			: EngineApp(title, width, height) {};
 

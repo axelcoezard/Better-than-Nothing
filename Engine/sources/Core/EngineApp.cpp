@@ -1,13 +1,14 @@
 /*
- * File: Engine.cpp
+ * File: EngineApp.cpp
  * Author: Axel Coezard (hello@axelcoezard.com)
  * -----
- * File Created: Saturday, 11th March 2023 1:28:16 pm
- * Last Modified: Saturday, 11th March 2023 1:28:17 pm
+ * File Created: Tuesday, 21st March 2023 5:13:17 pm
+ * Last Modified: Tuesday, 21st March 2023 11:04:43 pm
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
 #include "Core/EngineApp.h"
+#include "Renderer/Buffer.h"
 
 EngineApp::EngineApp(std::string_view title, uint32_t width, uint32_t height) {
 	m_Window = new Window(title, width, height);
@@ -19,11 +20,69 @@ void EngineApp::Run(void) {
 	m_Window->Open();
 	this->OnEnable();
 
+	const char *vertexShaderSource = "#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"}\0";
+	const char *fragmentShaderSource = "#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main()\n"
+		"{\n"
+		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"}\n\0";
+
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+	 unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+	unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+	glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+	float vertices[] = {
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
+    };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	VertexBuffer::Create(vertices, sizeof(vertices));
+	IndexBuffer::Create(indices, sizeof(indices));
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+
 	while (!m_Window->ShouldClose()) {
 		glfwPollEvents();
 
 		this->OnUpdate();
 		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
+
+  		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		this->OnRender(m_Renderer);
 
 		m_Window->SwapBuffers();
