@@ -15,14 +15,16 @@
 
 class UUID {
 private:
-	unsigned char m_Values[32];
+	unsigned char				m_Values[32];
 
-	static std::random_device s_RandomDevice;
-	static std::mt19937 s_TwisterEngine;
+	static std::random_device	s_RandomDevice;
+	static std::mt19937			s_TwisterEngine;
 
 public:
 	UUID(void);
 	UUID(const std::string& value);
+
+	static UUID RandomUUID(void);
 
 	friend std::ostream& operator<<(std::ostream& os, const UUID& m);
 };

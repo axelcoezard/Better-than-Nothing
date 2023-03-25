@@ -12,15 +12,7 @@
 std::random_device UUID::s_RandomDevice = std::random_device();
 std::mt19937 UUID::s_TwisterEngine = std::mt19937(UUID::s_RandomDevice());
 
-UUID::UUID(void) {
-	std::uniform_int_distribution<uint32_t> distribution(0, 15);
-
-	const char *v = "0123456789abcdef";
-
-	for (uint32_t index = 0; index < 32U; index++) {
-		m_Values[index] = v[distribution(s_TwisterEngine)];
-	}
-}
+UUID::UUID(void) = default;
 
 UUID::UUID(const std::string& value) {
 	for (uint32_t index = 0; index < 32U; index++) {
@@ -28,6 +20,17 @@ UUID::UUID(const std::string& value) {
 			m_Values[index] = value[index];
 		}
 	}
+}
+
+UUID UUID::RandomUUID(void) {
+	std::uniform_int_distribution<uint32_t> distribution(0, 15);
+	const char *v = "0123456789abcdef";
+
+	UUID uuid;
+	for (uint32_t index = 0; index < 32U; index++) {
+		uuid.m_Values[index] = v[distribution(s_TwisterEngine)];
+	}
+	return uuid;
 }
 
 std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
