@@ -17,6 +17,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
 #include "Audio/AudioSystem.h"
+#include "Core/UUID.h"
 
 static Window* m_Window;
 static Renderer* m_Renderer;
@@ -55,6 +56,8 @@ int main(void) {
         1, 2, 3   // second Triangle
     };
 
+	UUID uuid;
+	std::cout << uuid << std::endl;
 
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);

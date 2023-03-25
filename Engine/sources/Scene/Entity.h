@@ -11,10 +11,13 @@
 
 #include "entt.hpp"
 
+#include "Core/UUID.h"
+
+
 class Entity {
 private:
-	entt::entity m_EntityHandle{ entt::null };
-
+	entt::entity	m_EntityHandle{ entt::null };
+	UUID			m_UUID;
 public:
 
 };
