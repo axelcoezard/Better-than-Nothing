@@ -16,9 +16,9 @@
 template<uint32_t __TYPE>
 class Buffer {
 private:
-	uint32_t m_Id;
-	void* m_Data;
-	uint32_t m_DataSize;
+	uint32_t	m_Id;
+	void*		m_Data;
+	uint32_t	m_DataSize;
 public:
 	Buffer(void* data, uint32_t dataSize)
 		: m_Data(data), m_DataSize(dataSize) {

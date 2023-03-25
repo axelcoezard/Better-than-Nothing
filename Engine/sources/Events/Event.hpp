@@ -11,7 +11,7 @@
 
 class Event {
 private:
-	bool m_Handled = false;
+	bool	m_Handled = false;
 public:
 	virtual ~Event(void) = default;
 

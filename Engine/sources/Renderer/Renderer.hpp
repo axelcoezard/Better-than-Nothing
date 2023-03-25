@@ -14,7 +14,7 @@ struct Window;
 
 struct Renderer {
 private:
-	Window* m_Window;
+	Window*	m_Window;
 public:
 	Renderer(Window* window);
 	~Renderer(void);

@@ -12,28 +12,28 @@
 
 class KeyEvent: public Event {
 protected:
-	int m_Key;
-	int m_ScanCode;
-	int m_Mods;
+	uint32_t	m_Key;
+	uint32_t	m_ScanCode;
+	uint32_t	m_Mods;
 public:
-	KeyEvent(int key, int scanCode, int mods)
+	KeyEvent(uint32_t key, uint32_t scanCode, uint32_t mods)
 		: m_Key(key), m_ScanCode(scanCode), m_Mods(mods) {}
 
-	bool IsKey(int key) { return m_Key == key; }
+	bool IsKey(uint32_t key) { return m_Key == key; }
 
-	int GetKey(void) { return m_Key; }
-	int GetScanCode(void) { return m_ScanCode; }
-	int GetMods(void) { return m_Mods; }
+	uint32_t GetKey(void) { return m_Key; }
+	uint32_t GetScanCode(void) { return m_ScanCode; }
+	uint32_t GetMods(void) { return m_Mods; }
 };
 
 class KeyPressEvent: public KeyEvent {
 public:
-	KeyPressEvent(int key, int scanCode, int mods): KeyEvent(key, scanCode, mods) {}
+	KeyPressEvent(uint32_t key, uint32_t scanCode, uint32_t mods): KeyEvent(key, scanCode, mods) {}
 	DECLARE_EVENT_NAME(KeyPressEvent)
 };
 
 class KeyReleaseEvent: public KeyEvent {
 public:
-	KeyReleaseEvent(int key, int scanCode, int mods): KeyEvent(key, scanCode, mods) {}
+	KeyReleaseEvent(uint32_t key, uint32_t scanCode, uint32_t mods): KeyEvent(key, scanCode, mods) {}
 	DECLARE_EVENT_NAME(KeyReleaseEvent)
 };

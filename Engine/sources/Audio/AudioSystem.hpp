@@ -21,10 +21,10 @@
 
 class AudioSystem {
 private:
-	ALCdevice* m_Device = nullptr;
-	ALCcontext* m_Context = nullptr;
+	ALCdevice*					m_Device = nullptr;
+	ALCcontext*					m_Context = nullptr;
 
-	std::vector<std::string> m_Devices;
+	std::vector<std::string>	m_Devices;
 public:
 	AudioSystem(void);
 	~AudioSystem(void);

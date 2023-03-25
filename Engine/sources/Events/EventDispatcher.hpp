@@ -21,7 +21,7 @@
 
 struct EventDispatcher {
 private:
-	Event* m_Event;
+	Event*	m_Event;
 public:
 	EventDispatcher(Event* event) : m_Event(event) { };
 
