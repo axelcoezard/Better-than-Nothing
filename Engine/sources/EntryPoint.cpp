@@ -15,6 +15,7 @@
 #include "Core/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
 #include "Audio/AudioSystem.h"
 
 static Window* m_Window;
@@ -24,40 +25,24 @@ static AudioSystem* m_AudioSystem;
 int main(void) {
 	m_Window = new Window("better than nothing", 720, 720);
 	//m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
-	m_Renderer = new Renderer(m_Window);
-
-	m_AudioSystem = new AudioSystem();
-
 	m_Window->Open();
 
-	const char *vertexShaderSource = "#version 330 core\n"
+	m_Renderer = new Renderer(m_Window);
+	m_AudioSystem = new AudioSystem();
+
+	Shader shader;
+	shader.AddTextSource(Shader::VERTEX, "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
+		"void main() {\n"
 		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-	const char *fragmentShaderSource = "#version 330 core\n"
+		"}\0");
+	shader.AddTextSource(Shader::FRAGMENT, "#version 330 core\n"
 		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
+		"void main() {\n"
 		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
+		"}\n\0");
 
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-	 unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-	unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+	shader.Compile();
 
 	float vertices[] = {
          0.5f,  0.5f, 0.0f,  // top right
@@ -92,9 +77,10 @@ int main(void) {
 
 		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
 
-  		glUseProgram(shaderProgram);
+		shader.Bind();
 		glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		shader.UnBind();
 
 		m_Window->SwapBuffers();
 	}
