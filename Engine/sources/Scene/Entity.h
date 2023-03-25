@@ -9,15 +9,23 @@
 
 #pragma once
 
-#include "entt.hpp"
+#include "entt/entt.hpp"
 
 #include "Core/UUID.h"
 
+class Scene;
 
 class Entity {
 private:
-	entt::entity	m_EntityHandle{ entt::null };
+	entt::entity	m_Handle { entt::null };
 	UUID			m_UUID;
+	Scene*			m_Scene;
 public:
 	Entity(void);
+	Entity(entt::entity handle, const UUID& uuid, Scene* scene);
+
+	entt::entity	GetHandle(void) const;
+	UUID			GetUUID(void) const;
 };
+
+#include "Scene/Scene.h"

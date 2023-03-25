@@ -9,23 +9,28 @@
 
 #pragma once
 
-#include "entt.hpp"
+#include <map>
+
+#include "entt/entt.hpp"
+
+#include "Core/UUID.h"
 
 class Entity;
 
 class Scene {
 private:
-	entt::registry m_Registry;
-public:
-	Scene(void) = default;
-	~Scene(void) = default;
+	entt::registry					m_Registry;
+	std::map<UUID, entt::entity>	m_Entities;
 
-	Entity CreateEntity(const std::string& name);
-	bool RemoveEntity(const std::string& name);
+public:
+	Entity	CreateEntity(void);
+	bool	RemoveEntity(const UUID& uuid);
 
 	template<typename... Components>
-	auto GetAllEntitiesWith()
+	auto	GetAllEntitiesWith()
 	{
 		return m_Registry.view<Components...>();
 	}
 };
+
+#include "Scene/Entity.h"

@@ -56,9 +56,6 @@ int main(void) {
         1, 2, 3   // second Triangle
     };
 
-	UUID uuid = UUID::RandomUUID();
-	std::cout << uuid << std::endl;
-
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);

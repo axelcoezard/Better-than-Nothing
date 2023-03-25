@@ -11,34 +11,17 @@
 
 std::random_device UUID::s_RandomDevice = std::random_device();
 std::mt19937 UUID::s_TwisterEngine = std::mt19937(UUID::s_RandomDevice());
+std::uniform_int_distribution<uint64_t>	UUID::s_Distribution;
 
 UUID::UUID(void) = default;
+UUID::UUID(const uint64_t& UUID): m_UUID(UUID){}
 
-UUID::UUID(const std::string& value) {
-	for (uint32_t index = 0; index < 32U; index++) {
-		if (value[index] != '-') {
-			m_Values[index] = value[index];
-		}
-	}
+UUID::operator uint64_t(void) const {
+	return m_UUID;
 }
 
 UUID UUID::RandomUUID(void) {
-	std::uniform_int_distribution<uint32_t> distribution(0, 15);
-	const char *v = "0123456789abcdef";
-
 	UUID uuid;
-	for (uint32_t index = 0; index < 32U; index++) {
-		uuid.m_Values[index] = v[distribution(s_TwisterEngine)];
-	}
+	uuid.m_UUID = s_Distribution(s_TwisterEngine);
 	return uuid;
-}
-
-std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
-	const bool dash[] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-	for (uint32_t index = 0; index < 32U; index++) {
-		if (dash[index]) { os << '-'; }
-		os << uuid.m_Values[index];
-	}
-	return os;
 }
