@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-#include "Renderer/Renderer.h"
-#include "Core/Window.h"
+#include "Renderer/Renderer.hpp"
+#include "Core/Window.hpp"
 
 Renderer::Renderer(Window* window) {
 	m_Window = window;

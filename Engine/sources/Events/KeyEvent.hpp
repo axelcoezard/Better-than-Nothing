@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Events/Event.h"
+#include "Events/Event.hpp"
 
 class KeyEvent: public Event {
 protected:

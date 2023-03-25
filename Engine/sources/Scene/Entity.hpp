@@ -10,8 +10,7 @@
 #pragma once
 
 #include "entt/entt.hpp"
-
-#include "Core/UUID.h"
+#include "Core/UUID.hpp"
 
 class Scene;
 
@@ -27,5 +26,3 @@ public:
 	entt::entity	GetHandle(void) const;
 	UUID			GetUUID(void) const;
 };
-
-#include "Scene/Scene.h"

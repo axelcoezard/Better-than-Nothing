@@ -7,7 +7,7 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Scene/Entity.h"
+#include "Scene/Entity.hpp"
 
 Entity::Entity(void) = default;
 Entity::Entity(entt::entity handle, const UUID& uuid, Scene* scene)

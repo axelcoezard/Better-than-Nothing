@@ -8,7 +8,7 @@
  */
 
 #include <iostream>
-#include "AudioSystem.h"
+#include "AudioSystem.hpp"
 
 AudioSystem::AudioSystem(void) {};
 AudioSystem::~AudioSystem(void) {};

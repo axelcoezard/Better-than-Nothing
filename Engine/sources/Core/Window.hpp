@@ -15,9 +15,9 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Events/EventDispatcher.h"
-#include "Events/Event.h"
-#include "Events/WindowCloseEvent.h"
+#include "Events/EventDispatcher.hpp"
+#include "Events/Event.hpp"
+#include "Events/WindowCloseEvent.hpp"
 
 struct Window {
 private:

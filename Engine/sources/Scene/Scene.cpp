@@ -7,9 +7,9 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Scene/Scene.h"
-#include "Scene/Entity.h"
-#include "Core/UUID.h"
+#include "Scene/Scene.hpp"
+#include "Scene/Entity.hpp"
+#include "Core/UUID.hpp"
 
 Entity Scene::CreateEntity(void) {
 	Entity entity = Entity(m_Registry.create(), UUID::RandomUUID(), this);

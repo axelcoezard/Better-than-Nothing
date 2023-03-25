@@ -7,7 +7,7 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Core/UUID.h"
+#include "Core/UUID.hpp"
 
 std::random_device UUID::s_RandomDevice = std::random_device();
 std::mt19937 UUID::s_TwisterEngine = std::mt19937(UUID::s_RandomDevice());

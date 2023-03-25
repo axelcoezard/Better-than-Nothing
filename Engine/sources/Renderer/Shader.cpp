@@ -7,7 +7,7 @@
  * Modified By: Axel Coezard (hello@axelcoezard.com>)
  */
 
-#include "Renderer/Shader.h"
+#include "Renderer/Shader.hpp"
 
 Shader::Shader(void): m_Compiled(false) {}
 Shader::~Shader(void) {}

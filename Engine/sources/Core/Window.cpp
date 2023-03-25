@@ -8,10 +8,10 @@
  */
 #include <iostream>
 
-#include "Core/Window.h"
+#include "Core/Window.hpp"
 
-#include "Events/EventDispatcher.h"
-#include "Events/KeyEvent.h"
+#include "Events/EventDispatcher.hpp"
+#include "Events/KeyEvent.hpp"
 
 Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	: m_Title(title), m_Width(width), m_Height(height) {

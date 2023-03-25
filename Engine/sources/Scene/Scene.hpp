@@ -12,8 +12,7 @@
 #include <map>
 
 #include "entt/entt.hpp"
-
-#include "Core/UUID.h"
+#include "Core/UUID.hpp"
 
 class Entity;
 
@@ -32,5 +31,3 @@ public:
 		return m_Registry.view<Components...>();
 	}
 };
-
-#include "Scene/Entity.h"

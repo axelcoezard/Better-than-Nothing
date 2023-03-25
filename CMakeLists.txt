@@ -18,17 +18,17 @@ add_subdirectory("Engine/libs/entt")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.hpp"
 
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"

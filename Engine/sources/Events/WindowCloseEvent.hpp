@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Events/Event.h"
+#include "Events/Event.hpp"
 
 class WindowCloseEvent: public Event {
 public:

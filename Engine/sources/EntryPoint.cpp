@@ -12,12 +12,12 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/Window.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Shader.h"
-#include "Audio/AudioSystem.h"
-#include "Core/UUID.h"
+#include "Core/Window.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Renderer/Buffer.hpp"
+#include "Renderer/Shader.hpp"
+#include "Audio/AudioSystem.hpp"
+#include "Core/UUID.hpp"
 
 static Window* m_Window;
 static Renderer* m_Renderer;
