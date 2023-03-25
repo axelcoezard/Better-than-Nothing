@@ -15,14 +15,18 @@
 #include "Core/Window.h"
 #include "Core/Renderer.h"
 #include "Core/Buffer.h"
+#include "Audio/AudioSystem.h"
 
 static Window* m_Window;
 static Renderer* m_Renderer;
+static AudioSystem* m_AudioSystem;
 
 int main(void) {
 	m_Window = new Window("better than nothing", 720, 720);
 	//m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
 	m_Renderer = new Renderer(m_Window);
+
+	m_AudioSystem = new AudioSystem();
 
 	m_Window->Open();
 
@@ -79,6 +83,10 @@ int main(void) {
 
 	glBindVertexArray(0);
 
+	m_AudioSystem->Initialize();
+	unsigned int buffer = m_AudioSystem->LoadSound("/home/acoezard/lab/better-than-nothing/fizzy.wav");
+	m_AudioSystem->PlaySound(buffer);
+
 	while (!m_Window->ShouldClose()) {
 		glfwPollEvents();
 
@@ -91,6 +99,9 @@ int main(void) {
 		m_Window->SwapBuffers();
 	}
 
+	m_AudioSystem->Shutdown();
+
+	delete m_AudioSystem;
 	delete m_Renderer;
 	delete m_Window;
 

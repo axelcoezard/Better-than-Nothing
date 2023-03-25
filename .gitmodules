@@ -10,3 +10,9 @@
 [submodule "Engine/libs/entt"]
 	path = Engine/libs/entt
 	url = https://github.com/axelcoezard/better-than-nothing-entt.git
+[submodule "Engine/libs/openal"]
+	path = Engine/libs/openal
+	url = https://github.com/axelcoezard/better-than-nothing-openal.git
+[submodule "Engine/libs/libsndfile"]
+	path = Engine/libs/libsndfile
+	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
