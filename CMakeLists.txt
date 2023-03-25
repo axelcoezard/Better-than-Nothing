@@ -20,6 +20,8 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.h"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.h"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.h"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.h"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"

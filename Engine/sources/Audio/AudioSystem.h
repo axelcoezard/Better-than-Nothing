@@ -19,7 +19,6 @@
 
 #include <sndfile.h>
 
-
 class AudioSystem {
 private:
 	ALCdevice* m_Device = nullptr;

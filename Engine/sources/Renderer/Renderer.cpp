@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "Core/Renderer.h"
+#include "Renderer/Renderer.h"
 #include "Core/Window.h"
 
 Renderer::Renderer(Window* window) {

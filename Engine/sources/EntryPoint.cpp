@@ -13,8 +13,8 @@
 #include "GLFW/glfw3.h"
 
 #include "Core/Window.h"
-#include "Core/Renderer.h"
-#include "Core/Buffer.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/Buffer.h"
 #include "Audio/AudioSystem.h"
 
 static Window* m_Window;
