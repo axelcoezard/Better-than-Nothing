@@ -26,6 +26,6 @@ public:
 	Texture(const std::string& fileName);
 	~Texture(void);
 
-	void Bind(void);
+	void Bind(int position);
 	void UnBind(void);
 };

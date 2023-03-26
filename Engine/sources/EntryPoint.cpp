@@ -16,6 +16,7 @@
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Buffer.hpp"
 #include "Renderer/Shader.hpp"
+#include "Renderer/Texture.hpp"
 #include "Audio/AudioSystem.hpp"
 #include "Core/UUID.hpp"
 
@@ -34,37 +35,47 @@ int main(void) {
 	Shader shader;
 	shader.AddTextSource(Shader::VERTEX, "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec2 aTexture;\n"
+		"out vec2 vTexture;\n"
 		"void main() {\n"
+		"   vTexture = aTexture;\n"
 		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 		"}\0");
 	shader.AddTextSource(Shader::FRAGMENT, "#version 330 core\n"
 		"out vec4 FragColor;\n"
+		"in vec2 vTexture;\n"
+		"uniform sampler2D Texture0;\n"
 		"void main() {\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0");
+		"   FragColor = texture(Texture0, vTexture);\n"
+		"}\0");
 
-	shader.Compile();
+	Texture texture = Texture("/home/acoezard/lab/better-than-nothing/test.png");
 
 	float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
+		// positions        // texture
+		0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  // top right
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+	};
+
+	unsigned int indices[] = {  // note that we start from 0!
+		0, 1, 3,  // first Triangle
+		1, 2, 3   // second Triangle
+	};
 
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
 	VertexBuffer::Create(vertices, sizeof(vertices));
-	IndexBuffer::Create(indices, sizeof(indices));
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	shader.Compile();
+	shader.SetPointer("aPos", 3, 5 * sizeof(float), (void*) (0 * sizeof(float)));
+	shader.SetPointer("aTexture", 2, 5 * sizeof(float), (void*) (3 * sizeof(float)));
+	shader.Bind();
+
+	IndexBuffer::Create(indices, sizeof(indices));
 
 	glBindVertexArray(0);
 
@@ -77,13 +88,16 @@ int main(void) {
 
 		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
 
-		shader.Bind();
+		texture.Bind(GL_TEXTURE0);
 		glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		shader.UnBind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		m_Window->SwapBuffers();
 	}
+
+	shader.UnBind();
+	texture.UnBind();
 
 	m_AudioSystem->Shutdown();
 

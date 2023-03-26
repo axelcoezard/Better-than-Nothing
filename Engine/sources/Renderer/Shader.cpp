@@ -52,3 +52,33 @@ void Shader::Bind(void) {
 void Shader::UnBind(void) {
 	glUseProgram(0);
 }
+
+void Shader::BindAttribLocation(uint32_t position, const std::string& name) const {
+	glBindAttribLocation(m_Program, position, name.c_str());
+}
+
+int Shader::GetUniformLocation(const std::string& name) const {
+	return glGetUniformLocation(m_Program, name.c_str());
+}
+
+int Shader::GetAttribLocation(const std::string& name) const {
+	return glGetAttribLocation(m_Program, name.c_str());
+}
+
+void Shader::SetBool(const std::string& name, bool value) const {
+	glUniform1i(GetUniformLocation(name), (int) value);
+}
+
+void Shader::SetInt(const std::string& name, int value) const {
+	glUniform1i(GetUniformLocation(name), value);
+}
+
+void Shader::SetFloat(const std::string& name, float value) const {
+	glUniform1f(GetUniformLocation(name), value);
+}
+
+void Shader::SetPointer(const std::string& name, GLint size, GLsizei stride, const void* pointer) const {
+	int location = GetAttribLocation(name);
+	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, stride, pointer);
+	glEnableVertexAttribArray(location);
+}

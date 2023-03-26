@@ -32,8 +32,8 @@ public:
 	void Bind(void) const { glBindBuffer(__TYPE, m_Id); }
 	void UnBind(void) const { glBindBuffer(__TYPE, 0); }
 
-	static Buffer* Create(void* data, uint32_t dataSize) {
-		return new Buffer(data, dataSize);
+	static Buffer<__TYPE>* Create(void* data, uint32_t dataSize) {
+		return new Buffer<__TYPE>(data, dataSize);
 	}
 };
 

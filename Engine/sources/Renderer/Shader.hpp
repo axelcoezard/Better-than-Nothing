@@ -34,9 +34,18 @@ public:
 	Shader(void);
 	~Shader(void);
 
-	void AddTextSource(uint32_t type, const std::string& source);
-	void Compile(void);
+	void	AddTextSource(uint32_t type, const std::string& source);
+	void	Compile(void);
 
-	void Bind(void);
-	void UnBind(void);
+	void	Bind(void);
+	void	UnBind(void);
+
+	void	BindAttribLocation(uint32_t position, const std::string& name) const;
+	int		GetUniformLocation(const std::string& name) const;
+	int		GetAttribLocation(const std::string& name) const;
+
+	void	SetBool(const std::string& name, bool value) const;
+	void	SetInt(const std::string& name, int value) const;
+	void	SetFloat(const std::string& name, float value) const;
+	void	SetPointer(const std::string& name, GLint size, GLsizei stride, const void* pointer) const;
 };

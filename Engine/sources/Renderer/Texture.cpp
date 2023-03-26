@@ -15,16 +15,19 @@
 
 Texture::Texture(void) = default;
 Texture::Texture(const std::string& fileName) {
-	m_Data = stbi_load(fileName.c_str(), &m_Width, &m_Height, &m_Channels, 0);
+	const char* c_str = fileName.c_str();
 
-	if (m_Data != nullptr) {
+	stbi_set_flip_vertically_on_load(true);
+	m_Data = stbi_load(c_str, &m_Width, &m_Height, &m_Channels, 0);
+
+	if (m_Data == nullptr) {
 		std::cerr << "Failed to load texture: " << fileName << std::endl;
 	}
 
 	m_Format = m_Channels > 3 ? GL_RGBA : GL_RGB;
 
 	glGenTextures(1, &m_Id);
-	Bind();
+	Bind(-1);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, m_Format, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, m_Data);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -38,7 +41,10 @@ Texture::~Texture(void) {
 	}
 }
 
-void Texture::Bind(void) {
+void Texture::Bind(int position) {
+	if (position != -1) {
+		glActiveTexture(position);
+	}
 	glBindTexture(GL_TEXTURE_2D, m_Id);
 }
 
