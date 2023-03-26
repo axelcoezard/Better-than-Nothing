@@ -16,3 +16,6 @@
 [submodule "Engine/libs/libsndfile"]
 	path = Engine/libs/libsndfile
 	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
+[submodule "Engine/libs/stb"]
+	path = Engine/libs/stb
+	url = https://github.com/axelcoezard/better-than-nothing-stb.git
