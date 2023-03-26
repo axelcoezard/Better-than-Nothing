@@ -15,6 +15,7 @@ add_subdirectory("Engine/libs/glm")
 add_subdirectory("Engine/libs/openal")
 add_subdirectory("Engine/libs/libsndfile")
 add_subdirectory("Engine/libs/entt")
+add_subdirectory("Engine/libs/stb")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
@@ -46,7 +47,7 @@ add_compile_definitions(ENGINE_VERBOSE_MODE=true)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(${PROJECT_NAME} glfw libglew_static openal sndfile)
+target_link_libraries(${PROJECT_NAME} glfw libglew_static openal sndfile stb)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glew/include)
@@ -54,6 +55,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/En
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/openal/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/libsndfile/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/entt/single_include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/stb)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/sources)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
