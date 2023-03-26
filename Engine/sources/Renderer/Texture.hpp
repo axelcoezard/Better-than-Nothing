@@ -18,6 +18,7 @@ private:
 	int				m_Width;
 	int				m_Height;
 	int				m_Channels;
+	int				m_Format;
 
 	unsigned char*	m_Data = nullptr;
 public:

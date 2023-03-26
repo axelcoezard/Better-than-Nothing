@@ -21,11 +21,12 @@ Texture::Texture(const std::string& fileName) {
 		std::cerr << "Failed to load texture: " << fileName << std::endl;
 	}
 
+	m_Format = m_Channels > 3 ? GL_RGBA : GL_RGB;
+
 	glGenTextures(1, &m_Id);
 	Bind();
 
-	unsigned int format = m_Channels > 3 ? GL_RGBA : GL_RGB;
-	glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_Data);
+	glTexImage2D(GL_TEXTURE_2D, 0, m_Format, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, m_Data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	UnBind();
