@@ -10,20 +10,28 @@
 
 #include <sndfile.h>
 
+using AudioBuffer = unsigned int;
+
 class AudioSystem {
-private:
+protected:
+	static AudioSystem*			m_Instance;
+
 	ALCdevice*					m_Device = nullptr;
 	ALCcontext*					m_Context = nullptr;
 
 	std::vector<std::string>	m_Devices;
-public:
+
 	AudioSystem(void);
 	~AudioSystem(void);
 
-	bool Initialize(void);
-	void GetDevices(void);
-	void Shutdown(void);
+public:
+	static bool			Initialize(void);
+	static void			GetDevices(void);
+	static void			Shutdown(void);
 
-	uint32_t LoadSound(const std::string& fileName);
-	void PlaySound(uint32_t buffer);
+	static uint32_t		LoadSound(const std::string& fileName);
+	static void			PlaySound(uint32_t buffer);
+
+private:
+	static AudioSystem*	GetInstance(void);
 };

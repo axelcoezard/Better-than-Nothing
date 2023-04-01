@@ -1,43 +1,50 @@
 #include <iostream>
 #include "AudioSystem.hpp"
 
-AudioSystem::AudioSystem(void) {};
-AudioSystem::~AudioSystem(void) {};
+AudioSystem* AudioSystem::m_Instance = nullptr;
+
+AudioSystem::AudioSystem(void) = default;
+AudioSystem::~AudioSystem(void) = default;
 
 bool AudioSystem::Initialize(void) {
-	m_Device = alcOpenDevice(NULL);
-	if (!m_Device)
+	AudioSystem* instance = AudioSystem::GetInstance();
+
+	instance->m_Device = alcOpenDevice(nullptr);
+	if (!instance->m_Device)
 		return false;
 
-	m_Context = alcCreateContext(m_Device, NULL);
-	if (!m_Context)
+	instance->m_Context = alcCreateContext(instance->m_Device, nullptr);
+	if (!instance->m_Context)
 		return false;
 
-	if (!alcMakeContextCurrent(m_Context))
+	if (!alcMakeContextCurrent(instance->m_Context))
 		return false;
 
 	return true;
 }
 
 void AudioSystem::GetDevices(void) {
-	m_Devices.clear();
+	AudioSystem* instance = AudioSystem::GetInstance();
 
-	const ALCchar* deviceList = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+	instance->m_Devices.clear();
+
+	const ALCchar* deviceList = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
 	while (deviceList != nullptr && std::strlen(deviceList) > 0)
 	{
-		std::cout << deviceList << std::endl;
-		m_Devices.push_back(deviceList);
+		instance->m_Devices.emplace_back(deviceList);
 		deviceList += std::strlen(deviceList) + 1;
 	}
 }
 
 void AudioSystem::Shutdown(void) {
-	alcMakeContextCurrent(NULL);
-	if (m_Context != nullptr) {
-		alcDestroyContext(m_Context);
+	AudioSystem* instance = AudioSystem::GetInstance();
+
+	alcMakeContextCurrent(nullptr);
+	if (instance->m_Context != nullptr) {
+		alcDestroyContext(instance->m_Context);
 	}
-	if (m_Device != nullptr) {
-		alcCloseDevice(m_Device);
+	if (instance->m_Device != nullptr) {
+		alcCloseDevice(instance->m_Device);
 	}
 }
 
@@ -47,8 +54,8 @@ uint32_t AudioSystem::LoadSound(const std::string& fileName) {
 	if (!file)
 		return 0;
 
-	ALsizei nbSamples  = static_cast<ALsizei>(fileInfos.channels * fileInfos.frames);
-	ALsizei sampleRate = static_cast<ALsizei>(fileInfos.samplerate);
+	auto nbSamples  = static_cast<ALsizei>(fileInfos.channels * fileInfos.frames);
+    auto sampleRate = static_cast<ALsizei>(fileInfos.samplerate);
 
 	std::vector<ALshort> Samples(nbSamples);
 	if (sf_read_short(file, &Samples[0], nbSamples) < nbSamples)
@@ -85,3 +92,9 @@ void AudioSystem::PlaySound(uint32_t buffer) {
 	//alDeleteSources(1, &source);
 }
 
+AudioSystem* AudioSystem::GetInstance(void) {
+	if (m_Instance == nullptr) {
+		m_Instance = new AudioSystem();
+	}
+	return m_Instance;
+}

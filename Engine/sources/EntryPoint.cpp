@@ -10,7 +10,6 @@
 
 static Window* m_Window;
 static Renderer* m_Renderer;
-static AudioSystem* m_AudioSystem;
 
 int main(void) {
 	m_Window = new Window("better than nothing", 720, 720);
@@ -18,7 +17,6 @@ int main(void) {
 	m_Window->Open();
 
 	m_Renderer = new Renderer(m_Window);
-	m_AudioSystem = new AudioSystem();
 
 	Shader shader;
 	shader.AddTextSource(Shader::VERTEX, "#version 330 core\n"
@@ -67,9 +65,9 @@ int main(void) {
 
 	glBindVertexArray(0);
 
-	m_AudioSystem->Initialize();
-	unsigned int buffer = m_AudioSystem->LoadSound("/home/acoezard/lab/better-than-nothing/fizzy.wav");
-	m_AudioSystem->PlaySound(buffer);
+	AudioSystem::Initialize();
+	AudioBuffer buffer = AudioSystem::LoadSound("/home/acoezard/lab/better-than-nothing/fizzy.wav");
+    AudioSystem::PlaySound(buffer);
 
 	while (!m_Window->ShouldClose()) {
 		glfwPollEvents();
@@ -87,9 +85,8 @@ int main(void) {
 	shader.UnBind();
 	texture.UnBind();
 
-	m_AudioSystem->Shutdown();
+	AudioSystem::Shutdown();
 
-	delete m_AudioSystem;
 	delete m_Renderer;
 	delete m_Window;
 
