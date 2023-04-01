@@ -28,6 +28,8 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.hpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/Components/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/Components/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.hpp"
 

@@ -13,12 +13,13 @@ private:
 	std::map<UUID, entt::entity>	m_Entities;
 
 public:
-	Entity	CreateEntity(void);
-	bool	RemoveEntity(const UUID& uuid);
+	Entity			CreateEntity(void);
+	bool			RemoveEntity(const UUID& uuid);
 
 	template<typename... Components>
-	auto	GetAllEntitiesWith()
-	{
+	auto			GetAllEntitiesWith(void) {
 		return m_Registry.view<Components...>();
 	}
+
+	entt::registry&	GetRegistry(void);
 };

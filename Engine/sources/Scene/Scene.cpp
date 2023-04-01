@@ -20,3 +20,7 @@ bool Scene::RemoveEntity(const UUID& uuid) {
 	}
 	return false;
 }
+
+entt::registry& Scene::GetRegistry(void) {
+	return m_Registry;
+}
