@@ -1,14 +1,3 @@
-/*
- * File: main.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Tuesday, 7th March 2023 6:00:12 pm
- * Last Modified: Tuesday, 7th March 2023 9:49:41 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
-#include <iostream>
-
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
@@ -18,7 +7,6 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Texture.hpp"
 #include "Audio/AudioSystem.hpp"
-#include "Core/UUID.hpp"
 
 static Window* m_Window;
 static Renderer* m_Renderer;

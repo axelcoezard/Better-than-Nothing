@@ -1,12 +1,3 @@
-/*
- * File: AudioSystem.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 5:46:37 pm
- * Last Modified: Saturday, 25th March 2023 6:02:33 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #include <iostream>
 #include "AudioSystem.hpp"
 

@@ -1,12 +1,3 @@
-/*
- * File: Texture.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Sunday, 26th March 2023 5:13:50 pm
- * Last Modified: Sunday, 26th March 2023 5:13:51 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #include "Renderer/Texture.hpp"
 
 #include "stb_image.h"

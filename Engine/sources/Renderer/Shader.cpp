@@ -1,12 +1,3 @@
-/*
- * File: Shader.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 8:48:31 pm
- * Last Modified: Saturday, 25th March 2023 8:48:32 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #include "Renderer/Shader.hpp"
 
 Shader::Shader(void): m_Compiled(false) {}

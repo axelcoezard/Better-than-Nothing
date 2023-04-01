@@ -35,4 +35,5 @@ better-than-nothing
 
 # Folders
 build/
+cmake-build-debug/
 .vscode/

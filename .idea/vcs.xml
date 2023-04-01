@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/entt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/glew" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/glfw" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/glm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/libsndfile" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/openal" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Engine/libs/stb" vcs="Git" />
+  </component>
+</project>

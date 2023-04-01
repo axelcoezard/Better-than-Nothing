@@ -1,12 +1,3 @@
-/*
- * File: Scene.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 11:04:32 pm
- * Last Modified: Saturday, 25th March 2023 11:04:33 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
 #include "Core/UUID.hpp"

@@ -1,11 +1,3 @@
-/*
- * File: Buffer.h
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Tuesday, 21st March 2023 10:04:53 pm
- * Last Modified: Tuesday, 21st March 2023 10:04:55 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
 #pragma once
 
 #include <stdint.h>

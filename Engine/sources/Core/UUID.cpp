@@ -1,12 +1,3 @@
-/*
- * File: UUID.cpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 10:06:41 pm
- * Last Modified: Saturday, 25th March 2023 10:06:42 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #include "Core/UUID.hpp"
 
 std::random_device UUID::s_RandomDevice = std::random_device();

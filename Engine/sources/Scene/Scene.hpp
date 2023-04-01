@@ -1,12 +1,3 @@
-/*
- * File: Scene,h
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 5:07:56 pm
- * Last Modified: Saturday, 25th March 2023 5:07:58 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #pragma once
 
 #include <map>

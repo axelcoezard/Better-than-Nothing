@@ -1,12 +1,3 @@
-/*
- * File: EventDispatcher.h
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Tuesday, 21st March 2023 5:13:17 pm
- * Last Modified: Tuesday, 21st March 2023 11:14:31 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #pragma once
 
 #include <string>

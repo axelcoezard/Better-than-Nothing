@@ -1,12 +1,3 @@
-/*
- * File: AudioSystem.hpp
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 6:03:04 pm
- * Last Modified: Saturday, 25th March 2023 6:03:06 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #pragma once
 
 #include <vector>

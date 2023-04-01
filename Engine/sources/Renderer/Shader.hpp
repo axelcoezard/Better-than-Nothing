@@ -1,12 +1,3 @@
-/*
- * File: Shader.h
- * Author: Axel Coezard (hello@axelcoezard.com)
- * -----
- * File Created: Saturday, 25th March 2023 8:43:12 pm
- * Last Modified: Saturday, 25th March 2023 8:43:13 pm
- * Modified By: Axel Coezard (hello@axelcoezard.com>)
- */
-
 #pragma once
 
 #include <iostream>
