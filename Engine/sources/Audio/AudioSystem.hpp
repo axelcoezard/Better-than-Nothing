@@ -21,17 +21,17 @@ protected:
 
 	std::vector<std::string>	m_Devices;
 
-	AudioSystem(void);
-	~AudioSystem(void);
+	AudioSystem();
+	~AudioSystem();
 
 public:
-	static bool			Initialize(void);
-	static void			GetDevices(void);
-	static void			Shutdown(void);
+	static bool			Initialize();
+	static void			GetDevices();
+	static void			Shutdown();
 
 	static uint32_t		LoadSound(const std::string& fileName);
 	static void			PlaySound(uint32_t buffer);
 
 private:
-	static AudioSystem*	GetInstance(void);
+	static AudioSystem*	GetInstance();
 };

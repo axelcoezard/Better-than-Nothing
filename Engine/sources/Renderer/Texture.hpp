@@ -13,10 +13,10 @@ private:
 
 	unsigned char*	m_Data = nullptr;
 public:
-	Texture(void);
-	Texture(const std::string& fileName);
-	~Texture(void);
+	explicit Texture();
+	explicit Texture(const std::string& fileName);
+	~Texture();
 
-	void Bind(int position);
-	void UnBind(void);
+	void Bind(int position) const;
+	void UnBind() const;
 };

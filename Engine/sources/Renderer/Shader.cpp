@@ -1,7 +1,9 @@
 #include "Renderer/Shader.hpp"
 
-Shader::Shader(void): m_Compiled(false) {}
-Shader::~Shader(void) {}
+Shader::Shader()
+	: m_Program(0), m_Compiled(false), m_VertexShader(0), m_FragmentShader(0) {}
+
+Shader::~Shader() = default;
 
 void Shader::AddTextSource(uint32_t type, const std::string& source) {
 	const char* c_str = source.c_str();
@@ -19,13 +21,13 @@ void Shader::AddTextSource(uint32_t type, const std::string& source) {
 			throw std::runtime_error("Unknown shader type");
 	}
 
-	glShaderSource(id, 1, &c_str, NULL);
+	glShaderSource(id, 1, &c_str, nullptr);
 	glCompileShader(id);
 
 	m_Shaders[type] = id;
 }
 
-void Shader::Compile(void) {
+void Shader::Compile() {
 	m_Program = glCreateProgram();
 	glAttachShader(m_Program, m_VertexShader);
 	glAttachShader(m_Program, m_FragmentShader);
@@ -36,11 +38,13 @@ void Shader::Compile(void) {
 	m_Compiled = true;
 }
 
-void Shader::Bind(void) {
-	glUseProgram(m_Program);
+void Shader::Bind() const {
+	if (m_Compiled) {
+		glUseProgram(m_Program);
+	}
 }
 
-void Shader::UnBind(void) {
+void Shader::UnBind() const {
 	glUseProgram(0);
 }
 

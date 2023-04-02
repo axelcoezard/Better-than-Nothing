@@ -13,9 +13,9 @@ public:
 
 	bool IsKey(uint32_t key) { return m_Key == key; }
 
-	uint32_t GetKey(void) { return m_Key; }
-	uint32_t GetScanCode(void) { return m_ScanCode; }
-	uint32_t GetMods(void) { return m_Mods; }
+	uint32_t GetKey() { return m_Key; }
+	uint32_t GetScanCode() { return m_ScanCode; }
+	uint32_t GetMods() { return m_Mods; }
 };
 
 class KeyPressEvent: public KeyEvent {

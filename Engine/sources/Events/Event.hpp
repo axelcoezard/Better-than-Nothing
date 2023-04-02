@@ -4,12 +4,12 @@ class Event {
 private:
 	bool	m_Handled = false;
 public:
-	virtual ~Event(void) = default;
+	virtual ~Event() = default;
 
-	virtual const char* GetName(void) const = 0;
+	[[nodiscard]] virtual const char* GetName() const = 0;
 
 	void SetHandled(bool handled) { m_Handled = handled; }
-	bool IsHandled(void) { return m_Handled; }
+	bool IsHandled() { return m_Handled; }
 };
 
 #define DECLARE_EVENT_NAME(name)\

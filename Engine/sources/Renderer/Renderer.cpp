@@ -5,16 +5,14 @@ Renderer::Renderer(Window* window) {
 	m_Window = window;
 }
 
-Renderer::~Renderer(void) {
+Renderer::~Renderer() = default;
+
+
+void Renderer::Update() {
 
 }
 
 
-void Renderer::Update(void) {
-
-}
-
-
-void Renderer::Render(void) {
+void Renderer::Render() {
 
 }

@@ -2,7 +2,7 @@
 #include "Scene/Entity.hpp"
 #include "Core/UUID.hpp"
 
-Entity Scene::CreateEntity(void) {
+Entity Scene::CreateEntity() {
 	Entity entity = Entity(m_Registry.create(), UUID::RandomUUID(), this);
 	// TODO: Add basic components to entity
 	// - UUID Component
@@ -11,7 +11,7 @@ Entity Scene::CreateEntity(void) {
 	return entity;
 }
 
-bool Scene::RemoveEntity(const UUID& uuid) {
+bool Scene::RemoveEntity(UUID& uuid) {
 	auto search = m_Entities.find(uuid);
 	if (search != m_Entities.end()) {
 		m_Registry.destroy(search->second);
@@ -21,6 +21,6 @@ bool Scene::RemoveEntity(const UUID& uuid) {
 	return false;
 }
 
-entt::registry& Scene::GetRegistry(void) {
+entt::registry& Scene::GetRegistry() {
 	return m_Registry;
 }

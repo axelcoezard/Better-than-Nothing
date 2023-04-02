@@ -6,7 +6,7 @@ AudioSystem* AudioSystem::m_Instance = nullptr;
 AudioSystem::AudioSystem(void) = default;
 AudioSystem::~AudioSystem(void) = default;
 
-bool AudioSystem::Initialize(void) {
+bool AudioSystem::Initialize() {
 	AudioSystem* instance = AudioSystem::GetInstance();
 
 	instance->m_Device = alcOpenDevice(nullptr);
@@ -23,7 +23,7 @@ bool AudioSystem::Initialize(void) {
 	return true;
 }
 
-void AudioSystem::GetDevices(void) {
+void AudioSystem::GetDevices() {
 	AudioSystem* instance = AudioSystem::GetInstance();
 
 	instance->m_Devices.clear();
@@ -36,7 +36,7 @@ void AudioSystem::GetDevices(void) {
 	}
 }
 
-void AudioSystem::Shutdown(void) {
+void AudioSystem::Shutdown() {
 	AudioSystem* instance = AudioSystem::GetInstance();
 
 	alcMakeContextCurrent(nullptr);
@@ -92,7 +92,7 @@ void AudioSystem::PlaySound(uint32_t buffer) {
 	//alDeleteSources(1, &source);
 }
 
-AudioSystem* AudioSystem::GetInstance(void) {
+AudioSystem* AudioSystem::GetInstance() {
 	if (m_Instance == nullptr) {
 		m_Instance = new AudioSystem();
 	}

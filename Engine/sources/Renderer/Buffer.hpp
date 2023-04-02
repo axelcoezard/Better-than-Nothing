@@ -1,31 +1,29 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-template<uint32_t __TYPE>
+template<uint32_t T>
 class Buffer {
 private:
 	uint32_t	m_Id;
 	void*		m_Data;
 	uint32_t	m_DataSize;
 public:
-	Buffer(void* data, uint32_t dataSize)
-		: m_Data(data), m_DataSize(dataSize) {
+	explicit Buffer(void* data, uint32_t dataSize)
+		: m_Id(0), m_Data(data), m_DataSize(dataSize) {
 		glCreateBuffers(1, &m_Id);
-		glBindBuffer(__TYPE, m_Id);
-		glBufferData(__TYPE, m_DataSize, m_Data, GL_STATIC_DRAW);
+		glBindBuffer(T, m_Id);
+		glBufferData(T, m_DataSize, m_Data, GL_STATIC_DRAW);
 	}
 
-	~Buffer(void) { glDeleteBuffers(1, &m_Id); }
+	~Buffer() { glDeleteBuffers(1, &m_Id); }
 
-	void Bind(void) const { glBindBuffer(__TYPE, m_Id); }
-	void UnBind(void) const { glBindBuffer(__TYPE, 0); }
+	void Bind() const { glBindBuffer(T, m_Id); }
+	void UnBind() const { glBindBuffer(T, 0); }
 
-	static Buffer<__TYPE>* Create(void* data, uint32_t dataSize) {
-		return new Buffer<__TYPE>(data, dataSize);
+	static Buffer<T>* Create(void* data, uint32_t dataSize) {
+		return new Buffer<T>(data, dataSize);
 	}
 };
 

@@ -12,7 +12,7 @@ private:
 	UUID			m_UUID;
 	Scene*			m_Scene = nullptr;
 public:
-	Entity(void);
+	Entity();
 	Entity(entt::entity handle, const UUID& uuid, Scene* scene);
 
 	template<typename T, typename... Args>
@@ -25,6 +25,6 @@ public:
 		return m_Scene->GetRegistry().get<T>(m_Handle);
 	}
 
-	entt::entity	GetHandle(void) const;
-	UUID			GetUUID(void) const;
+	entt::entity	GetHandle() const;
+	UUID			GetUUID();
 };

@@ -4,8 +4,11 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-Texture::Texture(void) = default;
-Texture::Texture(const std::string& fileName) {
+Texture::Texture()
+	: m_Id(0), m_Width(0), m_Height(0), m_Channels(0), m_Format(0), m_Data(nullptr) {}
+
+Texture::Texture(const std::string& fileName)
+	: m_Id(0), m_Width(0), m_Height(0), m_Channels(0)  {
 	const char* c_str = fileName.c_str();
 
 	stbi_set_flip_vertically_on_load(true);
@@ -26,19 +29,19 @@ Texture::Texture(const std::string& fileName) {
 	UnBind();
 }
 
-Texture::~Texture(void) {
+Texture::~Texture() {
 	if (m_Data != nullptr) {
 		stbi_image_free(m_Data);
 	}
 }
 
-void Texture::Bind(int position) {
+void Texture::Bind(int position) const {
 	if (position != -1) {
 		glActiveTexture(position);
 	}
 	glBindTexture(GL_TEXTURE_2D, m_Id);
 }
 
-void Texture::UnBind(void) {
+void Texture::UnBind() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -4,7 +4,7 @@
 #include "Events/KeyEvent.hpp"
 
 Window::Window(std::string_view title, uint32_t width, uint32_t height)
-	: m_Title(title), m_Width(width), m_Height(height) {
+	: m_Window(nullptr), m_Title(title), m_Width(width), m_Height(height) {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 #if __APPLE__
@@ -16,12 +16,12 @@ Window::Window(std::string_view title, uint32_t width, uint32_t height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-Window::~Window(void) {
+Window::~Window() {
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
 }
 
-void Window::Open(void) {
+void Window::Open() {
 	m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
@@ -65,11 +65,11 @@ void Window::Open(void) {
 	glfwSwapInterval(1);
 }
 
-void Window::Close(void) {
+void Window::Close() {
 	glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 }
 
-bool Window::ShouldClose(void)  {
+bool Window::ShouldClose()  {
 	return glfwWindowShouldClose(m_Window) ==  GLFW_TRUE;
 }
 
@@ -82,17 +82,17 @@ void Window::Clear(float red, float green, float blue, float alpha) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Window::SwapBuffers(void) {
+void Window::SwapBuffers() {
 	glfwSwapBuffers(m_Window);
 }
 
-void Window::SetEventCallback(std::function<void(Event*)> eventcallback) {
+void Window::SetEventCallback(std::function<void(Event*)>& eventcallback) {
 	m_eventCallback = eventcallback;
 }
 
-uint32_t Window::GetWidth(void) {
+uint32_t Window::GetWidth() {
 	return m_Width;
 }
-uint32_t Window::GetHeight(void) {
+uint32_t Window::GetHeight() {
 	return m_Height;
 }

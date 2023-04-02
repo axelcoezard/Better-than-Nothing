@@ -13,10 +13,10 @@ private:
 	static std::uniform_int_distribution<uint64_t>	s_Distribution;
 
 public:
-	UUID(void);
-	UUID(const uint64_t& value);
+	UUID();
+	explicit UUID(const uint64_t& value);
 
-	operator uint64_t(void) const;
+	explicit operator uint64_t() const;
 
-	static UUID RandomUUID(void);
+	static UUID RandomUUID();
 };

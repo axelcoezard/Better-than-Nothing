@@ -18,18 +18,18 @@ private:
 			uint32_t m_VertexShader;
 			uint32_t m_FragmentShader;
 		};
-		uint32_t m_Shaders[2];
+		uint32_t m_Shaders[2]{};
 	};
 
 public:
-	Shader(void);
-	~Shader(void);
+	Shader();
+	~Shader();
 
 	void	AddTextSource(uint32_t type, const std::string& source);
-	void	Compile(void);
+	void	Compile();
 
-	void	Bind(void);
-	void	UnBind(void);
+	void	Bind() const;
+	void	UnBind() const;
 
 	void	BindAttribLocation(uint32_t position, const std::string& name) const;
 	int		GetUniformLocation(const std::string& name) const;

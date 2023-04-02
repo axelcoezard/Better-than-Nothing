@@ -4,6 +4,7 @@
 
 #include "entt/entt.hpp"
 #include "Core/UUID.hpp"
+#include "Scene/Entity.hpp"
 
 class Entity;
 
@@ -13,13 +14,13 @@ private:
 	std::map<UUID, entt::entity>	m_Entities;
 
 public:
-	Entity			CreateEntity(void);
-	bool			RemoveEntity(const UUID& uuid);
+	Entity			CreateEntity();
+	bool			RemoveEntity(UUID& uuid);
 
 	template<typename... Components>
-	auto			GetAllEntitiesWith(void) {
+	auto			GetAllEntitiesWith() {
 		return m_Registry.view<Components...>();
 	}
 
-	entt::registry&	GetRegistry(void);
+	entt::registry&	GetRegistry();
 };

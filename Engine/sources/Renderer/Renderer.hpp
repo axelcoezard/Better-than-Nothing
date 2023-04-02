@@ -8,9 +8,9 @@ struct Renderer {
 private:
 	Window*	m_Window;
 public:
-	Renderer(Window* window);
-	~Renderer(void);
+	explicit Renderer(Window* window);
+	~Renderer();
 
-	void Update(void);
-	void Render(void);
+	void Update();
+	void Render();
 };

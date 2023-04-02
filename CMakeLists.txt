@@ -17,7 +17,7 @@ add_subdirectory("Engine/libs/libsndfile")
 add_subdirectory("Engine/libs/entt")
 add_subdirectory("Engine/libs/stb")
 
-file(GLOB ALL_SRCS
+set(ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
