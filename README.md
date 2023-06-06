@@ -1,5 +1,5 @@
 # Better Than Nothing
-A better-than-nothing 2D OpenGL Game Engine
+A better-than-nothing Game Engine
 
 
 ## How to clone the repo
