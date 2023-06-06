@@ -1,5 +1,5 @@
-# Better Than Nothing
-A better-than-nothing Game Engine
+# Better Than Nothing Engine
+Everything is in the title, it is a better-than-nothing Game Engine
 
 
 ## How to clone the repo
