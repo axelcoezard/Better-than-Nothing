@@ -14,10 +14,9 @@ add_subdirectory("Engine/libs/glew")
 add_subdirectory("Engine/libs/glm")
 add_subdirectory("Engine/libs/openal")
 add_subdirectory("Engine/libs/libsndfile")
-add_subdirectory("Engine/libs/entt")
 add_subdirectory("Engine/libs/stb")
 
-set(ALL_SRCS
+file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
@@ -26,10 +25,6 @@ set(ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/Components/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Scene/Components/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.hpp"
 
@@ -56,7 +51,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/En
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glm/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/openal/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/libsndfile/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/entt/single_include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/stb)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/sources)
