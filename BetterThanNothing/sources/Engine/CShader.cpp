@@ -1,20 +1,20 @@
-#include "Renderer/Shader.hpp"
+#include "Engine/Shader.hpp"
 
-Shader::Shader()
+CShader::CShader()
 	: m_Program(0), m_Compiled(false), m_VertexShader(0), m_FragmentShader(0) {}
 
-Shader::~Shader() = default;
+CShader::~CShader() = default;
 
-void Shader::AddTextSource(uint32_t type, const std::string& source) {
+void CShader::AddTextSource(uint32_t type, const std::string& source) {
 	const char* c_str = source.c_str();
 	unsigned int id;
 
 	switch (type)
 	{
-		case Shader::VERTEX:
+		case CShader::VERTEX:
 			id = glCreateShader(GL_VERTEX_SHADER);
 			break;
-		case Shader::FRAGMENT:
+		case CShader::FRAGMENT:
 			id = glCreateShader(GL_FRAGMENT_SHADER);
 			break;
 		default:
@@ -27,7 +27,7 @@ void Shader::AddTextSource(uint32_t type, const std::string& source) {
 	m_Shaders[type] = id;
 }
 
-void Shader::Compile() {
+void CShader::Compile() {
 	m_Program = glCreateProgram();
 	glAttachShader(m_Program, m_VertexShader);
 	glAttachShader(m_Program, m_FragmentShader);
@@ -38,41 +38,41 @@ void Shader::Compile() {
 	m_Compiled = true;
 }
 
-void Shader::Bind() const {
+void CShader::Bind() const {
 	if (m_Compiled) {
 		glUseProgram(m_Program);
 	}
 }
 
-void Shader::UnBind() const {
+void CShader::UnBind() const {
 	glUseProgram(0);
 }
 
-void Shader::BindAttribLocation(uint32_t position, const std::string& name) const {
+void CShader::BindAttribLocation(uint32_t position, const std::string& name) const {
 	glBindAttribLocation(m_Program, position, name.c_str());
 }
 
-int Shader::GetUniformLocation(const std::string& name) const {
+int CShader::GetUniformLocation(const std::string& name) const {
 	return glGetUniformLocation(m_Program, name.c_str());
 }
 
-int Shader::GetAttribLocation(const std::string& name) const {
+int CShader::GetAttribLocation(const std::string& name) const {
 	return glGetAttribLocation(m_Program, name.c_str());
 }
 
-void Shader::SetBool(const std::string& name, bool value) const {
+void CShader::SetBool(const std::string& name, bool value) const {
 	glUniform1i(GetUniformLocation(name), (int) value);
 }
 
-void Shader::SetInt(const std::string& name, int value) const {
+void CShader::SetInt(const std::string& name, int value) const {
 	glUniform1i(GetUniformLocation(name), value);
 }
 
-void Shader::SetFloat(const std::string& name, float value) const {
+void CShader::SetFloat(const std::string& name, float value) const {
 	glUniform1f(GetUniformLocation(name), value);
 }
 
-void Shader::SetPointer(const std::string& name, GLint size, GLsizei stride, const void* pointer) const {
+void CShader::SetPointer(const std::string& name, GLint size, GLsizei stride, const void* pointer) const {
 	int location = GetAttribLocation(name);
 	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, stride, pointer);
 	glEnableVertexAttribArray(location);

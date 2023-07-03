@@ -4,7 +4,7 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-class Shader {
+class CShader {
 public:
 	static const uint32_t VERTEX = 0;
 	static const uint32_t FRAGMENT = 1;
@@ -22,8 +22,8 @@ private:
 	};
 
 public:
-	Shader();
-	~Shader();
+	CShader();
+	~CShader();
 
 	void	AddTextSource(uint32_t type, const std::string& source);
 	void	Compile();

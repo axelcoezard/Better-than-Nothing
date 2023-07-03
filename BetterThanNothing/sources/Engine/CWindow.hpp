@@ -7,20 +7,20 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Events/EventDispatcher.hpp"
-#include "Events/Event.hpp"
-#include "Events/WindowCloseEvent.hpp"
+#include "Events/CEventDispatcher.hpp"
+#include "Events/CEvent.hpp"
+#include "Events/CWindowCloseEvent.hpp"
 
-struct Window {
+struct CWindow {
 private:
-	GLFWwindow*					m_Window;
+	GLFWwindow*					m_pWindow;
 
 	std::string					m_Title;
 	uint32_t					m_Width, m_Height;
 	std::function<void(Event*)>	m_eventCallback;
 public:
-	Window(std::string_view title, uint32_t width, uint32_t height);
-	~Window();
+	CWindow(std::string_view title, uint32_t width, uint32_t height);
+	~CWindow();
 
 	void Open();
 	void Close();
@@ -29,7 +29,7 @@ public:
 	void SwapBuffers();
 	void Clear(float red, float green, float blue, float alpha);
 
-	void SetEventCallback(std::function<void(Event*)>& eventcallback);
+	void SetEventCallback(std::function<void(CEvent*)>& eventcallback);
 
 	uint32_t GetWidth();
 	uint32_t GetHeight();

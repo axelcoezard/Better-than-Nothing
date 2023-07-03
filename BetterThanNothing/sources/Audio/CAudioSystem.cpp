@@ -1,30 +1,30 @@
 #include <iostream>
-#include "AudioSystem.hpp"
+#include "CAudioSystem.hpp"
 
-AudioSystem* AudioSystem::m_Instance = nullptr;
+CAudioSystem* CAudioSystem::m_pInstance = nullptr;
 
-AudioSystem::AudioSystem(void) = default;
-AudioSystem::~AudioSystem(void) = default;
+CAudioSystem::CAudioSystem(void) = default;
+CAudioSystem::~CAudioSystem(void) = default;
 
-bool AudioSystem::Initialize() {
-	AudioSystem* instance = AudioSystem::GetInstance();
+bool CAudioSystem::Initialize() {
+	CAudioSystem* instance = CAudioSystem::GetInstance();
 
-	instance->m_Device = alcOpenDevice(nullptr);
-	if (!instance->m_Device)
+	instance->m_pDevice = alcOpenDevice(nullptr);
+	if (!instance->m_pDevice)
 		return false;
 
-	instance->m_Context = alcCreateContext(instance->m_Device, nullptr);
-	if (!instance->m_Context)
+	instance->m_pContext = alcCreateContext(instance->m_pDevice, nullptr);
+	if (!instance->m_pContext)
 		return false;
 
-	if (!alcMakeContextCurrent(instance->m_Context))
+	if (!alcMakeContextCurrent(instance->m_pContext))
 		return false;
 
 	return true;
 }
 
-void AudioSystem::GetDevices() {
-	AudioSystem* instance = AudioSystem::GetInstance();
+void CAudioSystem::GetDevices() {
+	CAudioSystem* instance = CAudioSystem::GetInstance();
 
 	instance->m_Devices.clear();
 
@@ -36,19 +36,19 @@ void AudioSystem::GetDevices() {
 	}
 }
 
-void AudioSystem::Shutdown() {
-	AudioSystem* instance = AudioSystem::GetInstance();
+void CAudioSystem::Shutdown() {
+	CAudioSystem* instance = CAudioSystem::GetInstance();
 
 	alcMakeContextCurrent(nullptr);
-	if (instance->m_Context != nullptr) {
-		alcDestroyContext(instance->m_Context);
+	if (instance->m_pContext != nullptr) {
+		alcDestroyContext(instance->m_pContext);
 	}
-	if (instance->m_Device != nullptr) {
-		alcCloseDevice(instance->m_Device);
+	if (instance->m_pDevice != nullptr) {
+		alcCloseDevice(instance->m_pDevice);
 	}
 }
 
-uint32_t AudioSystem::LoadSound(const std::string& fileName) {
+uint32_t CAudioSystem::LoadSound(const std::string& fileName) {
 	SF_INFO fileInfos;
 	SNDFILE* file = sf_open(fileName.c_str(), SFM_READ, &fileInfos);
 	if (!file)
@@ -79,7 +79,7 @@ uint32_t AudioSystem::LoadSound(const std::string& fileName) {
 	return buffer;
 }
 
-void AudioSystem::PlaySound(uint32_t buffer) {
+void CAudioSystem::PlaySound(uint32_t buffer) {
 	ALuint source;
 	alGenSources(1, &source);
 
@@ -92,9 +92,9 @@ void AudioSystem::PlaySound(uint32_t buffer) {
 	//alDeleteSources(1, &source);
 }
 
-AudioSystem* AudioSystem::GetInstance() {
-	if (m_Instance == nullptr) {
-		m_Instance = new AudioSystem();
+CAudioSystem* CAudioSystem::GetInstance() {
+	if (m_pInstance == nullptr) {
+		m_pInstance = new CAudioSystem();
 	}
-	return m_Instance;
+	return m_pInstance;
 }

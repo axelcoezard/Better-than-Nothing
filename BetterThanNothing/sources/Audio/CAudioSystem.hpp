@@ -10,19 +10,19 @@
 
 #include <sndfile.h>
 
-using AudioBuffer = unsigned int;
+using CAudioBuffer = unsigned int;
 
-class AudioSystem {
+class CAudioSystem {
 protected:
-	static AudioSystem*			m_Instance;
+	static CAudioSystem*		m_pInstance;
 
-	ALCdevice*					m_Device = nullptr;
-	ALCcontext*					m_Context = nullptr;
+	ALCdevice*					m_pDevice = nullptr;
+	ALCcontext*					m_pContext = nullptr;
 
 	std::vector<std::string>	m_Devices;
 
-	AudioSystem();
-	~AudioSystem();
+	CAudioSystem();
+	~CAudioSystem();
 
 public:
 	static bool			Initialize();
@@ -33,5 +33,5 @@ public:
 	static void			PlaySound(uint32_t buffer);
 
 private:
-	static AudioSystem*	GetInstance();
+	static CAudioSystem*	GetInstance();
 };

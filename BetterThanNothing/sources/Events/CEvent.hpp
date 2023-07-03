@@ -1,15 +1,15 @@
 #pragma once
 
-class Event {
+class CEvent {
 private:
-	bool	m_Handled = false;
+	bool	m_bHandled = false;
 public:
-	virtual ~Event() = default;
+	virtual ~CEvent() = default;
 
 	[[nodiscard]] virtual const char* GetName() const = 0;
 
-	void SetHandled(bool handled) { m_Handled = handled; }
-	bool IsHandled() { return m_Handled; }
+	void SetHandled(bool handled) { m_bHandled = handled; }
+	bool IsHandled() { return m_bHandled; }
 };
 
 #define DECLARE_EVENT_NAME(name)\

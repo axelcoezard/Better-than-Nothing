@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-class Texture {
+class CTexture {
 private:
 	uint32_t		m_Id;
 
@@ -13,9 +13,9 @@ private:
 
 	unsigned char*	m_Data = nullptr;
 public:
-	explicit Texture();
-	explicit Texture(const std::string& fileName);
-	~Texture();
+	explicit CTexture();
+	explicit CTexture(const std::string& fileName);
+	~CTexture();
 
 	void Bind(int position) const;
 	void UnBind() const;

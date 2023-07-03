@@ -4,10 +4,10 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-Texture::Texture()
+CTexture::CTexture()
 	: m_Id(0), m_Width(0), m_Height(0), m_Channels(0), m_Format(0), m_Data(nullptr) {}
 
-Texture::Texture(const std::string& fileName)
+CTexture::CTexture(const std::string& fileName)
 	: m_Id(0), m_Width(0), m_Height(0), m_Channels(0)  {
 	const char* c_str = fileName.c_str();
 
@@ -29,19 +29,19 @@ Texture::Texture(const std::string& fileName)
 	UnBind();
 }
 
-Texture::~Texture() {
+CTexture::~CTexture() {
 	if (m_Data != nullptr) {
 		stbi_image_free(m_Data);
 	}
 }
 
-void Texture::Bind(int position) const {
+void CTexture::Bind(int position) const {
 	if (position != -1) {
 		glActiveTexture(position);
 	}
 	glBindTexture(GL_TEXTURE_2D, m_Id);
 }
 
-void Texture::UnBind() const {
+void CTexture::UnBind() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
