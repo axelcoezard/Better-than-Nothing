@@ -1,25 +1,23 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Core/Window.hpp"
-#include "Renderer/Renderer.hpp"
-#include "Renderer/Buffer.hpp"
-#include "Renderer/Shader.hpp"
-#include "Renderer/Texture.hpp"
-#include "Audio/AudioSystem.hpp"
+#include "Engine/CWindow.hpp"
+#include "Engine/CBuffer.hpp"
+#include "Engine/CShader.hpp"
+#include "Engine/CTexture.hpp"
+#include "AudioSystem/CAudioSystem.hpp"
 
-static Window* m_Window;
-static Renderer* m_Renderer;
+using namespace BetterThanNothing;
+
+static CWindow* m_pWindow;
 
 int main(void) {
-	m_Window = new Window("better than nothing", 720, 720);
-	//m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
-	m_Window->Open();
+	m_pWindow = new CWindow("better than nothing", 720, 720);
+	//m_pWindow->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
+	m_pWindow->Open();
 
-	m_Renderer = new Renderer(m_Window);
-
-	Shader shader;
-	shader.AddTextSource(Shader::VERTEX, "#version 330 core\n"
+	CShader shader;
+	shader.AddTextSource(CShader::VERTEX, "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec2 aTexture;\n"
 		"out vec2 vTexture;\n"
@@ -27,7 +25,7 @@ int main(void) {
 		"   vTexture = aTexture;\n"
 		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 		"}\0");
-	shader.AddTextSource(Shader::FRAGMENT, "#version 330 core\n"
+	shader.AddTextSource(CShader::FRAGMENT, "#version 330 core\n"
 		"out vec4 FragColor;\n"
 		"in vec2 vTexture;\n"
 		"uniform sampler2D Texture0;\n"
@@ -35,7 +33,7 @@ int main(void) {
 		"   FragColor = texture(Texture0, vTexture);\n"
 		"}\0");
 
-	Texture texture = Texture("/home/acoezard/lab/better-than-nothing/test.png");
+	CTexture texture = CTexture("/home/acoezard/lab/better-than-nothing/test.png");
 
 	float vertices[] = {
 		// positions        // texture
@@ -54,41 +52,40 @@ int main(void) {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	VertexBuffer::Create(vertices, sizeof(vertices));
+	CVertexBuffer::Create(vertices, sizeof(vertices));
 
 	shader.Compile();
 	shader.SetPointer("aPos", 3, 5 * sizeof(float), (void*) (0 * sizeof(float)));
 	shader.SetPointer("aTexture", 2, 5 * sizeof(float), (void*) (3 * sizeof(float)));
 	shader.Bind();
 
-	IndexBuffer::Create(indices, sizeof(indices));
+	CIndexBuffer::Create(indices, sizeof(indices));
 
 	glBindVertexArray(0);
 
-	AudioSystem::Initialize();
-	AudioBuffer buffer = AudioSystem::LoadSound("/home/acoezard/lab/better-than-nothing/fizzy.wav");
-    AudioSystem::PlaySound(buffer);
+	CAudioSystem::Initialize();
+	CAudioBuffer buffer = CAudioSystem::LoadSound("/home/acoezard/lab/better-than-nothing/fizzy.wav");
+    CAudioSystem::PlaySound(buffer);
 
-	while (!m_Window->ShouldClose()) {
+	while (!m_pWindow->ShouldClose()) {
 		glfwPollEvents();
 
-		m_Window->Clear(0.0f, 0.0f, 1.0f, 1.0f);
+		m_pWindow->Clear(0.0f, 0.0f, 1.0f, 1.0f);
 
 		texture.Bind(GL_TEXTURE0);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-		m_Window->SwapBuffers();
+		m_pWindow->SwapBuffers();
 	}
 
 	shader.UnBind();
 	texture.UnBind();
 
-	AudioSystem::Shutdown();
+	CAudioSystem::Shutdown();
 
-	delete m_Renderer;
-	delete m_Window;
+	delete m_pWindow;
 
 	return 0;
 }

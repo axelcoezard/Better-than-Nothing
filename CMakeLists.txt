@@ -9,31 +9,31 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-add_subdirectory("Engine/libs/glfw")
-add_subdirectory("Engine/libs/glew")
-add_subdirectory("Engine/libs/glm")
-add_subdirectory("Engine/libs/openal")
-add_subdirectory("Engine/libs/libsndfile")
-add_subdirectory("Engine/libs/stb")
+add_subdirectory("BetterThanNothing/libs/glfw")
+add_subdirectory("BetterThanNothing/libs/glew")
+add_subdirectory("BetterThanNothing/libs/glm")
+add_subdirectory("BetterThanNothing/libs/openal")
+add_subdirectory("BetterThanNothing/libs/libsndfile")
+add_subdirectory("BetterThanNothing/libs/stb")
 
 file(GLOB ALL_SRCS
-	"${PROJECT_SOURCE_DIR}/Engine/sources/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Core/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Renderer/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Audio/*.hpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Engine/sources/Events/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Common/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Common/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/AudioSystem/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/AudioSystem/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Event/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Event/*.hpp"
 
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/Engine/sources
+	${PROJECT_SOURCE_DIR}/BetterThanNothing/sources
 	${PROJECT_SOURCE_DIR}/Sandbox
 )
 
@@ -46,14 +46,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(${PROJECT_NAME} glfw libglew_static openal sndfile stb)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glfw/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glew/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/glm/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/openal/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/libsndfile/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/libs/stb)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glfw/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glew/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glm/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/openal/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/libsndfile/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/stb)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Engine/sources)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/sources)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
 
 

@@ -1,21 +1,21 @@
-[submodule "Engine/libs/glfw"]
-	path = Engine/libs/glfw
-	url = https://github.com/axelcoezard/better-than-nothing-glfw.git
-[submodule "Engine/libs/glew"]
-	path = Engine/libs/glew
-	url = https://github.com/axelcoezard/better-than-nothing-glew.git
-[submodule "Engine/libs/glm"]
-	path = Engine/libs/glm
-	url = https://github.com/axelcoezard/better-than-nothing-glm.git
-[submodule "Engine/libs/entt"]
-	path = Engine/libs/entt
-	url = https://github.com/axelcoezard/better-than-nothing-entt.git
-[submodule "Engine/libs/openal"]
-	path = Engine/libs/openal
-	url = https://github.com/axelcoezard/better-than-nothing-openal.git
-[submodule "Engine/libs/libsndfile"]
-	path = Engine/libs/libsndfile
-	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
-[submodule "Engine/libs/stb"]
-	path = Engine/libs/stb
+[submodule "BetterThanNothing/libs/stb"]
+	path = BetterThanNothing/libs/stb
 	url = https://github.com/axelcoezard/better-than-nothing-stb.git
+[submodule "BetterThanNothing/libs/openal"]
+	path = BetterThanNothing/libs/openal
+	url = https://github.com/axelcoezard/better-than-nothing-openal.git
+[submodule "BetterThanNothing/libs/libsndfile"]
+	path = BetterThanNothing/libs/libsndfile
+	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
+[submodule "BetterThanNothing/libs/entt"]
+	path = BetterThanNothing/libs/entt
+	url = https://github.com/axelcoezard/better-than-nothing-entt.git
+[submodule "BetterThanNothing/libs/glfw"]
+	path = BetterThanNothing/libs/glfw
+	url = https://github.com/axelcoezard/better-than-nothing-glfw.git
+[submodule "BetterThanNothing/libs/glew"]
+	path = BetterThanNothing/libs/glew
+	url = https://github.com/axelcoezard/better-than-nothing-glew.git
+[submodule "BetterThanNothing/libs/glm"]
+	path = BetterThanNothing/libs/glm
+	url = https://github.com/axelcoezard/better-than-nothing-glm.git
