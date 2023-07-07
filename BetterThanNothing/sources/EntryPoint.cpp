@@ -1,11 +1,13 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "Engine/Window.hpp"
-#include "Engine/Buffer.hpp"
-#include "Engine/Shader.hpp"
-#include "Engine/Texture.hpp"
-#include "Audio/AudioSystem.hpp"
+#include "Engine/CWindow.hpp"
+#include "Engine/CBuffer.hpp"
+#include "Engine/CShader.hpp"
+#include "Engine/CTexture.hpp"
+#include "AudioSystem/CAudioSystem.hpp"
+
+using namespace BetterThanNothing;
 
 static CWindow* m_pWindow;
 

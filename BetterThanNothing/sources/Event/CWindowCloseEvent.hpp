@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Events/CEvent.hpp"
+#include "Event/CEvent.hpp"
 
-class CWindowCloseEvent: public CEvent {
-public:
-	DECLARE_EVENT_NAME(CWindowCloseEvent)
+namespace BetterThanNothing {
+	class CWindowCloseEvent: public CEvent {
+	public:
+		DECLARE_EVENT_NAME(CWindowCloseEvent)
+	};
 };
