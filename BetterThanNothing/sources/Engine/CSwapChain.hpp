@@ -27,7 +27,9 @@ namespace BetterThanNothing
 		VkSwapchainKHR					m_SwapChain;
 		VkFormat						m_Format;
 		VkExtent2D						m_Extent;
+
 		std::vector<VkImage>			m_Images;
+		std::vector<VkImageView>		m_ImageViews;
 
 	public:
 										CSwapChain(std::shared_ptr<CWindow>& pWindow, std::shared_ptr<CDevice>& pDevice);
@@ -37,6 +39,7 @@ namespace BetterThanNothing
 		CSwapChain&						operator=(const CSwapChain&) = delete;
 										CSwapChain(CSwapChain&&) = delete;
 		CSwapChain&						operator=(CSwapChain&&) = delete;
+
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
