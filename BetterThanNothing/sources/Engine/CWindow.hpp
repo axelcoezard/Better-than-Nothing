@@ -1,38 +1,38 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
+
 #include <string>
 #include <string_view>
-#include <functional>
+#include <memory>
 
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-
-#include "Event/CEventDispatcher.hpp"
-#include "Event/CEvent.hpp"
-#include "Event/CWindowCloseEvent.hpp"
-
-namespace BetterThanNothing {
-	struct CWindow {
+namespace BetterThanNothing
+{
+	class CWindow
+	{
 	private:
-		GLFWwindow*					m_pWindow;
+		GLFWwindow*		m_pWindow;
 
-		std::string					m_Title;
-		uint32_t					m_Width, m_Height;
-		std::function<void(CEvent*)>	m_eventCallback;
+		std::string		m_Title;
+		uint32_t		m_Width, m_Height;
 	public:
 		CWindow(std::string_view title, uint32_t width, uint32_t height);
 		~CWindow();
 
-		void Open();
-		void Close();
+		CWindow(const CWindow&) = delete;
+		CWindow& operator=(const CWindow&) = delete;
 
-		bool ShouldClose();
-		void SwapBuffers();
-		void Clear(float red, float green, float blue, float alpha);
+		void			Open();
+		void			Poll();
 
-		void SetEventCallback(std::function<void(CEvent*)>& eventcallback);
+		bool			ShouldClose();
+		void			Close();
 
-		uint32_t GetWidth();
-		uint32_t GetHeight();
+		GLFWwindow*		GetPointer();
+		std::string&	GetTitle();
+		uint32_t		GetWidth();
+		uint32_t		GetHeight();
 	};
 };
