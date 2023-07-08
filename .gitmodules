@@ -19,3 +19,6 @@
 [submodule "BetterThanNothing/libs/glm"]
 	path = BetterThanNothing/libs/glm
 	url = https://github.com/axelcoezard/better-than-nothing-glm.git
+[submodule "BetterThanNothing/libs/vulkan"]
+	path = BetterThanNothing/libs/vulkan
+	url = git@github.com:axelcoezard/better-than-nothing-vulkan.git
