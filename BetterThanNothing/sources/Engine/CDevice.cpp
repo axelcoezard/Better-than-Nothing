@@ -1,4 +1,5 @@
 #include "CDevice.hpp"
+
 #include <set>
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
@@ -13,7 +14,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
 namespace BetterThanNothing
 {
-	CDevice::CDevice(GLFWwindow* pWindow): m_pWindow(pWindow) {
+	CDevice::CDevice(std::shared_ptr<CWindow>& pWindow): m_pWindow(pWindow) {
 		CreateInstance();
 		SetupDebugMessenger();
 		CreateSurface();
@@ -80,7 +81,7 @@ namespace BetterThanNothing
 	}
 
 	void CDevice::CreateSurface() {
-		if (glfwCreateWindowSurface(m_Instance, m_pWindow, nullptr, &m_Surface) != VK_SUCCESS) {
+		if (glfwCreateWindowSurface(m_Instance, m_pWindow->GetPointer(), nullptr, &m_Surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
@@ -134,7 +135,8 @@ namespace BetterThanNothing
 		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = 0;
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_DeviceExtensions.size());
+		createInfo.ppEnabledExtensionNames = m_DeviceExtensions.data();
 
 		if (m_EnableValidationLayers) {
 			createInfo.enabledLayerCount = static_cast<uint32_t>(m_ValidationLayers.size());
@@ -150,6 +152,9 @@ namespace BetterThanNothing
 		vkGetDeviceQueue(m_Device, indices.m_GraphicsFamily.value(), 0, &m_GraphicsQueue);
 		vkGetDeviceQueue(m_Device, indices.m_PresentationFamily.value(), 0, &m_PresentationQueue);
 	}
+
+
+
 
 	bool CDevice::CheckValidationLayerSupport() {
 		uint32_t layerCount;
@@ -172,8 +177,22 @@ namespace BetterThanNothing
 				return false;
 			}
 		}
-
 		return true;
+	}
+
+	bool CDevice::CheckDeviceExtensionSupport(VkPhysicalDevice device) {
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+		std::set<std::string> requiredExtensions(m_DeviceExtensions.begin(), m_DeviceExtensions.end());
+
+		for (const auto& extension : availableExtensions) {
+			requiredExtensions.erase(extension.extensionName);
+		}
+		return requiredExtensions.empty();
 	}
 
 	std::vector<const char*> CDevice::GetRequiredExtensions() {
@@ -190,9 +209,17 @@ namespace BetterThanNothing
 		return extensions;
 	}
 
-
 	bool CDevice::IsDeviceSuitable(VkPhysicalDevice device) {
-		return FindQueueFamilies(device).IsComplete();
+		QueueFamilyIndices indices = FindQueueFamilies(device);
+		bool bExtensionsSupported = CheckDeviceExtensionSupport(device);
+		bool bSwapChainAdequate = false;
+
+		if (bExtensionsSupported) {
+			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+			bSwapChainAdequate = !swapChainSupport.m_Formats.empty() && !swapChainSupport.m_PresentationModes.empty();
+		}
+
+		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
 	}
 
 	QueueFamilyIndices CDevice::FindQueueFamilies(VkPhysicalDevice device) {
@@ -224,6 +251,27 @@ namespace BetterThanNothing
 		return indices;
 	}
 
+	SwapChainSupportDetails CDevice::QuerySwapChainSupport(VkPhysicalDevice device) {
+		SwapChainSupportDetails details;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.m_Capabilities);
+
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, nullptr);
+
+		if (formatCount != 0) {
+			details.m_Formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, details.m_Formats.data());
+		}
+
+		uint32_t presentationModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, nullptr);
+
+		if (presentationModeCount != 0) {
+			details.m_PresentationModes.resize(presentationModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, details.m_PresentationModes.data());
+		}
+		return details;
+	}
 
 	VkResult CDevice::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");

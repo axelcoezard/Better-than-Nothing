@@ -1,9 +1,9 @@
 #pragma once
 
-namespace BetterThanNothing {
-
-	class CPipeline {
+namespace BetterThanNothing
+{
+	class CPipeline
+	{
 
 	};
-
 }

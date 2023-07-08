@@ -1,5 +1,6 @@
 #include "CPipeline.hpp"
 
-namespace BetterThanNothing {
+namespace BetterThanNothing
+{
 
-}
+};

@@ -25,9 +25,17 @@ namespace BetterThanNothing
 		}
 	};
 
-	class CDevice {
+	struct SwapChainSupportDetails
+	{
+		VkSurfaceCapabilitiesKHR		m_Capabilities;
+		std::vector<VkSurfaceFormatKHR>	m_Formats;
+		std::vector<VkPresentModeKHR>	m_PresentationModes;
+	};
+
+	class CDevice
+	{
 	private:
-		GLFWwindow*						m_pWindow;
+		std::shared_ptr<CWindow>		m_pWindow;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -39,9 +47,10 @@ namespace BetterThanNothing
 
 		const bool						m_EnableValidationLayers = true;
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+		const std::vector<const char*>	m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	public:
-										CDevice(GLFWwindow* pWindow);
+										CDevice(std::shared_ptr<CWindow>& pWindow);
 										~CDevice();
 
 										CDevice(const CDevice&) = delete;
@@ -57,10 +66,14 @@ namespace BetterThanNothing
 		void							CreateLogicalDevice();
 
 		bool 							CheckValidationLayerSupport();
+		bool							CheckDeviceExtensionSupport(VkPhysicalDevice device);
+
 		std::vector<const char*>		GetRequiredExtensions();
 		bool							IsDeviceSuitable(VkPhysicalDevice device);
 
+	public:
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
+		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
 
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \
@@ -71,6 +84,16 @@ namespace BetterThanNothing
 																	  VkDebugUtilsMessengerEXT debugMessenger, \
 																	  const VkAllocationCallbacks* pAllocator);
 		void							PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-	};
 
-}
+	public:
+		VkInstance&						GetVkInstance()				{ return m_Instance; }
+		VkDebugUtilsMessengerEXT&		GetVkDebugMessenger()		{ return m_DebugMessenger; }
+		VkSurfaceKHR&					GetVkSurface()				{ return m_Surface; }
+		VkPhysicalDevice&				GetVkPhysicalDevice()		{ return m_PhysicalDevice; }
+		VkDevice&						GetVkDevice()				{ return m_Device; }
+		VkQueue&						GetVkGraphicsQueue()		{ return m_GraphicsQueue; }
+		VkQueue&						GetVkPresentationQueue()	{ return m_PresentationQueue; }
+		const std::vector<const char*>	GetValidationLayers()		{ return m_ValidationLayers; }
+		const std::vector<const char*>	GetDeviceExtensions()		{ return m_DeviceExtensions; }
+	};
+};
