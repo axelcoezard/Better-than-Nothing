@@ -18,21 +18,30 @@ namespace BetterThanNothing
 	struct QueueFamilyIndices
 	{
 		std::optional<uint32_t>			m_GraphicsFamily;
+		std::optional<uint32_t>			m_PresentationFamily;
+
+		bool IsComplete() {
+			return m_GraphicsFamily.has_value() && m_PresentationFamily.has_value();
+		}
 	};
 
 	class CDevice {
 	private:
+		GLFWwindow*						m_pWindow;
+
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
+		VkSurfaceKHR					m_Surface;
 		VkPhysicalDevice				m_PhysicalDevice = VK_NULL_HANDLE;
 		VkDevice						m_Device;
 		VkQueue							m_GraphicsQueue;
+		VkQueue							m_PresentationQueue;
 
 		const bool						m_EnableValidationLayers = true;
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 
 	public:
-										CDevice();
+										CDevice(GLFWwindow* pWindow);
 										~CDevice();
 
 										CDevice(const CDevice&) = delete;

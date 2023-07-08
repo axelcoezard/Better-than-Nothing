@@ -1,4 +1,5 @@
 #include "CDevice.hpp"
+#include <set>
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
 	(void) messageSeverity;
@@ -12,7 +13,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
 namespace BetterThanNothing
 {
-	CDevice::CDevice() {
+	CDevice::CDevice(GLFWwindow* pWindow): m_pWindow(pWindow) {
 		CreateInstance();
 		SetupDebugMessenger();
 		CreateSurface();
@@ -27,6 +28,7 @@ namespace BetterThanNothing
 			DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
 		}
 
+		vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
 		vkDestroyInstance(m_Instance, nullptr);
 	}
 
@@ -78,7 +80,9 @@ namespace BetterThanNothing
 	}
 
 	void CDevice::CreateSurface() {
-
+		if (glfwCreateWindowSurface(m_Instance, m_pWindow, nullptr, &m_Surface) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create window surface!");
+		}
 	}
 
 	void CDevice::PickPhysicalDevice() {
@@ -107,20 +111,28 @@ namespace BetterThanNothing
 	void CDevice::CreateLogicalDevice() {
 		QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
-		VkDeviceQueueCreateInfo queueCreateInfo{};
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = indices.m_GraphicsFamily.value();
-		queueCreateInfo.queueCount = 1;
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies = {
+			indices.m_GraphicsFamily.value(),
+			indices.m_PresentationFamily.value()
+		};
 
 		float queuePriority = 1.0f;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		for (uint32_t queueFamily : uniqueQueueFamilies) {
+			VkDeviceQueueCreateInfo queueCreateInfo{};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = &queueCreateInfo;
-		createInfo.queueCreateInfoCount = 1;
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.enabledExtensionCount = 0;
 
@@ -136,6 +148,7 @@ namespace BetterThanNothing
 		}
 
 		vkGetDeviceQueue(m_Device, indices.m_GraphicsFamily.value(), 0, &m_GraphicsQueue);
+		vkGetDeviceQueue(m_Device, indices.m_PresentationFamily.value(), 0, &m_PresentationQueue);
 	}
 
 	bool CDevice::CheckValidationLayerSupport() {
@@ -179,7 +192,7 @@ namespace BetterThanNothing
 
 
 	bool CDevice::IsDeviceSuitable(VkPhysicalDevice device) {
-		return FindQueueFamilies(device).m_GraphicsFamily.has_value();
+		return FindQueueFamilies(device).IsComplete();
 	}
 
 	QueueFamilyIndices CDevice::FindQueueFamilies(VkPhysicalDevice device) {
@@ -196,7 +209,14 @@ namespace BetterThanNothing
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.m_GraphicsFamily = index;
 			}
-			if (indices.m_GraphicsFamily.has_value()) {
+
+			VkBool32 presentationSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, index, m_Surface, &presentationSupport);
+			if (presentationSupport) {
+				indices.m_PresentationFamily = index;
+			}
+
+			if (indices.IsComplete()) {
 				break;
 			}
 			index++;

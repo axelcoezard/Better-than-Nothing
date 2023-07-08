@@ -6,7 +6,7 @@ using namespace BetterThanNothing;
 
 int main(void) {
 	auto pWindow = std::make_unique<CWindow>("better than nothing", 720, 720);
-	auto pDevice = std::make_unique<CDevice>();
+	auto pDevice = std::make_unique<CDevice>(pWindow->GetPointer());
 
 	pWindow->Open();
 
