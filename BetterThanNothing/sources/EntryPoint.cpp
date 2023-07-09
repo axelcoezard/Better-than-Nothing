@@ -2,6 +2,7 @@
 #include "Engine/CWindow.hpp"
 #include "Engine/CDevice.hpp"
 #include "Engine/CSwapChain.hpp"
+#include "Engine/CCommandPool.hpp"
 #include "Engine/CPipeline.hpp"
 
 using namespace BetterThanNothing;
@@ -12,6 +13,7 @@ int main(void) {
 
 	auto pDevice = std::make_shared<CDevice>(pWindow);
 	auto pSwapChain = std::make_shared<CSwapChain>(pWindow, pDevice);
+	auto pCommandPool = std::make_shared<CCommandPool>(pDevice);
 	auto pPipeLine = std::make_shared<CPipeline>(pDevice, pSwapChain);
 
 	while (!pWindow->ShouldClose()) {
