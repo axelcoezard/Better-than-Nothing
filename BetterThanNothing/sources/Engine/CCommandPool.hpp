@@ -25,6 +25,7 @@ namespace BetterThanNothing
 	private:
 		void							CreateCommandPool();
 
+	public:
 		VkCommandPool&					GetVkCommandPool()	{ return m_CommandPool; }
 	};
 };
