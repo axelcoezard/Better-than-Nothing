@@ -24,6 +24,8 @@ namespace BetterThanNothing
 		VkRenderPass					m_RenderPass;
 		VkPipelineLayout				m_PipelineLayout;
 		VkPipeline						m_GraphicsPipeline;
+
+		std::vector<VkFramebuffer>		m_Framebuffers;
 	public:
 										CPipeline(std::shared_ptr<CDevice>& pDevice, std::shared_ptr<CSwapChain>& pSwapChain);
 										~CPipeline();
@@ -40,5 +42,6 @@ namespace BetterThanNothing
 
 		void							CreateRenderPass();
 		void							CreateGraphicsPipeline();
+		void							CreateFramebuffers();
 	};
 }

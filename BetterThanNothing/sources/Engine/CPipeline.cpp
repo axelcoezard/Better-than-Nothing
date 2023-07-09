@@ -13,6 +13,11 @@ namespace BetterThanNothing
 
 	CPipeline::~CPipeline() {
 		auto device = m_pDevice->GetVkDevice();
+
+		for (auto framebuffer : m_Framebuffers) {
+			vkDestroyFramebuffer(device, framebuffer, nullptr);
+		}
+
 		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
 		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
@@ -195,5 +200,29 @@ namespace BetterThanNothing
 
 		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
 		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
+	}
+
+	void CPipeline::CreateFramebuffers() {
+		auto imageViews = m_pSwapChain->GetImageViews();
+		auto extent = m_pSwapChain->GetVkExtent();
+
+		m_Framebuffers.resize(imageViews.size());
+
+		for (size_t i = 0; i < imageViews.size(); i++) {
+			VkImageView attachments[] = { imageViews[i] };
+
+			VkFramebufferCreateInfo framebufferInfo{};
+			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			framebufferInfo.renderPass = m_RenderPass;
+			framebufferInfo.attachmentCount = 1;
+			framebufferInfo.pAttachments = attachments;
+			framebufferInfo.width = extent.width;
+			framebufferInfo.height = extent.height;
+			framebufferInfo.layers = 1;
+
+			if (vkCreateFramebuffer(m_pDevice->GetVkDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create framebuffer!");
+			}
+		}
 	}
 };

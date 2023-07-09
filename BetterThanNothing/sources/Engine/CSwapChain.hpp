@@ -52,5 +52,7 @@ namespace BetterThanNothing
 		VkSwapchainKHR&					GetVkSwapChain()	{ return m_SwapChain; }
 		VkFormat&						GetVkFormat()		{ return m_Format; }
 		VkExtent2D&						GetVkExtent()		{ return m_Extent; }
+		std::vector<VkImage>&			GetImages()			{ return m_Images; }
+		std::vector<VkImageView>&		GetImageViews()		{ return m_ImageViews; }
 	};
 };
