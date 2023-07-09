@@ -18,11 +18,12 @@
 
 namespace BetterThanNothing
 {
+	class CCommandBuffer;
 	class CSwapChain
 	{
 	private:
-		std::shared_ptr<CWindow>		m_pWindow;
-		std::shared_ptr<CDevice>		m_pDevice;
+		CWindow*						m_pWindow;
+		CDevice*						m_pDevice;
 
 		VkSwapchainKHR					m_SwapChain;
 		VkFormat						m_Format;
@@ -31,8 +32,12 @@ namespace BetterThanNothing
 		std::vector<VkImage>			m_Images;
 		std::vector<VkImageView>		m_ImageViews;
 
+		VkSemaphore						m_ImageAvailableSemaphore;
+		VkSemaphore						m_RenderFinishedSemaphore;
+		VkFence							m_InFlightFence;
+
 	public:
-										CSwapChain(std::shared_ptr<CWindow>& pWindow, std::shared_ptr<CDevice>& pDevice);
+										CSwapChain(CWindow* pWindow, CDevice* pDevice);
 										~CSwapChain();
 
 										CSwapChain(const CSwapChain&) = delete;
@@ -43,7 +48,12 @@ namespace BetterThanNothing
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
+		void							CreateSyncObjects();
 
+	public:
+		void							DrawFrame(CCommandBuffer* commandbuffer);
+
+	private:
 		VkSurfaceFormatKHR				ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR				ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D						ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);

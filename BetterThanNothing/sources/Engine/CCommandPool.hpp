@@ -10,11 +10,11 @@ namespace BetterThanNothing
 	class CCommandPool
 	{
 	private:
-		std::shared_ptr<CDevice>		m_pDevice;
+		CDevice*		m_pDevice;
 
 		VkCommandPool					m_CommandPool;
 	public:
-										CCommandPool(std::shared_ptr<CDevice>& pDevice);
+										CCommandPool(CDevice* pDevice);
 										~CCommandPool();
 
 										CCommandPool(const CCommandPool&) = delete;

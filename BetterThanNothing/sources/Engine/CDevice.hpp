@@ -35,7 +35,7 @@ namespace BetterThanNothing
 	class CDevice
 	{
 	private:
-		std::shared_ptr<CWindow>		m_pWindow;
+		CWindow*						m_pWindow;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -50,7 +50,7 @@ namespace BetterThanNothing
 		const std::vector<const char*>	m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	public:
-										CDevice(std::shared_ptr<CWindow>& pWindow);
+										CDevice(CWindow* pWindow);
 										~CDevice();
 
 										CDevice(const CDevice&) = delete;

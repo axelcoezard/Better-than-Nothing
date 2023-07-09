@@ -1,18 +1,26 @@
 #include "CSwapChain.hpp"
+#include "CCommandBuffer.hpp"
 
 namespace BetterThanNothing
 {
-	CSwapChain::CSwapChain(std::shared_ptr<CWindow>& pWindow, std::shared_ptr<CDevice>& pDevice)
+	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice)
 		: m_pWindow(pWindow), m_pDevice(pDevice) {
 		CreateSwapChain();
 		CreateImageViews();
+		CreateSyncObjects();
 	}
 
 	CSwapChain::~CSwapChain() {
+		auto device = m_pDevice->GetVkDevice();
+
+		vkDestroySemaphore(device, m_ImageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(device, m_RenderFinishedSemaphore, nullptr);
+		vkDestroyFence(device, m_InFlightFence, nullptr);
+
 		for (auto imageView : m_ImageViews) {
-			vkDestroyImageView(m_pDevice->GetVkDevice(), imageView, nullptr);
+			vkDestroyImageView(device, imageView, nullptr);
 		}
-		vkDestroySwapchainKHR(m_pDevice->GetVkDevice(), m_SwapChain, nullptr);
+		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
 
 	void CSwapChain::CreateSwapChain() {
@@ -94,6 +102,70 @@ namespace BetterThanNothing
 				throw std::runtime_error("failed to create image views!");
 			}
 		}
+	}
+
+	void CSwapChain::CreateSyncObjects() {
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		auto device = m_pDevice->GetVkDevice();
+		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
+			vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
+			vkCreateFence(device, &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create semaphores!");
+		}
+	}
+
+	void CSwapChain::DrawFrame(CCommandBuffer* pCommandBuffer) {
+		auto device = m_pDevice->GetVkDevice();
+		auto commandBuffer = pCommandBuffer->GetVkCommandBuffer();
+
+		VkFence fences[] = {m_InFlightFence};
+		vkWaitForFences(device, 1, fences, VK_TRUE, UINT64_MAX);
+		vkResetFences(device, 1, fences);
+
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(device, m_SwapChain, UINT64_MAX, m_ImageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		vkResetCommandBuffer(commandBuffer, 0);
+		pCommandBuffer->RecordCommandBuffer(commandBuffer, imageIndex);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphore};
+		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphore};
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		if (vkQueueSubmit(m_pDevice->GetVkGraphicsQueue(), 1, &submitInfo, m_InFlightFence) != VK_SUCCESS) {
+			throw std::runtime_error("failed to submit draw command buffer!");
+		}
+
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+
+		VkSwapchainKHR swapChains[] = {m_SwapChain};
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
 	}
 
 	VkSurfaceFormatKHR CSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {

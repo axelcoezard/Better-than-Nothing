@@ -2,10 +2,10 @@
 
 namespace BetterThanNothing
 {
-	CCommandBuffer::CCommandBuffer(std::shared_ptr<CDevice>& pDevice, \
-								   std::shared_ptr<CSwapChain>& pSwapChain, \
-								   std::shared_ptr<CPipeline>& pPipeline, \
-								   std::shared_ptr<CCommandPool>& pCommandPool)
+	CCommandBuffer::CCommandBuffer(CDevice* pDevice, \
+								   CSwapChain* pSwapChain, \
+								   CPipeline* pPipeline, \
+								   CCommandPool* pCommandPool)
 		: m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pPipeline(pPipeline), m_pCommandPool(pCommandPool) {
 		CreateCommandBuffer();
 	}

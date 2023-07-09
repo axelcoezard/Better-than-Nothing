@@ -9,19 +9,32 @@
 using namespace BetterThanNothing;
 
 int main(void) {
-	auto pWindow = std::make_shared<CWindow>("better than nothing", 720, 720);
+	auto pWindow = new CWindow("better than nothing", 720, 720);
 	pWindow->Open();
 
-	auto pDevice = std::make_shared<CDevice>(pWindow);
-	auto pSwapChain = std::make_shared<CSwapChain>(pWindow, pDevice);
-	auto pPipeLine = std::make_shared<CPipeline>(pDevice, pSwapChain);
-	auto pCommandPool = std::make_shared<CCommandPool>(pDevice);
-	auto pCommandBuffer = std::make_shared<CCommandBuffer>(pDevice, pSwapChain, pPipeLine, pCommandPool);
+	// unique instances
+	auto pDevice = new CDevice(pWindow);
+	auto pSwapChain = new CSwapChain(pWindow, pDevice);
+	auto pCommandPool = new CCommandPool(pDevice);
+
+	// one per shaders couple
+	auto pPipeLine = new CPipeline(pDevice, pSwapChain);
+	auto pCommandBuffer = new CCommandBuffer(pDevice, pSwapChain, pPipeLine, pCommandPool);
 
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
+		pSwapChain->DrawFrame(pCommandBuffer);
 		// Update, clear and render
 	}
+
+	vkDeviceWaitIdle(pDevice->GetVkDevice());
+
+	delete pCommandBuffer;
+	delete pPipeLine;
+	delete pCommandPool;
+	delete pSwapChain;
+	delete pDevice;
+	delete pWindow;
 
 	return EXIT_SUCCESS;
 }

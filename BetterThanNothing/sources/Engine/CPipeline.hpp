@@ -16,8 +16,8 @@ namespace BetterThanNothing
 	class CPipeline
 	{
 	private:
-		std::shared_ptr<CDevice>		m_pDevice;
-		std::shared_ptr<CSwapChain>		m_pSwapChain;
+		CDevice*						m_pDevice;
+		CSwapChain*						m_pSwapChain;
 
 		VkShaderModule					m_VertexShaderModule;
 		VkShaderModule					m_FragmentShaderModule;
@@ -27,7 +27,7 @@ namespace BetterThanNothing
 
 		std::vector<VkFramebuffer>		m_Framebuffers;
 	public:
-										CPipeline(std::shared_ptr<CDevice>& pDevice, std::shared_ptr<CSwapChain>& pSwapChain);
+										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain);
 										~CPipeline();
 
 										CPipeline(const CPipeline&) = delete;

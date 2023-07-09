@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	CCommandPool::CCommandPool(std::shared_ptr<CDevice>& pDevice): m_pDevice(pDevice) {
+	CCommandPool::CCommandPool(CDevice* pDevice): m_pDevice(pDevice) {
 		CreateCommandPool();
 	}
 
