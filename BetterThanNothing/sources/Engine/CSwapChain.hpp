@@ -47,5 +47,10 @@ namespace BetterThanNothing
 		VkSurfaceFormatKHR				ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR				ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D						ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+	public:
+		VkSwapchainKHR&					GetVkSwapChain()	{ return m_SwapChain; }
+		VkFormat&						GetVkFormat()		{ return m_Format; }
+		VkExtent2D&						GetVkExtent()		{ return m_Extent; }
 	};
 };
