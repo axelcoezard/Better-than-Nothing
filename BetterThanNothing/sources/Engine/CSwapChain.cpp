@@ -5,33 +5,35 @@ namespace BetterThanNothing
 {
 	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool)
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
+
+		glfwSetWindowUserPointer(pWindow->GetPointer(), this);
+		glfwSetFramebufferSizeCallback(pWindow->GetPointer(), FramebufferResizeCallback);
+
 		CreateSwapChain();
 		CreateImageViews();
 		CreateRenderPass();
-		CreateCommandBuffers();
 		CreateFramebuffers();
 		CreateSyncObjects();
+		CreateCommandBuffers();
 	}
 
 	CSwapChain::~CSwapChain() {
 		auto device = m_pDevice->GetVkDevice();
+
+		vkFreeCommandBuffers(
+			m_pDevice->GetVkDevice(),
+			m_pCommandPool->GetVkCommandPool(),
+			m_CommandBuffers.size(),
+			m_CommandBuffers.data());
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			vkDestroySemaphore(device, m_ImageAvailableSemaphores[i], nullptr);
 			vkDestroySemaphore(device, m_RenderFinishedSemaphores[i], nullptr);
 			vkDestroyFence(device, m_InFlightFences[i], nullptr);
 		}
-
-		for (auto framebuffer : m_Framebuffers) {
-			vkDestroyFramebuffer(device, framebuffer, nullptr);
-		}
-
-		for (auto imageView : m_ImageViews) {
-			vkDestroyImageView(device, imageView, nullptr);
-		}
-
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
-		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
+
+		CleanupSwapChain();
 	}
 
 	void CSwapChain::CreateSwapChain() {
@@ -215,8 +217,33 @@ namespace BetterThanNothing
 		}
 	}
 
+	void CSwapChain::CleanupSwapChain() {
+		auto device = m_pDevice->GetVkDevice();
+
+		for (auto framebuffer : m_Framebuffers) {
+			vkDestroyFramebuffer(device, framebuffer, nullptr);
+		}
+
+		for (auto imageView : m_ImageViews) {
+			vkDestroyImageView(device, imageView, nullptr);
+		}
+
+		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
+	}
+
 	void CSwapChain::RecreateSwapChain() {
+		auto window = m_pWindow->GetPointer();
+		int width = 0, height = 0;
+
+		glfwGetFramebufferSize(window, &width, &height);
+		while (width == 0 || height == 0) {
+			glfwGetFramebufferSize(window, &width, &height);
+			glfwWaitEvents();
+		}
+
 		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+
+		CleanupSwapChain();
 
 		CreateSwapChain();
 		CreateImageViews();
@@ -237,38 +264,34 @@ namespace BetterThanNothing
 		auto swapChainExtent = m_Extent;
 
 		VkRenderPassBeginInfo renderPassInfo{};
-		{
-			VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+		VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
 
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = m_RenderPass;
-			renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
-			renderPassInfo.renderArea.offset = {0, 0};
-			renderPassInfo.renderArea.extent = swapChainExtent;
-			renderPassInfo.clearValueCount = 1;
-			renderPassInfo.pClearValues = &clearColor;
-		}
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = m_RenderPass;
+		renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
+		renderPassInfo.renderArea.offset = {0, 0};
+		renderPassInfo.renderArea.extent = swapChainExtent;
+		renderPassInfo.clearValueCount = 1;
+		renderPassInfo.pClearValues = &clearColor;
 
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		{
-			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
 
-			VkViewport viewport{};
-			viewport.x = 0.0f;
-			viewport.y = 0.0f;
-			viewport.width = static_cast<float>(swapChainExtent.width);
-			viewport.height = static_cast<float>(swapChainExtent.height);
-			viewport.minDepth = 0.0f;
-			viewport.maxDepth = 1.0f;
-			vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(swapChainExtent.width);
+		viewport.height = static_cast<float>(swapChainExtent.height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-			VkRect2D scissor{};
-			scissor.offset = {0, 0};
-			scissor.extent = swapChainExtent;
-			vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		VkRect2D scissor{};
+		scissor.offset = {0, 0};
+		scissor.extent = swapChainExtent;
+		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-			vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-		}
+		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 		vkCmdEndRenderPass(commandBuffer);
 
 		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -276,15 +299,31 @@ namespace BetterThanNothing
 		}
 	}
 
+
+	void CSwapChain::FramebufferResizeCallback(GLFWwindow* window, int width, int height) {
+		(void) width;
+		(void) height;
+		auto app = reinterpret_cast<CSwapChain*>(glfwGetWindowUserPointer(window));
+		app->m_FramebufferResized = true; // todo: mv this to window class
+	}
+
 	void CSwapChain::DrawFrame(CPipeline* pPipeline) {
 		auto device = m_pDevice->GetVkDevice();
 
 		vkWaitForFences(device, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
-		vkResetFences(device, 1, &m_InFlightFences[m_CurrentFrame]);
 
 		uint32_t imageIndex;
-		vkAcquireNextImageKHR(device, m_SwapChain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
+		VkResult result = vkAcquireNextImageKHR(device, m_SwapChain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
 
+		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+			return (void) RecreateSwapChain();
+		}
+
+		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+			throw std::runtime_error("failed to acquire swap chain image!");
+		}
+
+		vkResetFences(device, 1, &m_InFlightFences[m_CurrentFrame]);
 		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
 		RecordCommandBuffer(pPipeline, m_CommandBuffers[m_CurrentFrame], imageIndex);
 
@@ -319,7 +358,15 @@ namespace BetterThanNothing
 		presentInfo.pImageIndices = &imageIndex;
 		presentInfo.pResults = nullptr;
 
-		vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
+		result = vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_FramebufferResized) {
+			m_FramebufferResized = false;
+			RecreateSwapChain();
+		} else if (result != VK_SUCCESS) {
+			throw std::runtime_error("failed to present swap chain image!");
+		}
+
 		m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 
