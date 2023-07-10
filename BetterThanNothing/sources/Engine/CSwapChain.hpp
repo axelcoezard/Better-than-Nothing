@@ -15,15 +15,20 @@
 
 #include "CWindow.hpp"
 #include "CDevice.hpp"
+#include "CCommandPool.hpp"
 
 namespace BetterThanNothing
 {
-	class CCommandBuffer;
+	constexpr const int MAX_FRAMES_IN_FLIGHT = 2;
+
+	class CPipeline;
+
 	class CSwapChain
 	{
 	private:
 		CWindow*						m_pWindow;
 		CDevice*						m_pDevice;
+		CCommandPool*					m_pCommandPool;
 
 		VkSwapchainKHR					m_SwapChain;
 		VkFormat						m_Format;
@@ -31,13 +36,16 @@ namespace BetterThanNothing
 
 		std::vector<VkImage>			m_Images;
 		std::vector<VkImageView>		m_ImageViews;
+		std::vector<VkCommandBuffer>	m_CommandBuffers;
 
-		VkSemaphore						m_ImageAvailableSemaphore;
-		VkSemaphore						m_RenderFinishedSemaphore;
-		VkFence							m_InFlightFence;
+		std::vector<VkSemaphore>		m_ImageAvailableSemaphores;
+		std::vector<VkSemaphore>		m_RenderFinishedSemaphores;
+		std::vector<VkFence>			m_InFlightFences;
+
+		uint32_t						m_CurrentFrame = 0;
 
 	public:
-										CSwapChain(CWindow* pWindow, CDevice* pDevice);
+										CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
 										~CSwapChain();
 
 										CSwapChain(const CSwapChain&) = delete;
@@ -48,10 +56,12 @@ namespace BetterThanNothing
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
+		void							CreateCommandBuffers();
 		void							CreateSyncObjects();
 
 	public:
-		void							DrawFrame(CCommandBuffer* commandbuffer);
+		void							RecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex);
+		void							DrawFrame(CPipeline* pPipeline);
 
 	private:
 		VkSurfaceFormatKHR				ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -59,10 +69,11 @@ namespace BetterThanNothing
 		VkExtent2D						ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 	public:
-		VkSwapchainKHR&					GetVkSwapChain()	{ return m_SwapChain; }
-		VkFormat&						GetVkFormat()		{ return m_Format; }
-		VkExtent2D&						GetVkExtent()		{ return m_Extent; }
-		std::vector<VkImage>&			GetImages()			{ return m_Images; }
-		std::vector<VkImageView>&		GetImageViews()		{ return m_ImageViews; }
+		VkSwapchainKHR&					GetVkSwapChain()		{ return m_SwapChain; }
+		VkFormat&						GetVkFormat()			{ return m_Format; }
+		VkExtent2D&						GetVkExtent()			{ return m_Extent; }
+		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()	{ return m_CommandBuffers; }
+		std::vector<VkImage>&			GetImages()				{ return m_Images; }
+		std::vector<VkImageView>&		GetImageViews()			{ return m_ImageViews; }
 	};
 };

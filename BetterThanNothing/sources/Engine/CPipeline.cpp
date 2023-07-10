@@ -1,4 +1,5 @@
 #include "CPipeline.hpp"
+#include "CSwapChain.hpp"
 
 namespace BetterThanNothing
 {

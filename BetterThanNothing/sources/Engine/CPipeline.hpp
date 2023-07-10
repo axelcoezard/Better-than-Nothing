@@ -9,10 +9,11 @@
 #include <memory>
 
 #include "CDevice.hpp"
-#include "CSwapChain.hpp"
 
 namespace BetterThanNothing
 {
+	class CSwapChain;
+
 	class CPipeline
 	{
 	private:
