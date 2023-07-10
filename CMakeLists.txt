@@ -10,7 +10,6 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 add_subdirectory("BetterThanNothing/libs/glfw")
-#add_subdirectory("BetterThanNothing/libs/glew")
 add_subdirectory("BetterThanNothing/libs/vulkan")
 add_subdirectory("BetterThanNothing/libs/glm")
 #add_subdirectory("BetterThanNothing/libs/openal")
@@ -45,11 +44,10 @@ add_compile_definitions(ENGINE_VERBOSE_MODE=true)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -O2)
 
-target_link_libraries(${PROJECT_NAME} glfw vulkan) #libglew_static openal sndfile stb)
+target_link_libraries(${PROJECT_NAME} glfw vulkan) #openal sndfile stb)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/vulkan)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glew/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glm/include)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/openal/include)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/libsndfile/include)

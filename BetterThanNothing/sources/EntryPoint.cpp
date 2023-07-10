@@ -14,8 +14,8 @@ int main(void) {
 
 	// unique instances
 	auto pDevice = new CDevice(pWindow);
-	auto pSwapChain = new CSwapChain(pWindow, pDevice);
 	auto pCommandPool = new CCommandPool(pDevice);
+	auto pSwapChain = new CSwapChain(pWindow, pDevice);
 
 	// one per shaders couple
 	auto pPipeLine = new CPipeline(pDevice, pSwapChain);
