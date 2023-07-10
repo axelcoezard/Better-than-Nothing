@@ -31,11 +31,13 @@ namespace BetterThanNothing
 		CCommandPool*					m_pCommandPool;
 
 		VkSwapchainKHR					m_SwapChain;
+		VkRenderPass					m_RenderPass;
 		VkFormat						m_Format;
 		VkExtent2D						m_Extent;
 
 		std::vector<VkImage>			m_Images;
 		std::vector<VkImageView>		m_ImageViews;
+		std::vector<VkFramebuffer>		m_Framebuffers;
 		std::vector<VkCommandBuffer>	m_CommandBuffers;
 
 		std::vector<VkSemaphore>		m_ImageAvailableSemaphores;
@@ -56,8 +58,12 @@ namespace BetterThanNothing
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
+		void							CreateRenderPass();
 		void							CreateCommandBuffers();
 		void							CreateSyncObjects();
+		void							CreateFramebuffers();
+
+		void							RecreateSwapChain();
 
 	public:
 		void							RecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex);
@@ -70,10 +76,12 @@ namespace BetterThanNothing
 
 	public:
 		VkSwapchainKHR&					GetVkSwapChain()		{ return m_SwapChain; }
+		VkRenderPass&					GetVkRenderPass()		{ return m_RenderPass; }
 		VkFormat&						GetVkFormat()			{ return m_Format; }
 		VkExtent2D&						GetVkExtent()			{ return m_Extent; }
-		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()	{ return m_CommandBuffers; }
 		std::vector<VkImage>&			GetImages()				{ return m_Images; }
 		std::vector<VkImageView>&		GetImageViews()			{ return m_ImageViews; }
+		std::vector<VkFramebuffer>&		GetFramebuffers()		{ return m_Framebuffers; }
+		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()	{ return m_CommandBuffers; }
 	};
 };

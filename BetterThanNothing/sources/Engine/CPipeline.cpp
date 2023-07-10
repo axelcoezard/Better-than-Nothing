@@ -8,23 +8,16 @@ namespace BetterThanNothing
 		LoadShader(
 			"/home/acoezard/lab/better-than-nothing/BetterThanNothing/assets/vert.spv",
 			"/home/acoezard/lab/better-than-nothing/BetterThanNothing/assets/frag.spv");
-		CreateRenderPass();
 		CreateGraphicsPipeline();
-		CreateFramebuffers();
 	}
 
 	CPipeline::~CPipeline() {
 		auto device = m_pDevice->GetVkDevice();
 
-		for (auto framebuffer : m_Framebuffers) {
-			vkDestroyFramebuffer(device, framebuffer, nullptr);
-		}
-
 		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
 		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
-		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 	}
 
 	std::vector<char> CPipeline::ReadFile(const std::string& filePath) {
@@ -62,48 +55,6 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to create shader module!");
 		}
 		return shaderModule;
-	}
-
-	void CPipeline::CreateRenderPass() {
-		VkAttachmentDescription colorAttachment{};
-		colorAttachment.format = m_pSwapChain->GetVkFormat();
-		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentReference colorAttachmentRef{};
-		colorAttachmentRef.attachment = 0;
-		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		VkSubpassDescription subpass{};
-		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.colorAttachmentCount = 1;
-		subpass.pColorAttachments = &colorAttachmentRef;
-
-		VkSubpassDependency dependency{};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = 1;
-		renderPassInfo.pAttachments = &colorAttachment;
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
-
-		if (vkCreateRenderPass(m_pDevice->GetVkDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create render pass!");
-		}
 	}
 
 	void CPipeline::CreateGraphicsPipeline() {
@@ -201,7 +152,7 @@ namespace BetterThanNothing
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicState;
 		pipelineInfo.layout = m_PipelineLayout;
-		pipelineInfo.renderPass = m_RenderPass;
+		pipelineInfo.renderPass = m_pSwapChain->GetVkRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.basePipelineIndex = -1;
@@ -212,29 +163,5 @@ namespace BetterThanNothing
 
 		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
 		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
-	}
-
-	void CPipeline::CreateFramebuffers() {
-		auto imageViews = m_pSwapChain->GetImageViews();
-		auto extent = m_pSwapChain->GetVkExtent();
-
-		m_Framebuffers.resize(imageViews.size());
-
-		for (size_t i = 0; i < imageViews.size(); i++) {
-			VkImageView attachments[] = { imageViews[i] };
-
-			VkFramebufferCreateInfo framebufferInfo{};
-			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = m_RenderPass;
-			framebufferInfo.attachmentCount = 1;
-			framebufferInfo.pAttachments = attachments;
-			framebufferInfo.width = extent.width;
-			framebufferInfo.height = extent.height;
-			framebufferInfo.layers = 1;
-
-			if (vkCreateFramebuffer(m_pDevice->GetVkDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to create framebuffer!");
-			}
-		}
 	}
 };

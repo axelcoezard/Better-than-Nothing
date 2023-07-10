@@ -7,7 +7,9 @@ namespace BetterThanNothing
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
 		CreateSwapChain();
 		CreateImageViews();
+		CreateRenderPass();
 		CreateCommandBuffers();
+		CreateFramebuffers();
 		CreateSyncObjects();
 	}
 
@@ -20,9 +22,15 @@ namespace BetterThanNothing
 			vkDestroyFence(device, m_InFlightFences[i], nullptr);
 		}
 
+		for (auto framebuffer : m_Framebuffers) {
+			vkDestroyFramebuffer(device, framebuffer, nullptr);
+		}
+
 		for (auto imageView : m_ImageViews) {
 			vkDestroyImageView(device, imageView, nullptr);
 		}
+
+		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
 
@@ -107,6 +115,48 @@ namespace BetterThanNothing
 		}
 	}
 
+	void CSwapChain::CreateRenderPass() {
+		VkAttachmentDescription colorAttachment{};
+		colorAttachment.format = m_Format;
+		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+		VkAttachmentReference colorAttachmentRef{};
+		colorAttachmentRef.attachment = 0;
+		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		VkSubpassDescription subpass{};
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.colorAttachmentCount = 1;
+		subpass.pColorAttachments = &colorAttachmentRef;
+
+		VkSubpassDependency dependency{};
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.srcAccessMask = 0;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+		VkRenderPassCreateInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount = 1;
+		renderPassInfo.pAttachments = &colorAttachment;
+		renderPassInfo.subpassCount = 1;
+		renderPassInfo.pSubpasses = &subpass;
+		renderPassInfo.dependencyCount = 1;
+		renderPassInfo.pDependencies = &dependency;
+
+		if (vkCreateRenderPass(m_pDevice->GetVkDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create render pass!");
+		}
+	}
+
 	void CSwapChain::CreateCommandBuffers() {
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
@@ -144,6 +194,36 @@ namespace BetterThanNothing
 		}
 	}
 
+	void CSwapChain::CreateFramebuffers() {
+		m_Framebuffers.resize(m_ImageViews.size());
+
+		for (size_t i = 0; i < m_ImageViews.size(); i++) {
+			VkImageView attachments[] = { m_ImageViews[i] };
+
+			VkFramebufferCreateInfo framebufferInfo{};
+			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			framebufferInfo.renderPass = m_RenderPass;
+			framebufferInfo.attachmentCount = 1;
+			framebufferInfo.pAttachments = attachments;
+			framebufferInfo.width = m_Extent.width;
+			framebufferInfo.height = m_Extent.height;
+			framebufferInfo.layers = 1;
+
+			if (vkCreateFramebuffer(m_pDevice->GetVkDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create framebuffer!");
+			}
+		}
+	}
+
+	void CSwapChain::RecreateSwapChain() {
+		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+
+		CreateSwapChain();
+		CreateImageViews();
+		CreateFramebuffers();
+	}
+
+
 	void CSwapChain::RecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex) {
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -161,8 +241,8 @@ namespace BetterThanNothing
 			VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
 
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = pPipeline->GetVkRenderPass();
-			renderPassInfo.framebuffer = pPipeline->GetFramebuffers()[imageIndex];
+			renderPassInfo.renderPass = m_RenderPass;
+			renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
 			renderPassInfo.renderArea.offset = {0, 0};
 			renderPassInfo.renderArea.extent = swapChainExtent;
 			renderPassInfo.clearValueCount = 1;

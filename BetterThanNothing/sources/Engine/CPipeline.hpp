@@ -22,11 +22,9 @@ namespace BetterThanNothing
 
 		VkShaderModule					m_VertexShaderModule;
 		VkShaderModule					m_FragmentShaderModule;
-		VkRenderPass					m_RenderPass;
 		VkPipelineLayout				m_PipelineLayout;
 		VkPipeline						m_GraphicsPipeline;
 
-		std::vector<VkFramebuffer>		m_Framebuffers;
 	public:
 										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain);
 										~CPipeline();
@@ -43,15 +41,12 @@ namespace BetterThanNothing
 
 		void							CreateRenderPass();
 		void							CreateGraphicsPipeline();
-		void							CreateFramebuffers();
 
 	public:
 		VkShaderModule&					GetVkVertexShaderModule()	{ return m_VertexShaderModule; }
 		VkShaderModule&					GetVkFragmentShaderModule()	{ return m_FragmentShaderModule; }
-		VkRenderPass&					GetVkRenderPass()			{ return m_RenderPass; }
 		VkPipelineLayout&				GetVkPipelineLayout()		{ return m_PipelineLayout; }
 		VkPipeline&						GetVkGraphicsPipeline()		{ return m_GraphicsPipeline; }
 
-		std::vector<VkFramebuffer>&		GetFramebuffers()			{ return m_Framebuffers; }
 	};
 }

@@ -28,8 +28,8 @@ int main(void) {
 	vkDeviceWaitIdle(pDevice->GetVkDevice());
 
 	delete pPipeLine;
-	delete pCommandPool;
 	delete pSwapChain;
+	delete pCommandPool;
 	delete pDevice;
 	delete pWindow;
 
