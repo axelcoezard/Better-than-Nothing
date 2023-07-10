@@ -5,10 +5,6 @@ namespace BetterThanNothing
 {
 	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool)
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
-
-		glfwSetWindowUserPointer(pWindow->GetPointer(), this);
-		glfwSetFramebufferSizeCallback(pWindow->GetPointer(), FramebufferResizeCallback);
-
 		CreateSwapChain();
 		CreateImageViews();
 		CreateRenderPass();
@@ -299,14 +295,6 @@ namespace BetterThanNothing
 		}
 	}
 
-
-	void CSwapChain::FramebufferResizeCallback(GLFWwindow* window, int width, int height) {
-		(void) width;
-		(void) height;
-		auto app = reinterpret_cast<CSwapChain*>(glfwGetWindowUserPointer(window));
-		app->m_FramebufferResized = true; // todo: mv this to window class
-	}
-
 	void CSwapChain::DrawFrame(CPipeline* pPipeline) {
 		auto device = m_pDevice->GetVkDevice();
 
@@ -360,8 +348,8 @@ namespace BetterThanNothing
 
 		result = vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_FramebufferResized) {
-			m_FramebufferResized = false;
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_pWindow->IsResized()) {
+			m_pWindow->SetResized(false);
 			RecreateSwapChain();
 		} else if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swap chain image!");

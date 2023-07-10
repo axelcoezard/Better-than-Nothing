@@ -17,6 +17,8 @@ namespace BetterThanNothing
 
 		std::string		m_Title;
 		uint32_t		m_Width, m_Height;
+
+		bool			m_bResized = false;
 	public:
 		CWindow(std::string_view title, uint32_t width, uint32_t height);
 		~CWindow();
@@ -25,14 +27,18 @@ namespace BetterThanNothing
 		CWindow& operator=(const CWindow&) = delete;
 
 		void			Open();
-		void			Poll();
+		void			Poll()						{ glfwPollEvents(); }
+		bool			ShouldClose()				{ return glfwWindowShouldClose(m_pWindow) ==  GLFW_TRUE; }
+		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
 
-		bool			ShouldClose();
-		void			Close();
+		static void		ResizeCallback(GLFWwindow* window, int width, int height);
 
-		GLFWwindow*		GetPointer();
-		std::string&	GetTitle();
-		uint32_t		GetWidth();
-		uint32_t		GetHeight();
+		GLFWwindow*		GetPointer()				{ return m_pWindow; }
+		std::string&	GetTitle()					{ return m_Title; }
+		uint32_t		GetWidth()					{ return m_Width; }
+		uint32_t		GetHeight()					{ return m_Height; }
+
+		bool			IsResized()					{ return m_bResized; }
+		void			SetResized(bool bResized)	{ m_bResized = bResized; }
 	};
 };

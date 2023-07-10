@@ -45,7 +45,6 @@ namespace BetterThanNothing
 		std::vector<VkFence>			m_InFlightFences;
 
 		uint32_t						m_CurrentFrame = 0;
-		bool							m_FramebufferResized = false;
 
 	public:
 										CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
@@ -67,9 +66,6 @@ namespace BetterThanNothing
 		void							CleanupSwapChain();
 		void							RecreateSwapChain();
 		void							RecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex);
-
-		static void						FramebufferResizeCallback(GLFWwindow* window, int width, int height);
-
 	public:
 		void							DrawFrame(CPipeline* pPipeline);
 
