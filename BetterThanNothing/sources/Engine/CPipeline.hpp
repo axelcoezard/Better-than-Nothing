@@ -1,13 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <stdexcept>
-#include <cstdlib>
-#include <cstring>
-#include <cstdint>
-#include <memory>
-
 #include "CDevice.hpp"
 
 namespace BetterThanNothing

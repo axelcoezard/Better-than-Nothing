@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-#include <memory>
-
 #include "CDevice.hpp"
 
 namespace BetterThanNothing

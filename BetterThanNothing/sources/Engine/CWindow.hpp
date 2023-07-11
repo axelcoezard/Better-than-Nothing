@@ -1,13 +1,5 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
-
-#include <string>
-#include <string_view>
-#include <memory>
-
 namespace BetterThanNothing
 {
 	class CWindow
