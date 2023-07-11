@@ -37,4 +37,3 @@ better-than-nothing
 build/
 cmake-build-debug/
 .idea/
-.vscode/

@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "compilerPath": "/usr/bin/g++",
+			"forcedInclude": [
+				"${workspaceFolder}/build/CMakeFiles/better-than-nothing.dir/cmake_pch.hxx"
+			],
+            "cStandard": "c17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}
