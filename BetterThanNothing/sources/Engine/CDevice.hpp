@@ -63,6 +63,7 @@ namespace BetterThanNothing
 	public:
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
+		uint32_t						FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \

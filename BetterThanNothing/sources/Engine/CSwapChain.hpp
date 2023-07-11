@@ -22,6 +22,9 @@ namespace BetterThanNothing
 		VkFormat						m_Format;
 		VkExtent2D						m_Extent;
 
+		VkBuffer						m_VertexBuffer;
+		VkDeviceMemory					m_VertexBufferMemory;
+
 		std::vector<VkImage>			m_Images;
 		std::vector<VkImageView>		m_ImageViews;
 		std::vector<VkFramebuffer>		m_Framebuffers;
@@ -46,6 +49,7 @@ namespace BetterThanNothing
 		void							CreateSwapChain();
 		void							CreateImageViews();
 		void							CreateRenderPass();
+		void							CreateVertexBuffer();
 		void							CreateCommandBuffers();
 		void							CreateSyncObjects();
 		void							CreateFramebuffers();

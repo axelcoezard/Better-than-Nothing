@@ -1,8 +1,16 @@
 #include "CSwapChain.hpp"
 #include "CPipeline.hpp"
+#include "CVertex.hpp"
 
 namespace BetterThanNothing
 {
+
+	const std::vector<Vertex> m_Vertices = {
+		{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+		{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+		{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+	};
+
 	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool)
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
 		CreateSwapChain();
@@ -10,11 +18,22 @@ namespace BetterThanNothing
 		CreateRenderPass();
 		CreateFramebuffers();
 		CreateSyncObjects();
+		CreateVertexBuffer();
 		CreateCommandBuffers();
 	}
 
 	CSwapChain::~CSwapChain() {
 		auto device = m_pDevice->GetVkDevice();
+
+		CleanupSwapChain();
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			vkDestroySemaphore(device, m_ImageAvailableSemaphores[i], nullptr);
+			vkDestroySemaphore(device, m_RenderFinishedSemaphores[i], nullptr);
+			vkDestroyFence(device, m_InFlightFences[i], nullptr);
+		}
+
+		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
 		vkFreeCommandBuffers(
 			m_pDevice->GetVkDevice(),
@@ -22,14 +41,8 @@ namespace BetterThanNothing
 			m_CommandBuffers.size(),
 			m_CommandBuffers.data());
 
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			vkDestroySemaphore(device, m_ImageAvailableSemaphores[i], nullptr);
-			vkDestroySemaphore(device, m_RenderFinishedSemaphores[i], nullptr);
-			vkDestroyFence(device, m_InFlightFences[i], nullptr);
-		}
-		vkDestroyRenderPass(device, m_RenderPass, nullptr);
-
-		CleanupSwapChain();
+		vkDestroyBuffer(device, m_VertexBuffer, nullptr);
+		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
 	}
 
 	void CSwapChain::CreateSwapChain() {
@@ -153,6 +166,41 @@ namespace BetterThanNothing
 		if (vkCreateRenderPass(m_pDevice->GetVkDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create render pass!");
 		}
+	}
+
+
+	void CSwapChain::CreateVertexBuffer() {
+		VkBufferCreateInfo bufferInfo{};
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size = sizeof(m_Vertices[0]) * m_Vertices.size();
+		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+		auto device = m_pDevice->GetVkDevice();
+		if (vkCreateBuffer(device, &bufferInfo, nullptr, &m_VertexBuffer) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create vertex buffer!");
+		}
+
+		VkMemoryRequirements memRequirements;
+		vkGetBufferMemoryRequirements(device, m_VertexBuffer, &memRequirements);
+
+		VkMemoryAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocInfo.allocationSize = memRequirements.size;
+		allocInfo.memoryTypeIndex = m_pDevice->FindMemoryType(
+			memRequirements.memoryTypeBits,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+		if (vkAllocateMemory(device, &allocInfo, nullptr, &m_VertexBufferMemory) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate vertex buffer memory!");
+		}
+
+		vkBindBufferMemory(device, m_VertexBuffer, m_VertexBufferMemory, 0);
+
+		void* data;
+		vkMapMemory(device, m_VertexBufferMemory, 0, bufferInfo.size, 0, &data);
+		memcpy(data, m_Vertices.data(), (size_t) bufferInfo.size);
+		vkUnmapMemory(device, m_VertexBufferMemory);
 	}
 
 	void CSwapChain::CreateCommandBuffers() {
@@ -287,7 +335,11 @@ namespace BetterThanNothing
 		scissor.extent = swapChainExtent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+		VkBuffer vertexBuffers[] = {m_VertexBuffer};
+		VkDeviceSize offsets[] = {0};
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+		vkCmdDraw(commandBuffer, static_cast<uint32_t>(m_Vertices.size()), 1, 0, 0);
 		vkCmdEndRenderPass(commandBuffer);
 
 		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
