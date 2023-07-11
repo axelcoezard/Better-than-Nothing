@@ -22,13 +22,15 @@ namespace BetterThanNothing
 		VkFormat						m_Format;
 		VkExtent2D						m_Extent;
 
-		VkBuffer						m_VertexBuffer;
-		VkDeviceMemory					m_VertexBufferMemory;
-
 		std::vector<VkImage>			m_Images;
 		std::vector<VkImageView>		m_ImageViews;
 		std::vector<VkFramebuffer>		m_Framebuffers;
 		std::vector<VkCommandBuffer>	m_CommandBuffers;
+
+		VkBuffer						m_VertexBuffer;
+		VkDeviceMemory					m_VertexBufferMemory;
+		VkBuffer						m_IndexBuffer;
+		VkDeviceMemory					m_IndexBufferMemory;
 
 		std::vector<VkSemaphore>		m_ImageAvailableSemaphores;
 		std::vector<VkSemaphore>		m_RenderFinishedSemaphores;
@@ -50,9 +52,13 @@ namespace BetterThanNothing
 		void							CreateImageViews();
 		void							CreateRenderPass();
 		void							CreateVertexBuffer();
+		void							CreateIndexBuffer();
 		void							CreateCommandBuffers();
 		void							CreateSyncObjects();
 		void							CreateFramebuffers();
+
+		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void							CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 		void							CleanupSwapChain();
 		void							RecreateSwapChain();
