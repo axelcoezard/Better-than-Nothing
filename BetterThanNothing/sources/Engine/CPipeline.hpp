@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CDevice.hpp"
+#include "CSwapChain.hpp"
+#include "CDescriptorPool.hpp"
 
 namespace BetterThanNothing
 {
@@ -11,6 +13,7 @@ namespace BetterThanNothing
 	private:
 		CDevice*						m_pDevice;
 		CSwapChain*						m_pSwapChain;
+		CDescriptorPool*				m_pDescriptorPool;
 
 		VkShaderModule					m_VertexShaderModule;
 		VkShaderModule					m_FragmentShaderModule;
@@ -18,7 +21,7 @@ namespace BetterThanNothing
 		VkPipeline						m_GraphicsPipeline;
 
 	public:
-										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain);
+										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain, CDescriptorPool* pDescriptorPool);
 										~CPipeline();
 
 										CPipeline(const CPipeline&) = delete;
@@ -32,6 +35,7 @@ namespace BetterThanNothing
 		VkShaderModule					CreateShaderModule(const std::vector<char>& code);
 
 		void							CreateRenderPass();
+		void							CreateDescriptorSetLayout();
 		void							CreateGraphicsPipeline();
 
 	public:

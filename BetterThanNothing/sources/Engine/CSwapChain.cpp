@@ -1,10 +1,13 @@
+#include "CWindow.hpp"
+#include "CDevice.hpp"
 #include "CSwapChain.hpp"
 #include "CPipeline.hpp"
 #include "CVertex.hpp"
+#include "CUniformBufferObject.hpp"
+#include "CDescriptorPool.hpp"
 
 namespace BetterThanNothing
 {
-
 	const std::vector<Vertex> m_Vertices = {
 		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -25,6 +28,7 @@ namespace BetterThanNothing
 		CreateSyncObjects();
 		CreateVertexBuffer();
 		CreateIndexBuffer();
+		CreateUniformBuffer();
 		CreateCommandBuffers();
 	}
 
@@ -46,6 +50,11 @@ namespace BetterThanNothing
 			m_pCommandPool->GetVkCommandPool(),
 			m_CommandBuffers.size(),
 			m_CommandBuffers.data());
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			vkDestroyBuffer(device, m_UniformBuffers[i], nullptr);
+			vkFreeMemory(device, m_UniformBuffersMemory[i], nullptr);
+		}
 
 		vkDestroyBuffer(device, m_IndexBuffer, nullptr);
 		vkFreeMemory(device, m_IndexBufferMemory, nullptr);
@@ -300,6 +309,23 @@ namespace BetterThanNothing
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
+	void CSwapChain::CreateUniformBuffer() {
+		VkDeviceSize bufferSize = sizeof(CUniformBufferObject);
+
+		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			CreateBuffer(bufferSize,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+				m_UniformBuffers[i],
+				m_UniformBuffersMemory[i]);
+			vkMapMemory(m_pDevice->GetVkDevice(), m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
+		}
+	}
+
 	void CSwapChain::CreateCommandBuffers() {
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
@@ -391,12 +417,24 @@ namespace BetterThanNothing
 		CreateFramebuffers();
 	}
 
+	void CSwapChain::UpdateUniformBuffer(uint32_t currentImage) {
+		static auto startTime = std::chrono::high_resolution_clock::now();
 
-	void CSwapChain::RecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+		CUniformBufferObject ubo{};
+		ubo.m_Model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.m_View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.m_Projection = glm::perspective(glm::radians(45.0f), m_Extent.width / (float) m_Extent.height, 0.1f, 10.0f);
+		ubo.m_Projection[1][1] *= -1;
+
+		memcpy(m_UniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+	}
+
+	void CSwapChain::RecordCommandBuffer(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex) { // move this method to the renderer class
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = 0;
-		beginInfo.pInheritanceInfo = nullptr;
 
 		if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
 			throw std::runtime_error("failed to begin recording command buffer!");
@@ -437,6 +475,11 @@ namespace BetterThanNothing
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			pPipeline->GetVkPipelineLayout(), 0, 1,
+			&pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame], 0, nullptr);
+
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 		vkCmdEndRenderPass(commandBuffer);
 
@@ -445,7 +488,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::DrawFrame(CPipeline* pPipeline) {
+	void CSwapChain::DrawFrame(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline) { // move this method to the renderer class
 		auto device = m_pDevice->GetVkDevice();
 
 		vkWaitForFences(device, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
@@ -461,9 +504,11 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
+		UpdateUniformBuffer(m_CurrentFrame);
+
 		vkResetFences(device, 1, &m_InFlightFences[m_CurrentFrame]);
 		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
-		RecordCommandBuffer(pPipeline, m_CommandBuffers[m_CurrentFrame], imageIndex);
+		RecordCommandBuffer(pDescriptorPool, pPipeline, m_CommandBuffers[m_CurrentFrame], imageIndex);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
