@@ -9,12 +9,12 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-add_subdirectory("BetterThanNothing/libs/glfw")
-add_subdirectory("BetterThanNothing/libs/vulkan")
-add_subdirectory("BetterThanNothing/libs/glm")
-add_subdirectory("BetterThanNothing/libs/stb")
-#add_subdirectory("BetterThanNothing/libs/openal")
-#add_subdirectory("BetterThanNothing/libs/libsndfile")
+add_subdirectory("ThirdParty/glfw")
+add_subdirectory("ThirdParty/vulkan")
+add_subdirectory("ThirdParty/glm")
+add_subdirectory("ThirdParty/stb")
+#add_subdirectory("ThirdParty/openal")
+#add_subdirectory("ThirdParty/libsndfile")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
@@ -41,12 +41,12 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -O2)
 
 target_link_libraries(${PROJECT_NAME} glfw vulkan stb) #openal sndfile)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glfw/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/vulkan)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/glm/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/stb)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/openal/include)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/libs/libsndfile/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glfw/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glm/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
+#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
+#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/libsndfile/include)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/sources)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
