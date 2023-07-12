@@ -2,11 +2,9 @@
 
 # Install all required tools using apt
 sudo apt install cmake -y
-sudo apt install vulkan-tools -y
-sudo apt install libvulkan-dev -y
-sudo apt install vulkan-validationlayers-dev spirv-tools -y
-sudo apt install libglfw3-dev -y
-sudo apt install libglm-dev -y
+sudo apt install vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools -y
+sudo apt install libglfw3-dev libglm-dev -y
+sudo apt install doxygen doxygen-gui doxygen-doc -y
 sudo apt install wget -y
 
 # Install glslc using the downloaded archive
