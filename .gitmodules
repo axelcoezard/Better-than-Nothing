@@ -1,21 +1,19 @@
-[submodule "BetterThanNothing/libs/stb"]
-	path = BetterThanNothing/libs/stb
-	url = https://github.com/axelcoezard/better-than-nothing-stb.git
-[submodule "BetterThanNothing/libs/openal"]
-	path = BetterThanNothing/libs/openal
-	url = https://github.com/axelcoezard/better-than-nothing-openal.git
-[submodule "BetterThanNothing/libs/libsndfile"]
-	path = BetterThanNothing/libs/libsndfile
-	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
-[submodule "BetterThanNothing/libs/entt"]
-	path = BetterThanNothing/libs/entt
-	url = https://github.com/axelcoezard/better-than-nothing-entt.git
 [submodule "BetterThanNothing/libs/glfw"]
 	path = BetterThanNothing/libs/glfw
 	url = https://github.com/axelcoezard/better-than-nothing-glfw.git
-[submodule "BetterThanNothing/libs/glew"]
-	path = BetterThanNothing/libs/glew
-	url = https://github.com/axelcoezard/better-than-nothing-glew.git
+[submodule "BetterThanNothing/libs/vulkan"]
+	path = BetterThanNothing/libs/vulkan
+	url = git@github.com:axelcoezard/better-than-nothing-vulkan.git
+[submodule "BetterThanNothing/libs/openal"]
+	path = BetterThanNothing/libs/openal
+	url = https://github.com/axelcoezard/better-than-nothing-openal.git
 [submodule "BetterThanNothing/libs/glm"]
 	path = BetterThanNothing/libs/glm
 	url = https://github.com/axelcoezard/better-than-nothing-glm.git
+[submodule "BetterThanNothing/libs/stb"]
+	path = BetterThanNothing/libs/stb
+	url = https://github.com/axelcoezard/better-than-nothing-stb.git
+[submodule "BetterThanNothing/libs/libsndfile"]
+	path = BetterThanNothing/libs/libsndfile
+	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git
+

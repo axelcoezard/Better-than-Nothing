@@ -1,38 +1,36 @@
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <functional>
-
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-
-#include "Event/CEventDispatcher.hpp"
-#include "Event/CEvent.hpp"
-#include "Event/CWindowCloseEvent.hpp"
-
-namespace BetterThanNothing {
-	struct CWindow {
+namespace BetterThanNothing
+{
+	class CWindow
+	{
 	private:
-		GLFWwindow*					m_pWindow;
+		GLFWwindow*		m_pWindow;
 
-		std::string					m_Title;
-		uint32_t					m_Width, m_Height;
-		std::function<void(CEvent*)>	m_eventCallback;
+		std::string		m_Title;
+		uint32_t		m_Width, m_Height;
+
+		bool			m_bResized = false;
 	public:
 		CWindow(std::string_view title, uint32_t width, uint32_t height);
 		~CWindow();
 
-		void Open();
-		void Close();
+		CWindow(const CWindow&) = delete;
+		CWindow& operator=(const CWindow&) = delete;
 
-		bool ShouldClose();
-		void SwapBuffers();
-		void Clear(float red, float green, float blue, float alpha);
+		void			Open();
+		void			Poll()						{ glfwPollEvents(); }
+		bool			ShouldClose()				{ return glfwWindowShouldClose(m_pWindow) ==  GLFW_TRUE; }
+		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
 
-		void SetEventCallback(std::function<void(CEvent*)>& eventcallback);
+		static void		ResizeCallback(GLFWwindow* window, int width, int height);
 
-		uint32_t GetWidth();
-		uint32_t GetHeight();
+		GLFWwindow*		GetPointer()				{ return m_pWindow; }
+		std::string&	GetTitle()					{ return m_Title; }
+		uint32_t		GetWidth()					{ return m_Width; }
+		uint32_t		GetHeight()					{ return m_Height; }
+
+		bool			IsResized()					{ return m_bResized; }
+		void			SetResized(bool bResized)	{ m_bResized = bResized; }
 	};
 };
