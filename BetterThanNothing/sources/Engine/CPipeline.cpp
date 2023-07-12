@@ -134,9 +134,9 @@ namespace BetterThanNothing
 		dynamicState.pDynamicStates = dynamicStates.data();
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 1;
-        pipelineLayoutInfo.pSetLayouts = &m_pDescriptorPool->GetVkDescriptorSetLayout();
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = 1;
+		pipelineLayoutInfo.pSetLayouts = &m_pDescriptorPool->GetVkDescriptorSetLayout();
 
 		auto device = m_pDevice->GetVkDevice();
 		if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
