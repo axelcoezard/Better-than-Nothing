@@ -1,6 +1,8 @@
-#include "CPipeline.hpp"
+#include "CDevice.hpp"
 #include "CSwapChain.hpp"
+#include "CPipeline.hpp"
 #include "CVertex.hpp"
+#include "CDescriptorPool.hpp"
 
 namespace BetterThanNothing
 {

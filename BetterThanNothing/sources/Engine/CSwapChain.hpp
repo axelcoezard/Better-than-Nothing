@@ -1,15 +1,11 @@
 #pragma once
 
-#include "CCommandPool.hpp"
-
 namespace BetterThanNothing
 {
 	class CWindow;
-
 	class CDevice;
-
 	class CDescriptorPool;
-
+	class CCommandPool;
 	class CPipeline;
 
 	class CSwapChain
@@ -63,9 +59,13 @@ namespace BetterThanNothing
 		void							CreateSyncObjects();
 		void							CreateFramebuffers();
 
+	public:
 		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		VkCommandBuffer					BeginSingleTimeCommands();
+		void							EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
 		void							CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
+	private:
 		void							CleanupSwapChain();
 		void							RecreateSwapChain();
 		void							UpdateUniformBuffer(uint32_t currentImage);

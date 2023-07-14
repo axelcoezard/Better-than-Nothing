@@ -1,12 +1,10 @@
 #pragma once
 
-#include "CDevice.hpp"
-#include "CSwapChain.hpp"
-#include "CDescriptorPool.hpp"
-
 namespace BetterThanNothing
 {
+	class CDevice;
 	class CSwapChain;
+	class CDescriptorPool;
 
 	class CPipeline
 	{

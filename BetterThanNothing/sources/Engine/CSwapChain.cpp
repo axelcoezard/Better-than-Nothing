@@ -4,6 +4,7 @@
 #include "CPipeline.hpp"
 #include "CVertex.hpp"
 #include "CUniformBufferObject.hpp"
+#include "CCommandPool.hpp"
 #include "CDescriptorPool.hpp"
 
 namespace BetterThanNothing
@@ -214,9 +215,8 @@ namespace BetterThanNothing
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+	VkCommandBuffer CSwapChain::BeginSingleTimeCommands() {
 		auto device = m_pDevice->GetVkDevice();
-		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
 		auto commandPool = m_pCommandPool->GetVkCommandPool();
 
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -233,13 +233,14 @@ namespace BetterThanNothing
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 		vkBeginCommandBuffer(commandBuffer, &beginInfo);
-		{
-			VkBufferCopy copyRegion{};
-			copyRegion.srcOffset = 0;
-			copyRegion.dstOffset = 0;
-			copyRegion.size = size;
-			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-		}
+		return commandBuffer;
+	}
+
+	void CSwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer) {
+		auto device = m_pDevice->GetVkDevice();
+		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
+		auto commandPool = m_pCommandPool->GetVkCommandPool();
+
 		vkEndCommandBuffer(commandBuffer);
 
 		VkSubmitInfo submitInfo{};
@@ -251,6 +252,16 @@ namespace BetterThanNothing
 		vkQueueWaitIdle(graphicsQueue);
 
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+	}
+
+	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+		{
+			VkBufferCopy copyRegion{};
+			copyRegion.size = size;
+			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+		}
+		EndSingleTimeCommands(commandBuffer);
 	}
 
 	void CSwapChain::CreateVertexBuffer() {
