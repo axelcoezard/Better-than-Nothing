@@ -1,18 +1,20 @@
 #include "CWindow.hpp"
 #include "CDevice.hpp"
 #include "CSwapChain.hpp"
+#include "CTexture.hpp"
 #include "CPipeline.hpp"
 #include "CVertex.hpp"
 #include "CUniformBufferObject.hpp"
+#include "CCommandPool.hpp"
 #include "CDescriptorPool.hpp"
 
 namespace BetterThanNothing
 {
 	const std::vector<Vertex> m_Vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 	};
 
 	const std::vector<uint16_t> m_Indices = {
@@ -23,6 +25,11 @@ namespace BetterThanNothing
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
 		CreateSwapChain();
 		CreateImageViews();
+
+		m_pTexture = new CTexture(pDevice, pCommandPool, this);
+		CreateTextureImageView();
+		CreateTextureSampler();
+
 		CreateRenderPass();
 		CreateFramebuffers();
 		CreateSyncObjects();
@@ -44,6 +51,10 @@ namespace BetterThanNothing
 		}
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
+
+		delete m_pTexture;
+		vkDestroySampler(device, m_TextureSampler, nullptr);
+		vkDestroyImageView(device, m_TextureImageView, nullptr);
 
 		vkFreeCommandBuffers(
 			m_pDevice->GetVkDevice(),
@@ -121,26 +132,43 @@ namespace BetterThanNothing
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
-			VkImageViewCreateInfo createInfo{};
-			createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			createInfo.image = m_Images[i];
-			createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			createInfo.format = m_Format;
+			m_ImageViews[i] = CreateImageView(m_Images[i], m_Format);
+		}
+	}
 
-			createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-			createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-			createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-			createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+	void CSwapChain::CreateTextureImageView() {
+		m_TextureImageView = CreateImageView(m_pTexture->GetVkImage(), VK_FORMAT_R8G8B8A8_SRGB);
+	}
 
-			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			createInfo.subresourceRange.baseMipLevel = 0;
-			createInfo.subresourceRange.levelCount = 1;
-			createInfo.subresourceRange.baseArrayLayer = 0;
-			createInfo.subresourceRange.layerCount = 1;
+	void CSwapChain::CreateTextureSampler() {
+		auto device = m_pDevice->GetVkDevice();
 
-			if (vkCreateImageView(m_pDevice->GetVkDevice(), &createInfo, nullptr, &m_ImageViews[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to create image views!");
-			}
+		VkSamplerCreateInfo samplerInfo{};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = VK_FILTER_LINEAR;
+		samplerInfo.minFilter = VK_FILTER_LINEAR;
+		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+		// Anisotropic filtering
+		VkPhysicalDeviceProperties properties{};
+		vkGetPhysicalDeviceProperties(m_pDevice->GetVkPhysicalDevice(), &properties);
+		samplerInfo.anisotropyEnable = VK_TRUE;
+		samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+
+		// Mipmap
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.minLod = 0.0f;
+		samplerInfo.maxLod = 0.0f;
+
+		if (vkCreateSampler(device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create texture sampler!");
 		}
 	}
 
@@ -186,6 +214,30 @@ namespace BetterThanNothing
 		}
 	}
 
+	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format) {
+		VkImageViewCreateInfo viewInfo{};
+		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfo.image = image;
+		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.format = format;
+		viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfo.subresourceRange.baseMipLevel = 0;
+		viewInfo.subresourceRange.levelCount = 1;
+		viewInfo.subresourceRange.baseArrayLayer = 0;
+		viewInfo.subresourceRange.layerCount = 1;
+
+		VkImageView imageView;
+		if (vkCreateImageView(m_pDevice->GetVkDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create texture image view!");
+		}
+
+		return imageView;
+	}
+
 	void CSwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
 		VkBufferCreateInfo bufferInfo{};
@@ -214,9 +266,8 @@ namespace BetterThanNothing
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+	VkCommandBuffer CSwapChain::BeginSingleTimeCommands() {
 		auto device = m_pDevice->GetVkDevice();
-		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
 		auto commandPool = m_pCommandPool->GetVkCommandPool();
 
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -233,13 +284,14 @@ namespace BetterThanNothing
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 		vkBeginCommandBuffer(commandBuffer, &beginInfo);
-		{
-			VkBufferCopy copyRegion{};
-			copyRegion.srcOffset = 0;
-			copyRegion.dstOffset = 0;
-			copyRegion.size = size;
-			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-		}
+		return commandBuffer;
+	}
+
+	void CSwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer) {
+		auto device = m_pDevice->GetVkDevice();
+		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
+		auto commandPool = m_pCommandPool->GetVkCommandPool();
+
 		vkEndCommandBuffer(commandBuffer);
 
 		VkSubmitInfo submitInfo{};
@@ -251,6 +303,16 @@ namespace BetterThanNothing
 		vkQueueWaitIdle(graphicsQueue);
 
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+	}
+
+	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+		{
+			VkBufferCopy copyRegion{};
+			copyRegion.size = size;
+			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+		}
+		EndSingleTimeCommands(commandBuffer);
 	}
 
 	void CSwapChain::CreateVertexBuffer() {

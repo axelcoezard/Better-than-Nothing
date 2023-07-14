@@ -4,6 +4,7 @@
 #include "Engine/CCommandPool.hpp"
 #include "Engine/CSwapChain.hpp"
 #include "Engine/CDescriptorPool.hpp"
+#include "Engine/CTexture.hpp"
 #include "Engine/CPipeline.hpp"
 
 using namespace BetterThanNothing;
