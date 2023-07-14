@@ -60,6 +60,7 @@ namespace BetterThanNothing
 		void							CreateFramebuffers();
 
 	public:
+		VkImageView						CreateImageView(VkImage image, VkFormat format);
 		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		VkCommandBuffer					BeginSingleTimeCommands();
 		void							EndSingleTimeCommands(VkCommandBuffer& commandBuffer);

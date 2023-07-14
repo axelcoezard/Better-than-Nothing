@@ -4,6 +4,7 @@
 #include "Engine/CCommandPool.hpp"
 #include "Engine/CSwapChain.hpp"
 #include "Engine/CDescriptorPool.hpp"
+#include "Engine/CTexture.hpp"
 #include "Engine/CPipeline.hpp"
 
 using namespace BetterThanNothing;
@@ -18,6 +19,8 @@ int main(void) {
 	auto pSwapChain = new CSwapChain(pWindow, pDevice, pCommandPool);
 	auto pDescriptorPool = new CDescriptorPool(pDevice, pSwapChain);
 
+	auto pTexture = new CTexture(pDevice, pCommandPool, pSwapChain);
+
 	// one per shaders couple
 	auto pPipeLine = new CPipeline(pDevice, pSwapChain, pDescriptorPool);
 
@@ -30,6 +33,7 @@ int main(void) {
 	vkDeviceWaitIdle(pDevice->GetVkDevice());
 
 	delete pPipeLine;
+	delete pTexture;
 	delete pDescriptorPool;
 	delete pSwapChain;
 	delete pCommandPool;

@@ -129,6 +129,7 @@ namespace BetterThanNothing
 		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
+		deviceFeatures.samplerAnisotropy = VK_TRUE;
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -219,7 +220,10 @@ namespace BetterThanNothing
 			bSwapChainAdequate = !swapChainSupport.m_Formats.empty() && !swapChainSupport.m_PresentationModes.empty();
 		}
 
-		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
+		VkPhysicalDeviceFeatures supportedFeatures;
+		vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+
+		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate && supportedFeatures.samplerAnisotropy;
 	}
 
 	QueueFamilyIndices CDevice::FindQueueFamilies(VkPhysicalDevice device) {
