@@ -1,6 +1,7 @@
 #include "CWindow.hpp"
 #include "CDevice.hpp"
 #include "CSwapChain.hpp"
+#include "CTexture.hpp"
 #include "CPipeline.hpp"
 #include "CVertex.hpp"
 #include "CUniformBufferObject.hpp"
@@ -10,10 +11,10 @@
 namespace BetterThanNothing
 {
 	const std::vector<Vertex> m_Vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 	};
 
 	const std::vector<uint16_t> m_Indices = {
@@ -24,6 +25,11 @@ namespace BetterThanNothing
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
 		CreateSwapChain();
 		CreateImageViews();
+
+		m_pTexture = new CTexture(pDevice, pCommandPool, this);
+		CreateTextureImageView();
+		CreateTextureSampler();
+
 		CreateRenderPass();
 		CreateFramebuffers();
 		CreateSyncObjects();
@@ -45,6 +51,10 @@ namespace BetterThanNothing
 		}
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
+
+		delete m_pTexture;
+		vkDestroySampler(device, m_TextureSampler, nullptr);
+		vkDestroyImageView(device, m_TextureImageView, nullptr);
 
 		vkFreeCommandBuffers(
 			m_pDevice->GetVkDevice(),
@@ -123,6 +133,42 @@ namespace BetterThanNothing
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
 			m_ImageViews[i] = CreateImageView(m_Images[i], m_Format);
+		}
+	}
+
+	void CSwapChain::CreateTextureImageView() {
+		m_TextureImageView = CreateImageView(m_pTexture->GetVkImage(), VK_FORMAT_R8G8B8A8_SRGB);
+	}
+
+	void CSwapChain::CreateTextureSampler() {
+		auto device = m_pDevice->GetVkDevice();
+
+		VkSamplerCreateInfo samplerInfo{};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = VK_FILTER_LINEAR;
+		samplerInfo.minFilter = VK_FILTER_LINEAR;
+		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+		// Anisotropic filtering
+		VkPhysicalDeviceProperties properties{};
+		vkGetPhysicalDeviceProperties(m_pDevice->GetVkPhysicalDevice(), &properties);
+		samplerInfo.anisotropyEnable = VK_TRUE;
+		samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+
+		// Mipmap
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.minLod = 0.0f;
+		samplerInfo.maxLod = 0.0f;
+
+		if (vkCreateSampler(device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create texture sampler!");
 		}
 	}
 

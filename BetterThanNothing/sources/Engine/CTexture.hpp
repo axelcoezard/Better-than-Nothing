@@ -18,8 +18,7 @@ namespace BetterThanNothing
 
 		VkImage				m_Image;
 		VkDeviceMemory		m_ImageMemory;
-		VkImageView			m_ImageView;
-		VkSampler			m_Sampler;
+
 
 	public:
 							CTexture(CDevice* pDevice, CCommandPool* pCommandPool, CSwapChain* pSwapChain);
@@ -34,8 +33,6 @@ namespace BetterThanNothing
 
 	private:
 		void				CreateTextureImage();
-		void				CreateTextureImageView();
-		void				CreateTextureSampler();
 
 		void				TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		void				CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
@@ -43,6 +40,5 @@ namespace BetterThanNothing
 	public:
 		VkImage&			GetVkImage()		{ return m_Image; }
 		VkDeviceMemory&		GetVkImageMemory()	{ return m_ImageMemory; }
-		VkImageView&		GetVkImageView()	{ return m_ImageView; }
 	};
 };

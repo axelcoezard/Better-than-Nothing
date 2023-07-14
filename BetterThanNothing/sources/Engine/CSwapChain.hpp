@@ -7,6 +7,7 @@ namespace BetterThanNothing
 	class CDescriptorPool;
 	class CCommandPool;
 	class CPipeline;
+	class CTexture;
 
 	class CSwapChain
 	{
@@ -14,6 +15,7 @@ namespace BetterThanNothing
 		CWindow*						m_pWindow;
 		CDevice*						m_pDevice;
 		CCommandPool*					m_pCommandPool;
+		CTexture*						m_pTexture;
 
 		VkSwapchainKHR					m_SwapChain;
 		VkRenderPass					m_RenderPass;
@@ -24,6 +26,9 @@ namespace BetterThanNothing
 		std::vector<VkImageView>		m_ImageViews;
 		std::vector<VkFramebuffer>		m_Framebuffers;
 		std::vector<VkCommandBuffer>	m_CommandBuffers;
+
+		VkImageView						m_TextureImageView;
+		VkSampler						m_TextureSampler;
 
 		VkBuffer						m_VertexBuffer;
 		VkDeviceMemory					m_VertexBufferMemory;
@@ -51,6 +56,8 @@ namespace BetterThanNothing
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
+		void							CreateTextureImageView();
+		void							CreateTextureSampler();
 		void							CreateRenderPass();
 		void							CreateVertexBuffer();
 		void							CreateIndexBuffer();
@@ -88,6 +95,8 @@ namespace BetterThanNothing
 		std::vector<VkImageView>&		GetImageViews()				{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&		GetFramebuffers()			{ return m_Framebuffers; }
 		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()		{ return m_CommandBuffers; }
+		VkImageView&					GetVkTextureImageView()		{ return m_TextureImageView; }
+		VkSampler&						GetVkTextureSampler()		{ return m_TextureSampler; }
 		VkBuffer&						GetVertexBuffer()			{ return m_VertexBuffer; }
 		VkDeviceMemory&					GetVertexBufferMemory()		{ return m_VertexBufferMemory; }
 		VkBuffer&						GetIndexBuffer()			{ return m_IndexBuffer; }
