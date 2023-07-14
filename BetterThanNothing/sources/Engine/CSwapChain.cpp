@@ -33,6 +33,7 @@ namespace BetterThanNothing
 		CreateImageViews();
 
 		m_pTexture = new CTexture(pDevice, pCommandPool, this);
+		CreateDepthResources();
 		CreateTextureImageView();
 		CreateTextureSampler();
 
@@ -138,12 +139,28 @@ namespace BetterThanNothing
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
-			m_ImageViews[i] = CreateImageView(m_Images[i], m_Format);
+			m_ImageViews[i] = CreateImageView(m_Images[i], m_Format, VK_IMAGE_ASPECT_COLOR_BIT);
 		}
 	}
 
+	void CSwapChain::CreateDepthResources() {
+		VkFormat depthFormat = FindDepthFormat();
+
+		m_pTexture->CreateImage(
+			m_Extent.width, m_Extent.height,
+			depthFormat,
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			m_DepthImage,
+			m_DepthImageMemory);
+
+		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+		m_pTexture->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	}
+
 	void CSwapChain::CreateTextureImageView() {
-		m_TextureImageView = CreateImageView(m_pTexture->GetVkImage(), VK_FORMAT_R8G8B8A8_SRGB);
+		m_TextureImageView = CreateImageView(m_pTexture->GetVkImage(), VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 	void CSwapChain::CreateTextureSampler() {
@@ -193,23 +210,42 @@ namespace BetterThanNothing
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+		VkAttachmentDescription depthAttachment{};
+		depthAttachment.format = FindDepthFormat();
+		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		VkAttachmentReference depthAttachmentRef{};
+		depthAttachmentRef.attachment = 1;
+		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 		VkSubpassDescription subpass{};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
+		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 		VkSubpassDependency dependency{};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		dependency.srcAccessMask = 0;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+		std::array<VkAttachmentDescription, 2> attachments = {
+			colorAttachment, depthAttachment
+		};
 
 		VkRenderPassCreateInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = 1;
-		renderPassInfo.pAttachments = &colorAttachment;
+		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		renderPassInfo.pAttachments = attachments.data();
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
 		renderPassInfo.dependencyCount = 1;
@@ -220,7 +256,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format) {
+	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = image;
@@ -230,7 +266,7 @@ namespace BetterThanNothing
 		viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
 		viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
 		viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfo.subresourceRange.aspectMask = aspectFlags;
 		viewInfo.subresourceRange.baseMipLevel = 0;
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -435,13 +471,16 @@ namespace BetterThanNothing
 		m_Framebuffers.resize(m_ImageViews.size());
 
 		for (size_t i = 0; i < m_ImageViews.size(); i++) {
-			VkImageView attachments[] = { m_ImageViews[i] };
+			std::array<VkImageView, 2> attachments = {
+				m_ImageViews[i],
+				m_DepthImageView
+			};
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = m_RenderPass;
-			framebufferInfo.attachmentCount = 1;
-			framebufferInfo.pAttachments = attachments;
+			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = m_Extent.width;
 			framebufferInfo.height = m_Extent.height;
 			framebufferInfo.layers = 1;
@@ -454,6 +493,10 @@ namespace BetterThanNothing
 
 	void CSwapChain::CleanupSwapChain() {
 		auto device = m_pDevice->GetVkDevice();
+
+		vkDestroyImageView(device, m_DepthImageView, nullptr);
+		vkDestroyImage(device, m_DepthImage, nullptr);
+		vkFreeMemory(device, m_DepthImageMemory, nullptr);
 
 		for (auto framebuffer : m_Framebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
@@ -482,7 +525,19 @@ namespace BetterThanNothing
 
 		CreateSwapChain();
 		CreateImageViews();
+		CreateDepthResources();
 		CreateFramebuffers();
+	}
+
+	VkFormat CSwapChain::FindDepthFormat() {
+		return m_pDevice->FindSupportedFormat(
+			{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	}
+
+	bool CSwapChain::HasStencilComponent(VkFormat format) {
+		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
 	void CSwapChain::UpdateUniformBuffer(uint32_t currentImage) {
@@ -511,15 +566,18 @@ namespace BetterThanNothing
 		auto swapChainExtent = m_Extent;
 
 		VkRenderPassBeginInfo renderPassInfo{};
-		VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_RenderPass;
 		renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
 		renderPassInfo.renderArea.offset = {0, 0};
 		renderPassInfo.renderArea.extent = swapChainExtent;
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
+
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+		clearValues[1].depthStencil = {1.0f, 0};
+
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());

@@ -64,6 +64,7 @@ namespace BetterThanNothing
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
 		uint32_t						FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \

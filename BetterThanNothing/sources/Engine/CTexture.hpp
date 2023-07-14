@@ -34,6 +34,7 @@ namespace BetterThanNothing
 	private:
 		void				CreateTextureImage();
 
+	public:
 		void				TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		void				CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 

@@ -291,6 +291,24 @@ namespace BetterThanNothing
 		throw std::runtime_error("failed to find suitable memory type!");
 	}
 
+	VkFormat CDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+		for (VkFormat format : candidates) {
+			VkFormatProperties props;
+			vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &props);
+
+			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+				return format;
+			}
+
+			if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+				return format;
+			}
+		}
+
+		throw std::runtime_error("failed to find supported format!");
+	}
+
+
 	VkResult CDevice::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if (func != nullptr) {
