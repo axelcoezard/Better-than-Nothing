@@ -1,5 +1,6 @@
 #include "CDevice.hpp"
 #include "CSwapChain.hpp"
+#include "CTexture.hpp"
 #include "CDescriptorPool.hpp"
 #include "CUniformBufferObject.hpp"
 
@@ -90,7 +91,7 @@ namespace BetterThanNothing
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			imageInfo.imageView = m_pSwapChain->GetVkTextureImageView();
-			imageInfo.sampler = m_pSwapChain->GetVkTextureSampler();
+			imageInfo.sampler = m_pSwapChain->GetTexture()->GetVkTextureSampler();
 
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 

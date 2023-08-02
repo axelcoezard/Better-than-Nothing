@@ -29,7 +29,6 @@ namespace BetterThanNothing
 		std::vector<VkCommandBuffer>	m_CommandBuffers;
 
 		VkImageView						m_TextureImageView;
-		VkSampler						m_TextureSampler;
 
 		VkImage							m_DepthImage;
 		VkDeviceMemory					m_DepthImageMemory;
@@ -80,7 +79,7 @@ namespace BetterThanNothing
 		void							CreateFramebuffers();
 
 	public:
-		VkImageView						CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+		VkImageView						CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		VkCommandBuffer					BeginSingleTimeCommands();
 		void							EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
@@ -105,6 +104,8 @@ namespace BetterThanNothing
 		VkExtent2D						ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 	public:
+		CTexture*&						GetTexture()				{ return m_pTexture; }
+
 		VkSwapchainKHR&					GetVkSwapChain()			{ return m_SwapChain; }
 		VkRenderPass&					GetVkRenderPass()			{ return m_RenderPass; }
 		VkFormat&						GetVkFormat()				{ return m_Format; }
@@ -114,7 +115,6 @@ namespace BetterThanNothing
 		std::vector<VkFramebuffer>&		GetFramebuffers()			{ return m_Framebuffers; }
 		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()		{ return m_CommandBuffers; }
 		VkImageView&					GetVkTextureImageView()		{ return m_TextureImageView; }
-		VkSampler&						GetVkTextureSampler()		{ return m_TextureSampler; }
 		VkBuffer&						GetVertexBuffer()			{ return m_VertexBuffer; }
 		VkDeviceMemory&					GetVertexBufferMemory()		{ return m_VertexBufferMemory; }
 		VkBuffer&						GetIndexBuffer()			{ return m_IndexBuffer; }
