@@ -30,6 +30,10 @@ namespace BetterThanNothing
 		VkImageView						m_TextureImageView;
 		VkSampler						m_TextureSampler;
 
+		VkImage							m_DepthImage;
+		VkDeviceMemory					m_DepthImageMemory;
+		VkImageView						m_DepthImageView;
+
 		VkBuffer						m_VertexBuffer;
 		VkDeviceMemory					m_VertexBufferMemory;
 		VkBuffer						m_IndexBuffer;
@@ -56,18 +60,22 @@ namespace BetterThanNothing
 	private:
 		void							CreateSwapChain();
 		void							CreateImageViews();
+		void							CreateRenderPass();
+
+		void							CreateDepthResources();
 		void							CreateTextureImageView();
 		void							CreateTextureSampler();
-		void							CreateRenderPass();
+
 		void							CreateVertexBuffer();
 		void							CreateIndexBuffer();
 		void							CreateUniformBuffer();
+
 		void							CreateCommandBuffers();
 		void							CreateSyncObjects();
 		void							CreateFramebuffers();
 
 	public:
-		VkImageView						CreateImageView(VkImage image, VkFormat format);
+		VkImageView						CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		VkCommandBuffer					BeginSingleTimeCommands();
 		void							EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
@@ -76,8 +84,13 @@ namespace BetterThanNothing
 	private:
 		void							CleanupSwapChain();
 		void							RecreateSwapChain();
+
+	public:
+		VkFormat						FindDepthFormat();
+		bool							HasStencilComponent(VkFormat format);
 		void							UpdateUniformBuffer(uint32_t currentImage);
 		void							RecordCommandBuffer(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
 	public:
 		void							DrawFrame(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline);
 
