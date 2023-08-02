@@ -9,8 +9,8 @@ namespace BetterThanNothing
 	CPipeline::CPipeline(CDevice* pDevice, CSwapChain* pSwapChain, CDescriptorPool* pDescriptorPool)
 		: m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pDescriptorPool(pDescriptorPool) {
 		LoadShader(
-			"/home/acoezard/lab/better-than-nothing/BetterThanNothing/assets/vert.spv",
-			"/home/acoezard/lab/better-than-nothing/BetterThanNothing/assets/frag.spv");
+			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
+			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 		CreateGraphicsPipeline();
 	}
 
@@ -75,8 +75,8 @@ namespace BetterThanNothing
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
-		auto bindingDescription = Vertex::GetBindingDescription();
-		auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+		auto bindingDescription = CVertex::GetBindingDescription();
+		auto attributeDescriptions = CVertex::GetAttributeDescriptions();
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
