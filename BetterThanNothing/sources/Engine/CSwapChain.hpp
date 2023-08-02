@@ -8,6 +8,7 @@ namespace BetterThanNothing
 	class CCommandPool;
 	class CPipeline;
 	class CTexture;
+	class CVertex;
 
 	class CSwapChain
 	{
@@ -33,6 +34,9 @@ namespace BetterThanNothing
 		VkImage							m_DepthImage;
 		VkDeviceMemory					m_DepthImageMemory;
 		VkImageView						m_DepthImageView;
+
+		std::vector<CVertex>			m_Vertices;
+		std::vector<uint32_t>			m_Indices;
 
 		VkBuffer						m_VertexBuffer;
 		VkDeviceMemory					m_VertexBufferMemory;
@@ -66,6 +70,7 @@ namespace BetterThanNothing
 		void							CreateTextureImageView();
 		void							CreateTextureSampler();
 
+		void							LoadModel();
 		void							CreateVertexBuffer();
 		void							CreateIndexBuffer();
 		void							CreateUniformBuffer();

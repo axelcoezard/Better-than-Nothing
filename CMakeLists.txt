@@ -13,6 +13,7 @@ add_subdirectory("ThirdParty/glfw")
 add_subdirectory("ThirdParty/vulkan")
 add_subdirectory("ThirdParty/glm")
 add_subdirectory("ThirdParty/stb")
+#add_subdirectory("ThirdParty/tinyobjloader2")
 #add_subdirectory("ThirdParty/openal")
 #add_subdirectory("ThirdParty/libsndfile")
 
@@ -42,6 +43,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Th
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glm/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader2)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/libsndfile/include)
 
