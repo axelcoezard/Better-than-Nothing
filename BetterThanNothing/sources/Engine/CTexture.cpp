@@ -306,7 +306,7 @@ namespace BetterThanNothing
 
 		// Mipmap
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.minLod = static_cast<float>(m_MipLevels / 2);
+		samplerInfo.minLod = 0.0f; // static_cast<float>(m_MipLevels / 2);
 		samplerInfo.maxLod = static_cast<float>(m_MipLevels);
 		samplerInfo.mipLodBias = 0.0f;
 
