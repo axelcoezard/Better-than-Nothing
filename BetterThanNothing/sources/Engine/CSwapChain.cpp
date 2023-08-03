@@ -23,6 +23,7 @@ namespace BetterThanNothing
 		CreateImageViews();
 
 		m_pTexture = new CTexture(pDevice, pCommandPool, this);
+		CreateColorResources();
 		CreateDepthResources();
 
 		CreateRenderPass();
@@ -136,6 +137,7 @@ namespace BetterThanNothing
 
 		m_pTexture->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
+			m_pDevice->GetMsaaSamples(),
 			depthFormat,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -147,24 +149,52 @@ namespace BetterThanNothing
 		m_pTexture->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
+	void CSwapChain::CreateColorResources() {
+		VkFormat colorFormat = m_Format;
+
+		m_pTexture->CreateImage(
+			m_Extent.width, m_Extent.height, 1,
+			m_pDevice->GetMsaaSamples(), colorFormat,
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			m_ColorImage, m_ColorImageMemory);
+
+		m_ColorImageView = CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+	}
+
 	void CSwapChain::CreateRenderPass() {
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_Format;
-		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		colorAttachment.samples = m_pDevice->GetMsaaSamples();
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+		 VkAttachmentDescription colorAttachmentResolve{};
+		colorAttachmentResolve.format = m_Format;
+		colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+		colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+		VkAttachmentReference colorAttachmentResolveRef{};
+		colorAttachmentResolveRef.attachment = 2;
+		colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
 		VkAttachmentDescription depthAttachment{};
 		depthAttachment.format = FindDepthFormat();
-		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.samples = m_pDevice->GetMsaaSamples();
 		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -181,6 +211,7 @@ namespace BetterThanNothing
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
 		subpass.pDepthStencilAttachment = &depthAttachmentRef;
+		subpass.pResolveAttachments = &colorAttachmentResolveRef;
 
 		VkSubpassDependency dependency{};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -190,8 +221,8 @@ namespace BetterThanNothing
 		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-		std::array<VkAttachmentDescription, 2> attachments = {
-			colorAttachment, depthAttachment
+		std::array<VkAttachmentDescription, 3> attachments = {
+			colorAttachment, depthAttachment, colorAttachmentResolve
 		};
 
 		VkRenderPassCreateInfo renderPassInfo{};
@@ -463,9 +494,10 @@ namespace BetterThanNothing
 		m_Framebuffers.resize(m_ImageViews.size());
 
 		for (size_t i = 0; i < m_ImageViews.size(); i++) {
-			std::array<VkImageView, 2> attachments = {
-				m_ImageViews[i],
-				m_DepthImageView
+			std::array<VkImageView, 3> attachments = {
+				m_ColorImageView,
+				m_DepthImageView,
+				m_ImageViews[i]
 			};
 
 			VkFramebufferCreateInfo framebufferInfo{};
@@ -489,6 +521,10 @@ namespace BetterThanNothing
 		vkDestroyImageView(device, m_DepthImageView, nullptr);
 		vkDestroyImage(device, m_DepthImage, nullptr);
 		vkFreeMemory(device, m_DepthImageMemory, nullptr);
+
+		vkDestroyImageView(device, m_ColorImageView, nullptr);
+		vkDestroyImage(device, m_ColorImage, nullptr);
+		vkFreeMemory(device, m_ColorImageMemory, nullptr);
 
 		for (auto framebuffer : m_Framebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
@@ -517,6 +553,7 @@ namespace BetterThanNothing
 
 		CreateSwapChain();
 		CreateImageViews();
+		CreateColorResources();
 		CreateDepthResources();
 		CreateFramebuffers();
 	}

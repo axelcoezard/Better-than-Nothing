@@ -32,6 +32,10 @@ namespace BetterThanNothing
 		VkDeviceMemory					m_DepthImageMemory;
 		VkImageView						m_DepthImageView;
 
+		VkImage							m_ColorImage;
+		VkDeviceMemory					m_ColorImageMemory;
+		VkImageView						m_ColorImageView;
+
 		std::vector<CVertex>			m_Vertices;
 		std::vector<uint32_t>			m_Indices;
 
@@ -63,6 +67,7 @@ namespace BetterThanNothing
 		void							CreateImageViews();
 		void							CreateRenderPass();
 
+		void							CreateColorResources();
 		void							CreateDepthResources();
 
 		void							LoadModel();

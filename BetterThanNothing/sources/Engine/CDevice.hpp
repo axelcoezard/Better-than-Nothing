@@ -38,6 +38,8 @@ namespace BetterThanNothing
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*>	m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
+
 	public:
 										CDevice(CWindow* pWindow);
 										~CDevice();
@@ -59,6 +61,7 @@ namespace BetterThanNothing
 
 		std::vector<const char*>		GetRequiredExtensions();
 		bool							IsDeviceSuitable(VkPhysicalDevice device);
+		VkSampleCountFlagBits			GetMaxUsableSampleCount();
 
 	public:
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
@@ -86,5 +89,6 @@ namespace BetterThanNothing
 		VkQueue&						GetVkPresentationQueue()	{ return m_PresentationQueue; }
 		const std::vector<const char*>	GetValidationLayers()		{ return m_ValidationLayers; }
 		const std::vector<const char*>	GetDeviceExtensions()		{ return m_DeviceExtensions; }
+		VkSampleCountFlagBits&			GetMsaaSamples()			{ return m_MsaaSamples; }
 	};
 };
