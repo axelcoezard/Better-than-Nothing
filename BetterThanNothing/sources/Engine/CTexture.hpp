@@ -46,9 +46,9 @@ namespace BetterThanNothing
 		void				CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 	public:
-		VkImage&			GetVkImage()			{ return m_Image; }
-		VkDeviceMemory&		GetVkImageMemory()		{ return m_ImageMemory; }
-		VkSampler&			GetVkTextureSampler()	{ return m_Sampler; }
+		VkImage&			GetVkImage()				{ return m_Image; }
+		VkDeviceMemory&		GetVkImageMemory()			{ return m_ImageMemory; }
+		VkSampler&			GetVkTextureSampler()		{ return m_Sampler; }
 		VkImageView&		GetVkTextureImageView()		{ return m_ImageView; }
 	};
 };
