@@ -20,7 +20,8 @@ namespace BetterThanNothing
 
 		VkImage				m_Image;
 		VkDeviceMemory		m_ImageMemory;
-		VkSampler			m_TextureSampler;
+		VkSampler			m_Sampler;
+		VkImageView			m_ImageView;
 
 
 	public:
@@ -37,6 +38,7 @@ namespace BetterThanNothing
 
 	private:
 		void				CreateTextureImage();
+		void				CreateTextureImageView();
 		void				CreateTextureSampler();
 
 	public:
@@ -46,6 +48,7 @@ namespace BetterThanNothing
 	public:
 		VkImage&			GetVkImage()			{ return m_Image; }
 		VkDeviceMemory&		GetVkImageMemory()		{ return m_ImageMemory; }
-		VkSampler&			GetVkTextureSampler()	{ return m_TextureSampler; }
+		VkSampler&			GetVkTextureSampler()	{ return m_Sampler; }
+		VkImageView&		GetVkTextureImageView()		{ return m_ImageView; }
 	};
 };

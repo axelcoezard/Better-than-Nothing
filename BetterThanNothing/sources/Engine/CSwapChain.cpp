@@ -24,7 +24,6 @@ namespace BetterThanNothing
 
 		m_pTexture = new CTexture(pDevice, pCommandPool, this);
 		CreateDepthResources();
-		CreateTextureImageView();
 
 		CreateRenderPass();
 		CreateFramebuffers();
@@ -51,7 +50,6 @@ namespace BetterThanNothing
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
 		delete m_pTexture;
-		vkDestroyImageView(device, m_TextureImageView, nullptr);
 
 		vkFreeCommandBuffers(
 			m_pDevice->GetVkDevice(),
@@ -147,10 +145,6 @@ namespace BetterThanNothing
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
 		m_pTexture->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
-	}
-
-	void CSwapChain::CreateTextureImageView() {
-		m_TextureImageView = CreateImageView(m_pTexture->GetVkImage(), VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
 	void CSwapChain::CreateRenderPass() {

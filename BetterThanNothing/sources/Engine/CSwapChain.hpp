@@ -28,8 +28,6 @@ namespace BetterThanNothing
 		std::vector<VkFramebuffer>		m_Framebuffers;
 		std::vector<VkCommandBuffer>	m_CommandBuffers;
 
-		VkImageView						m_TextureImageView;
-
 		VkImage							m_DepthImage;
 		VkDeviceMemory					m_DepthImageMemory;
 		VkImageView						m_DepthImageView;
@@ -66,8 +64,6 @@ namespace BetterThanNothing
 		void							CreateRenderPass();
 
 		void							CreateDepthResources();
-		void							CreateTextureImageView();
-		void							CreateTextureSampler();
 
 		void							LoadModel();
 		void							CreateVertexBuffer();
@@ -114,7 +110,6 @@ namespace BetterThanNothing
 		std::vector<VkImageView>&		GetImageViews()				{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&		GetFramebuffers()			{ return m_Framebuffers; }
 		std::vector<VkCommandBuffer>&	GetVkCommandBuffer()		{ return m_CommandBuffers; }
-		VkImageView&					GetVkTextureImageView()		{ return m_TextureImageView; }
 		VkBuffer&						GetVertexBuffer()			{ return m_VertexBuffer; }
 		VkDeviceMemory&					GetVertexBufferMemory()		{ return m_VertexBufferMemory; }
 		VkBuffer&						GetIndexBuffer()			{ return m_IndexBuffer; }

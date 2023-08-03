@@ -90,7 +90,7 @@ namespace BetterThanNothing
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = m_pSwapChain->GetVkTextureImageView();
+			imageInfo.imageView = m_pSwapChain->GetTexture()->GetVkTextureImageView();
 			imageInfo.sampler = m_pSwapChain->GetTexture()->GetVkTextureSampler();
 
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};

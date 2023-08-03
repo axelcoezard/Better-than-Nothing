@@ -9,8 +9,9 @@ namespace BetterThanNothing
 {
 	CTexture::CTexture(CDevice* pDevice, CCommandPool* pCommandPool, CSwapChain* pSwapChain)
 		: m_pDevice(pDevice), m_pCommandPool(pCommandPool), m_pSwapChain(pSwapChain) {
-		CreateTextureSampler();
 		CreateTextureImage();
+		CreateTextureImageView();
+		CreateTextureSampler();
 	}
 
 	CTexture::~CTexture() {
@@ -18,7 +19,8 @@ namespace BetterThanNothing
 
 		vkDestroyImage(device, m_Image, nullptr);
 		vkFreeMemory(device, m_ImageMemory, nullptr);
-		vkDestroySampler(device, m_TextureSampler, nullptr);
+		vkDestroyImageView(device, m_ImageView, nullptr);
+		vkDestroySampler(device, m_Sampler, nullptr);
 	}
 
 	void CTexture::CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
@@ -28,7 +30,7 @@ namespace BetterThanNothing
 		imageInfo.extent.width = static_cast<uint32_t>(width);
 		imageInfo.extent.height = static_cast<uint32_t>(height);
 		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = 1;
+		imageInfo.mipLevels = mipLevels;
 		imageInfo.arrayLayers = 1;
 		imageInfo.format = format;
 		imageInfo.tiling = tiling;
@@ -37,7 +39,6 @@ namespace BetterThanNothing
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.flags = 0;
-		imageInfo.mipLevels = mipLevels;
 
  		auto device = m_pDevice->GetVkDevice();
 		if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
@@ -57,6 +58,10 @@ namespace BetterThanNothing
 		}
 
 		vkBindImageMemory(device, image, imageMemory, 0);
+	}
+
+	void CTexture::CreateTextureImageView() {
+		m_ImageView = m_pSwapChain->CreateImageView(m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
 	}
 
 	void CTexture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
@@ -305,7 +310,7 @@ namespace BetterThanNothing
 		samplerInfo.maxLod = static_cast<float>(m_MipLevels);
 		samplerInfo.mipLodBias = 0.0f;
 
-		if (vkCreateSampler(device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS) {
+		if (vkCreateSampler(device, &samplerInfo, nullptr, &m_Sampler) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create texture sampler!");
 		}
 	}
