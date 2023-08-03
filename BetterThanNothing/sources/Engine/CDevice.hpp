@@ -64,6 +64,7 @@ namespace BetterThanNothing
 		VkSampleCountFlagBits			GetMaxUsableSampleCount();
 
 	public:
+		void							Idle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
 		uint32_t						FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);

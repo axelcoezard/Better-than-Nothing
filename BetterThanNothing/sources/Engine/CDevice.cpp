@@ -156,9 +156,6 @@ namespace BetterThanNothing
 		vkGetDeviceQueue(m_Device, indices.m_PresentationFamily.value(), 0, &m_PresentationQueue);
 	}
 
-
-
-
 	bool CDevice::CheckValidationLayerSupport() {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -241,7 +238,6 @@ namespace BetterThanNothing
 		if (counts & VK_SAMPLE_COUNT_2_BIT)		{ return VK_SAMPLE_COUNT_2_BIT; }
 		return VK_SAMPLE_COUNT_1_BIT;
 	}
-
 
 	QueueFamilyIndices CDevice::FindQueueFamilies(VkPhysicalDevice device) {
 		QueueFamilyIndices indices;
