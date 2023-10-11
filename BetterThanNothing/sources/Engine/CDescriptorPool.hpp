@@ -3,8 +3,8 @@
 namespace BetterThanNothing
 {
 	class CDevice;
-
 	class CSwapChain;
+	class CModel;
 
 	class CDescriptorPool
 	{
@@ -29,6 +29,9 @@ namespace BetterThanNothing
 		void 							CreateDescriptorSetLayout();
 		void							CreateDescriptorPool();
 		void							CreateDescriptorSets();
+
+	public:
+		void							UpdateDescriptorSets(CModel* model);
 
 	public:
 		VkDescriptorSetLayout&			GetVkDescriptorSetLayout() { return m_DescriptorSetLayout; }

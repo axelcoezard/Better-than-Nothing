@@ -20,8 +20,6 @@ namespace BetterThanNothing
 	CPipeline::~CPipeline() {
 		auto device = m_pDevice->GetVkDevice();
 
-		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
-		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
@@ -51,6 +49,10 @@ namespace BetterThanNothing
 	}
 
 	VkShaderModule CPipeline::CreateShaderModule(const std::vector<char>& code) {
+		if (code.data() == nullptr || code.size() == 0) {
+			throw std::runtime_error("Invalid shader code");
+		}
+
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = code.size();

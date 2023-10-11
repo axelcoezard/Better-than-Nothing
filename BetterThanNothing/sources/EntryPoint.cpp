@@ -10,6 +10,26 @@ int main(void) {
 	auto pDevice = new CDevice(pWindow);
 	auto pRenderer = new CRenderer(pWindow, pDevice);
 
+	pRenderer->LoadPipeline(
+		"main",
+		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
+		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
+
+	pRenderer->LoadModel(
+		"42",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
+
+	//pRenderer->LoadModel(
+	//	"viking_room",
+	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
+	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
+
+	//pRenderer->LoadModel(
+	//	"stall",
+	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/stall/stall.obj",
+	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/stall/stall.png");
+
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 		pRenderer->DrawFrame();
@@ -17,6 +37,7 @@ int main(void) {
 
 	pDevice->Idle();
 
+	delete pRenderer;
 	delete pDevice;
 	delete pWindow;
 

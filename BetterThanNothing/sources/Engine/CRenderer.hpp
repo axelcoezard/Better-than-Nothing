@@ -10,6 +10,7 @@ namespace BetterThanNothing
 	class CDescriptorPool;
 	class CTexture;
 	class CPipeline;
+	class CModel;
 
 	class CRenderer
 	{
@@ -21,6 +22,8 @@ namespace BetterThanNothing
 		CDescriptorPool*					m_pDescriptorPool;
 
 		std::map<std::string, CPipeline*>	m_pPipeLines;
+		std::map<std::string, CTexture*>	m_pTextures;
+		std::map<std::string, CModel*>		m_pModels;
 
 	public:
 											CRenderer(CWindow* pWindow, CDevice* pDevice);
@@ -31,10 +34,10 @@ namespace BetterThanNothing
 											CRenderer(CRenderer&&) = delete;
 		CRenderer&							operator=(CRenderer&&) = delete;
 
-	private:
-		void								CreatePipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
-
 	public:
+		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
+		void								LoadModel(const std::string& modelID, const std::string& modelPath, const std::string& texturePath);
+
 		void								DrawFrame();
 
 	public:
@@ -44,5 +47,6 @@ namespace BetterThanNothing
 		CSwapChain*							GetSwapChain()		{ return m_pSwapChain; }
 		CDescriptorPool*					GetDescriptorPool()	{ return m_pDescriptorPool; }
 		std::map<std::string, CPipeline*>	GetPipeLines()		{ return m_pPipeLines; }
+		std::map<std::string, CModel*>		GetModels()			{ return m_pModels; }
 	};
 };

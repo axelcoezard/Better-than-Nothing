@@ -3,6 +3,7 @@
 #include "CTexture.hpp"
 #include "CDescriptorPool.hpp"
 #include "CUniformBufferObject.hpp"
+#include "CModel.hpp"
 
 namespace BetterThanNothing
 {
@@ -42,6 +43,7 @@ namespace BetterThanNothing
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
 		layoutInfo.pBindings = bindings.data();
+		layoutInfo.flags = VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
 
 		if (vkCreateDescriptorSetLayout(m_pDevice->GetVkDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor set layout!");
@@ -81,6 +83,11 @@ namespace BetterThanNothing
 		if (vkAllocateDescriptorSets(device, &allocInfo, m_DescriptorSets.data()) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate descriptor sets!");
 		}
+	}
+
+	void CDescriptorPool::UpdateDescriptorSets(CModel* model)
+	{
+		auto device = m_pDevice->GetVkDevice();
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			VkDescriptorBufferInfo bufferInfo{};
@@ -90,8 +97,8 @@ namespace BetterThanNothing
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = m_pSwapChain->GetTexture()->GetVkTextureImageView();
-			imageInfo.sampler = m_pSwapChain->GetTexture()->GetVkTextureSampler();
+			imageInfo.imageView = model->GetTexture()->GetVkTextureImageView();
+			imageInfo.sampler = model->GetTexture()->GetVkTextureSampler();
 
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
