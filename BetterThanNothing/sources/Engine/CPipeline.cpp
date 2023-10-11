@@ -6,11 +6,14 @@
 
 namespace BetterThanNothing
 {
-	CPipeline::CPipeline(CDevice* pDevice, CSwapChain* pSwapChain, CDescriptorPool* pDescriptorPool)
-		: m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pDescriptorPool(pDescriptorPool) {
-		LoadShader(
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
+	CPipeline::CPipeline(
+		CDevice* pDevice,
+		CSwapChain* pSwapChain,
+		CDescriptorPool* pDescriptorPool,
+		const std::string& vertexShaderFilePath,
+		const std::string& fragmentShaderFilePath
+	) : m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pDescriptorPool(pDescriptorPool) {
+		LoadShader(vertexShaderFilePath, fragmentShaderFilePath);
 		CreateGraphicsPipeline();
 	}
 
