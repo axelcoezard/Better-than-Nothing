@@ -41,8 +41,8 @@ namespace BetterThanNothing
 		void							CreateTexture(const std::string& texturePath);
 
 	public:
-		VkBuffer&						GetVkVertexBuffer() { return m_VertexBuffer; }
-		VkBuffer&						GetVkIndexBuffer() { return m_IndexBuffer; }
+		VkBuffer&						GetVertexBuffer() { return m_VertexBuffer; }
+		VkBuffer&						GetIndexBuffer() { return m_IndexBuffer; }
 		uint32_t						GetIndicesCount() { return static_cast<uint32_t>(m_Indices.size()); }
 		CTexture*						GetTexture() { return m_pTexture; }
 	};

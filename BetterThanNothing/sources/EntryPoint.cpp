@@ -20,10 +20,10 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
 
-	//pRenderer->LoadModel(
-	//	"viking_room",
-	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
-	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
+	pRenderer->LoadModel(
+		"viking_room",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
 
 	//pRenderer->LoadModel(
 	//	"stall",

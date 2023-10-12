@@ -9,6 +9,7 @@ namespace BetterThanNothing
 	class CPipeline;
 	class CTexture;
 	class CVertex;
+	class CModel;
 
 	class CSwapChain
 	{
@@ -45,6 +46,7 @@ namespace BetterThanNothing
 
 		uint32_t						m_CurrentFrame = 0;
 		uint32_t						m_CurrentImageIndex = 0;
+		CDescriptorPool*				m_pDescriptorPool = nullptr;
 
 	public:
 										CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
@@ -81,11 +83,20 @@ namespace BetterThanNothing
 
 		VkFormat						FindDepthFormat();
 		bool							HasStencilComponent(VkFormat format);
-		void							UpdateUniformBuffer(uint32_t currentImage);
+		void							UpdateUniformBuffer();
 
-		void							StartRecordCommandBuffer(CPipeline* pPipeline, VkCommandBuffer commandBuffer);
-		void							EndRecordCommandBuffer(VkCommandBuffer commandBuffer);
+		void							BindDescriptorPool(CDescriptorPool* pDescriptorPool);
+		void							BeginRecordCommandBuffer(CPipeline* pPipeline);
+		void							BindModel(CModel* pModel);
+		void							DrawModel(CPipeline* pPipeline, CModel* pModel);
+		void							EndRecordCommandBuffer();
+
+	private:
+		void							ResetCommandBuffer();
 		VkResult						AcquireNextImage();
+		void							WaitForFences();
+		void							ResetFences();
+		void							NextFrame();
 
 	private:
 		VkSurfaceFormatKHR				ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -104,13 +115,6 @@ namespace BetterThanNothing
 		std::vector<VkBuffer>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<VkDeviceMemory>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
 		std::vector<void*>&				GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
-		std::vector<VkFence>&			GetInFlightFences()				{ return m_InFlightFences; }
-		std::vector<VkSemaphore>&		GetImageAvailableSemaphores()	{ return m_ImageAvailableSemaphores; }
-		std::vector<VkSemaphore>&		GetRenderFinishedSemaphores()	{ return m_RenderFinishedSemaphores; }
-		VkCommandBuffer&				GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
-		uint32_t&						GetCurrentImageIndex()			{ return m_CurrentImageIndex; }
-		uint32_t&						GetCurrentFrame()				{ return m_CurrentFrame; }
-		void							SetCurrentFrame(uint32_t currentFrame) { m_CurrentFrame = currentFrame; }
 
 	};
 };

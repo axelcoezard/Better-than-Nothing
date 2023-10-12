@@ -73,19 +73,6 @@ namespace BetterThanNothing
 		CreateTexture(texturePath);
 	}
 
-	void CModel::Bind(VkCommandBuffer commandBuffer)
-	{
-		VkBuffer vertexBuffers[] = {m_VertexBuffer};
-		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-	}
-
-	void CModel::Draw(VkCommandBuffer commandBuffer)
-	{
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
-	}
-
 	void CModel::CreateVertexBuffer()
 	{
 		auto device = m_pDevice->GetVkDevice();
