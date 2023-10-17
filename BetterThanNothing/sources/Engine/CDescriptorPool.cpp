@@ -122,10 +122,4 @@ namespace BetterThanNothing
 			}
 		}
 	}
-
-	void CDescriptorPool::UpdateDescriptorSets(CModel* model, uint32_t modelIndex)
-	{
-		(void) model;
-		(void) modelIndex;
-	}
 };
