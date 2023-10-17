@@ -1,4 +1,5 @@
 #include "Engine/CWindow.hpp"
+#include "Handlers/CKeyboardHandler.hpp"
 
 namespace BetterThanNothing
 {
@@ -24,6 +25,7 @@ namespace BetterThanNothing
 
 		glfwSetWindowUserPointer(m_pWindow, this);
 		glfwSetFramebufferSizeCallback(m_pWindow, ResizeCallback);
+		glfwSetKeyCallback(m_pWindow, KeyCallback);
 	}
 
 	void CWindow::ResizeCallback(GLFWwindow* pWindow, int width, int height) {
@@ -32,5 +34,14 @@ namespace BetterThanNothing
 
 		auto window = reinterpret_cast<CWindow*>(glfwGetWindowUserPointer(pWindow));
 		window->SetResized(true);
+	}
+
+	void CWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+		(void) scancode;
+		(void) mods;
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		}
+		CKeyboardHandler::UpdateKey(key, action);
 	}
 };

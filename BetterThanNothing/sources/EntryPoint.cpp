@@ -2,6 +2,7 @@
 #include "Engine/CWindow.hpp"
 #include "Engine/CDevice.hpp"
 #include "Engine/CRenderer.hpp"
+#include "Handlers/CKeyboardHandler.hpp"
 
 using namespace BetterThanNothing;
 
@@ -30,6 +31,15 @@ int main(void) {
 	pRenderer->PrepareFrame();
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
+
+		if (CKeyboardHandler::IsKeyPressed(GLFW_KEY_W)) {
+			pRenderer->MoveCamera(-.001f, 0.0f, -.001f);
+		}
+
+		if (CKeyboardHandler::IsKeyPressed(GLFW_KEY_S)) {
+			pRenderer->MoveCamera(.001f, 0.0f, .001f);
+		}
+
 		pRenderer->DrawFrame();
 	}
 

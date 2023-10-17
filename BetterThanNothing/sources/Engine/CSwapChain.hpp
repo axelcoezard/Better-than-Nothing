@@ -48,6 +48,10 @@ namespace BetterThanNothing
 		uint32_t						m_CurrentImageIndex = 0;
 		CDescriptorPool*				m_pDescriptorPool = nullptr;
 
+		float							m_CameraX = 0.0f;
+		float							m_CameraY = 0.0f;
+		float							m_CameraZ = 0.0f;
+
 	public:
 										CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
 										~CSwapChain();
@@ -84,6 +88,8 @@ namespace BetterThanNothing
 		VkFormat						FindDepthFormat();
 		bool							HasStencilComponent(VkFormat format);
 		void							UpdateUniformBuffer();
+
+		void 							MoveCamera(float x, float y, float z);
 
 		void							BindDescriptorPool(CDescriptorPool* pDescriptorPool);
 		void							BeginRecordCommandBuffer(CPipeline* pPipeline);

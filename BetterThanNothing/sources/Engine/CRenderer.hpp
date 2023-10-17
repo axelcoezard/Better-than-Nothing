@@ -41,6 +41,8 @@ namespace BetterThanNothing
 		void								PrepareFrame();
 		void								DrawFrame();
 
+		void								MoveCamera(float x, float y, float z);
+
 	public:
 		CWindow*							GetWindow()			{ return m_pWindow; }
 		CDevice*							GetDevice()			{ return m_pDevice; }

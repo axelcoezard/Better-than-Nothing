@@ -55,6 +55,11 @@ namespace BetterThanNothing
 		m_pDescriptorPool->CreateDescriptorSets(m_pModels);
 	}
 
+	void CRenderer::MoveCamera(float x, float y, float z)
+	{
+		m_pSwapChain->MoveCamera(x, y, z);
+	}
+
 	void CRenderer::DrawFrame()
 	{
 		auto pPipeline = m_pPipeLines.at("main");

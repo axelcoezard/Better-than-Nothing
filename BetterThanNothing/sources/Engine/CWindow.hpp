@@ -24,6 +24,7 @@ namespace BetterThanNothing
 		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
 
 		static void		ResizeCallback(GLFWwindow* window, int width, int height);
+		static void		KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 		GLFWwindow*		GetPointer()				{ return m_pWindow; }
 		std::string&	GetTitle()					{ return m_Title; }
