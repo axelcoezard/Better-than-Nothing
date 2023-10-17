@@ -7,22 +7,18 @@
 #include "CUniformBufferObject.hpp"
 #include "CCommandPool.hpp"
 #include "CDescriptorPool.hpp"
-
-#ifndef TINYOBJLOADER_IMPLEMENTATION
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
-#endif
+#include "CModel.hpp"
 
 #include <unordered_map>
 
 namespace BetterThanNothing
 {
 	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool)
-		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool) {
+		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool)
+	{
 		CreateSwapChain();
 		CreateImageViews();
 
-		m_pTexture = new CTexture(pDevice, pCommandPool, this);
 		CreateColorResources();
 		CreateDepthResources();
 
@@ -30,14 +26,12 @@ namespace BetterThanNothing
 		CreateFramebuffers();
 		CreateSyncObjects();
 
-		LoadModel();
-		CreateVertexBuffer();
-		CreateIndexBuffer();
 		CreateUniformBuffer();
 		CreateCommandBuffers();
 	}
 
-	CSwapChain::~CSwapChain() {
+	CSwapChain::~CSwapChain()
+	{
 		auto device = m_pDevice->GetVkDevice();
 
 		CleanupSwapChain();
@@ -50,8 +44,6 @@ namespace BetterThanNothing
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
-		delete m_pTexture;
-
 		vkFreeCommandBuffers(
 			m_pDevice->GetVkDevice(),
 			m_pCommandPool->GetVkCommandPool(),
@@ -62,15 +54,10 @@ namespace BetterThanNothing
 			vkDestroyBuffer(device, m_UniformBuffers[i], nullptr);
 			vkFreeMemory(device, m_UniformBuffersMemory[i], nullptr);
 		}
-
-		vkDestroyBuffer(device, m_IndexBuffer, nullptr);
-		vkFreeMemory(device, m_IndexBufferMemory, nullptr);
-
-		vkDestroyBuffer(device, m_VertexBuffer, nullptr);
-		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
 	}
 
-	void CSwapChain::CreateSwapChain() {
+	void CSwapChain::CreateSwapChain()
+	{
 		SwapChainSupportDetails swapChainSupport = m_pDevice->QuerySwapChainSupport(m_pDevice->GetVkPhysicalDevice());
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.m_Formats);
@@ -124,7 +111,8 @@ namespace BetterThanNothing
 		vkGetSwapchainImagesKHR(m_pDevice->GetVkDevice(), m_SwapChain, &imageCount, m_Images.data());
 	}
 
-	void CSwapChain::CreateImageViews() {
+	void CSwapChain::CreateImageViews()
+	{
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
@@ -132,10 +120,12 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateDepthResources() {
+	void CSwapChain::CreateDepthResources()
+	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		m_pTexture->CreateImage(
+		CTexture::CreateImage(
+			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(),
 			depthFormat,
@@ -146,13 +136,15 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		m_pTexture->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		CTexture::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
-	void CSwapChain::CreateColorResources() {
+	void CSwapChain::CreateColorResources()
+	{
 		VkFormat colorFormat = m_Format;
 
-		m_pTexture->CreateImage(
+		CTexture::CreateImage(
+			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(), colorFormat,
 			VK_IMAGE_TILING_OPTIMAL,
@@ -163,7 +155,8 @@ namespace BetterThanNothing
 		m_ColorImageView = CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
-	void CSwapChain::CreateRenderPass() {
+	void CSwapChain::CreateRenderPass()
+	{
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_Format;
 		colorAttachment.samples = m_pDevice->GetMsaaSamples();
@@ -239,7 +232,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) {
+	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+	{
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = image;
@@ -264,8 +258,8 @@ namespace BetterThanNothing
 		return imageView;
 	}
 
-	void CSwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+	void CSwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+	{
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -292,7 +286,8 @@ namespace BetterThanNothing
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	VkCommandBuffer CSwapChain::BeginSingleTimeCommands() {
+	VkCommandBuffer CSwapChain::BeginSingleTimeCommands()
+	{
 		auto device = m_pDevice->GetVkDevice();
 		auto commandPool = m_pCommandPool->GetVkCommandPool();
 
@@ -313,7 +308,8 @@ namespace BetterThanNothing
 		return commandBuffer;
 	}
 
-	void CSwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer) {
+	void CSwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer)
+	{
 		auto device = m_pDevice->GetVkDevice();
 		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
 		auto commandPool = m_pCommandPool->GetVkCommandPool();
@@ -331,7 +327,8 @@ namespace BetterThanNothing
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
 
-	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+	{
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 		{
 			VkBufferCopy copyRegion{};
@@ -341,102 +338,8 @@ namespace BetterThanNothing
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CSwapChain::LoadModel() {
-		tinyobj::attrib_t attrib;
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
-		std::string warn, err;
-
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, "/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj")) {
-			throw std::runtime_error(warn + err);
-		}
-
-		std::unordered_map<CVertex, uint32_t> uniqueVertices{};
-
-		for (const auto& shape : shapes) {
-			for (const auto& index : shape.mesh.indices) {
-				CVertex vertex{};
-
-				vertex.m_Position = {
-					attrib.vertices[3 * index.vertex_index + 0],
-					attrib.vertices[3 * index.vertex_index + 1],
-					attrib.vertices[3 * index.vertex_index + 2]
-				};
-
-				vertex.m_TextureCoordinates = {
-					attrib.texcoords[2 * index.texcoord_index + 0],
-					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-				};
-
-				vertex.m_Color = {1.0f, 1.0f, 1.0f};
-
-				if (uniqueVertices.count(vertex) == 0) {
-					uniqueVertices[vertex] = static_cast<uint32_t>(m_Vertices.size());
-					m_Vertices.push_back(vertex);
-				}
-
-				m_Indices.push_back(uniqueVertices[vertex]);
-			}
-		}
-	}
-
-	void CSwapChain::CreateVertexBuffer() {
-		auto device = m_pDevice->GetVkDevice();
-
-		VkDeviceSize bufferSize = sizeof(m_Vertices[0]) * m_Vertices.size();
-
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory);
-
-		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, m_Vertices.data(), (size_t) bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
-
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			m_VertexBuffer,
-			m_VertexBufferMemory);
-
-		CopyBuffer(stagingBuffer, m_VertexBuffer, bufferSize);
-
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-	}
-
-	void CSwapChain::CreateIndexBuffer() {
-		auto device = m_pDevice->GetVkDevice();
-
-		VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
-
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory);
-
-		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, m_Indices.data(), (size_t) bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
-
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			m_IndexBuffer,
-			m_IndexBufferMemory);
-
-		CopyBuffer(stagingBuffer, m_IndexBuffer, bufferSize);
-
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-	}
-
-	void CSwapChain::CreateUniformBuffer() {
+	void CSwapChain::CreateUniformBuffer()
+	{
 		VkDeviceSize bufferSize = sizeof(CUniformBufferObject);
 
 		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
@@ -453,7 +356,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateCommandBuffers() {
+	void CSwapChain::CreateCommandBuffers()
+	{
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
 		VkCommandBufferAllocateInfo allocInfo{};
@@ -467,7 +371,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateSyncObjects() {
+	void CSwapChain::CreateSyncObjects()
+	{
 		m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		m_RenderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		m_InFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
@@ -490,7 +395,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateFramebuffers() {
+	void CSwapChain::CreateFramebuffers()
+	{
 		m_Framebuffers.resize(m_ImageViews.size());
 
 		for (size_t i = 0; i < m_ImageViews.size(); i++) {
@@ -515,7 +421,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CleanupSwapChain() {
+	void CSwapChain::CleanupSwapChain()
+	{
 		auto device = m_pDevice->GetVkDevice();
 
 		vkDestroyImageView(device, m_DepthImageView, nullptr);
@@ -537,7 +444,8 @@ namespace BetterThanNothing
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
 
-	void CSwapChain::RecreateSwapChain() {
+	void CSwapChain::RecreateSwapChain()
+	{
 		auto window = m_pWindow->GetPointer();
 		int width = 0, height = 0;
 
@@ -558,33 +466,59 @@ namespace BetterThanNothing
 		CreateFramebuffers();
 	}
 
-	VkFormat CSwapChain::FindDepthFormat() {
+	VkFormat CSwapChain::FindDepthFormat()
+	{
 		return m_pDevice->FindSupportedFormat(
 			{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	bool CSwapChain::HasStencilComponent(VkFormat format) {
+	bool CSwapChain::HasStencilComponent(VkFormat format)
+	{
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void CSwapChain::UpdateUniformBuffer(uint32_t currentImage) {
+	void CSwapChain::UpdateUniformBuffer()
+	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		CUniformBufferObject ubo{};
-		ubo.m_Model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.m_View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.m_Projection = glm::perspective(glm::radians(45.0f), m_Extent.width / (float) m_Extent.height, 0.1f, 10.0f);
+		ubo.m_Model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		ubo.m_View = glm::lookAt(glm::vec3(-10.0f, 2.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.m_Projection = glm::perspective(glm::radians(45.0f), m_Extent.width / (float) m_Extent.height, 0.1f, 1000.0f);
 		ubo.m_Projection[1][1] *= -1;
 
-		memcpy(m_UniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+		memcpy(m_UniformBuffersMapped[m_CurrentFrame], &ubo, sizeof(ubo));
 	}
 
-	void CSwapChain::RecordCommandBuffer(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline, VkCommandBuffer commandBuffer, uint32_t imageIndex) { // move this method to the renderer class
+	void CSwapChain::BindDescriptorPool(CDescriptorPool* pDescriptorPool)
+	{
+		m_pDescriptorPool = pDescriptorPool;
+	}
+
+	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline)
+	{
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+
+		WaitForFences();
+		VkResult result = AcquireNextImage();
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+			return (void) RecreateSwapChain();
+		}
+
+		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+			throw std::runtime_error("failed to acquire swap chain image!");
+		}
+
+		UpdateUniformBuffer();
+		ResetFences();
+		ResetCommandBuffer();
+
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -597,7 +531,7 @@ namespace BetterThanNothing
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_RenderPass;
-		renderPassInfo.framebuffer = m_Framebuffers[imageIndex];
+		renderPassInfo.framebuffer = m_Framebuffers[m_CurrentImageIndex];
 		renderPassInfo.renderArea.offset = {0, 0};
 		renderPassInfo.renderArea.extent = swapChainExtent;
 
@@ -624,51 +558,44 @@ namespace BetterThanNothing
 		scissor.offset = {0, 0};
 		scissor.extent = swapChainExtent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+	}
 
-		VkBuffer vertexBuffers[] = {m_VertexBuffer};
+	void CSwapChain::BindModel(CModel* pModel)
+	{
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+
+		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
 		VkDeviceSize offsets[] = {0};
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+	}
+
+	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex)
+	{
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			pPipeline->GetVkPipelineLayout(), 0, 1,
-			&pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame], 0, nullptr);
+			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][modelIndex], 0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
+	}
+
+	void CSwapChain::EndRecordCommandBuffer()
+	{
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+
 		vkCmdEndRenderPass(commandBuffer);
 
 		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
 			throw std::runtime_error("failed to record command buffer!");
 		}
-	}
-
-	void CSwapChain::DrawFrame(CDescriptorPool* pDescriptorPool, CPipeline* pPipeline) { // move this method to the renderer class
-		auto device = m_pDevice->GetVkDevice();
-
-		vkWaitForFences(device, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
-
-		uint32_t imageIndex;
-		VkResult result = vkAcquireNextImageKHR(device, m_SwapChain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
-
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			return (void) RecreateSwapChain();
-		}
-
-		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-			throw std::runtime_error("failed to acquire swap chain image!");
-		}
-
-		UpdateUniformBuffer(m_CurrentFrame);
-
-		vkResetFences(device, 1, &m_InFlightFences[m_CurrentFrame]);
-		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
-		RecordCommandBuffer(pDescriptorPool, pPipeline, m_CommandBuffers[m_CurrentFrame], imageIndex);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &m_CommandBuffers[m_CurrentFrame];
+		submitInfo.pCommandBuffers = &commandBuffer;
 
 		VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]};
 		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
@@ -693,10 +620,10 @@ namespace BetterThanNothing
 		VkSwapchainKHR swapChains[] = {m_SwapChain};
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
-		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pImageIndices = &m_CurrentImageIndex;
 		presentInfo.pResults = nullptr;
 
-		result = vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
+		VkResult result = vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_pWindow->IsResized()) {
 			m_pWindow->SetResized(false);
@@ -705,10 +632,42 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to present swap chain image!");
 		}
 
+		NextFrame();
+	}
+
+	VkResult CSwapChain::AcquireNextImage()
+	{
+		return vkAcquireNextImageKHR(
+			m_pDevice->GetVkDevice(),
+			m_SwapChain,
+			UINT64_MAX,
+			m_ImageAvailableSemaphores[m_CurrentFrame],
+			VK_NULL_HANDLE,
+			&m_CurrentImageIndex);
+	}
+
+	void CSwapChain::ResetCommandBuffer()
+	{
+		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
+	}
+
+	void CSwapChain::WaitForFences()
+	{
+		vkWaitForFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+	}
+
+	void CSwapChain::ResetFences()
+	{
+		vkResetFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
+	}
+
+	void CSwapChain::NextFrame()
+	{
 		m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 
-	VkSurfaceFormatKHR CSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
+	VkSurfaceFormatKHR CSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+	{
 		for (const auto& availableFormat : availableFormats) {
 			if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
 				return availableFormat;
@@ -717,7 +676,8 @@ namespace BetterThanNothing
 		return availableFormats[0];
 	}
 
-	VkPresentModeKHR CSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
+	VkPresentModeKHR CSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+	{
 		for (const auto& availablePresentMode : availablePresentModes) {
 			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
 				return availablePresentMode;
@@ -726,7 +686,8 @@ namespace BetterThanNothing
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	VkExtent2D CSwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+	VkExtent2D CSwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+	{
 		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 			return capabilities.currentExtent;
 		}

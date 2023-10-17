@@ -8,11 +8,7 @@
 namespace BetterThanNothing
 {
 	CTexture::CTexture(CDevice* pDevice, CCommandPool* pCommandPool, CSwapChain* pSwapChain)
-		: m_pDevice(pDevice), m_pCommandPool(pCommandPool), m_pSwapChain(pSwapChain) {
-		CreateTextureImage();
-		CreateTextureImageView();
-		CreateTextureSampler();
-	}
+		: m_pDevice(pDevice), m_pCommandPool(pCommandPool), m_pSwapChain(pSwapChain) {}
 
 	CTexture::~CTexture() {
 		auto device = m_pDevice->GetVkDevice();
@@ -23,7 +19,15 @@ namespace BetterThanNothing
 		vkDestroySampler(device, m_Sampler, nullptr);
 	}
 
-	void CTexture::CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+	void CTexture::LoadFromFile(const std::string& filePath) {
+		m_FilePath = filePath;
+
+		CreateTextureImage(filePath);
+		CreateTextureImageView();
+		CreateTextureSampler();
+	}
+
+	void CTexture::CreateImage(CDevice* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -40,7 +44,7 @@ namespace BetterThanNothing
 		imageInfo.samples = numSamples;
 		imageInfo.flags = 0;
 
- 		auto device = m_pDevice->GetVkDevice();
+ 		auto device = pDevice->GetVkDevice();
 		if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create image!");
 		}
@@ -51,7 +55,7 @@ namespace BetterThanNothing
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = m_pDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
+		allocInfo.memoryTypeIndex = pDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
 
 		if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate image memory!");
@@ -150,9 +154,9 @@ namespace BetterThanNothing
 		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CTexture::CreateTextureImage() {
+	void CTexture::CreateTextureImage(const std::string& filePath) {
 		int texWidth, texHeight, texChannels;
-		stbi_uc* pixels = stbi_load("/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		stbi_uc* pixels = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
 
 		m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
@@ -175,7 +179,9 @@ namespace BetterThanNothing
 
 		stbi_image_free(pixels);
 
-		CreateImage(texWidth, texHeight,
+		CTexture::CreateImage(
+			m_pDevice,
+			texWidth, texHeight,
 			m_MipLevels,
 			VK_SAMPLE_COUNT_1_BIT,
 			VK_FORMAT_R8G8B8A8_SRGB,
@@ -183,17 +189,16 @@ namespace BetterThanNothing
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_Image, m_ImageMemory);
-		TransitionImageLayout(m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_MipLevels);
-		CopyBufferToImage(m_StagingBuffer, m_Image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-		//TransitionImageLayout(m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_MipLevels);
+		TransitionImageLayout(m_pSwapChain, m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_MipLevels);
+		CopyBufferToImage(m_pSwapChain, m_StagingBuffer, m_Image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 		GenerateMipmaps(m_Image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, m_MipLevels);
 
 		vkDestroyBuffer(device, m_StagingBuffer, nullptr);
 		vkFreeMemory(device, m_StagingBufferMemory, nullptr);
 	}
 
-	void CTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
-		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
+	void CTexture::TransitionImageLayout(CSwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
+		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			(void) format;
 			VkPipelineStageFlags sourceStage;
@@ -215,7 +220,7 @@ namespace BetterThanNothing
 			if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 				barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-				if (m_pSwapChain->HasStencilComponent(format)) {
+				if (pSwapChain->HasStencilComponent(format)) {
 					barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 				}
 			} else {
@@ -254,11 +259,11 @@ namespace BetterThanNothing
 			);
 
 		}
-		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
+		pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CTexture::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
-		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
+	void CTexture::CopyBufferToImage(CSwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			VkBufferImageCopy region{};
 			region.bufferOffset = 0;
@@ -282,7 +287,7 @@ namespace BetterThanNothing
 				&region
 			);
 		}
-		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
+		pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
 	void CTexture::CreateTextureSampler() {
