@@ -50,6 +50,11 @@ namespace BetterThanNothing
 		m_pModels.insert(entry);
 	}
 
+	void CRenderer::PrepareFrame()
+	{
+		m_pDescriptorPool->CreateDescriptorSets();
+	}
+
 	void CRenderer::DrawFrame()
 	{
 		auto pPipeline = m_pPipeLines.at("main");
@@ -57,12 +62,14 @@ namespace BetterThanNothing
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 		m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
 
+		auto index = 0;
 		for (auto & entry : m_pModels) {
 			auto pModel = entry.second;
 
 			m_pSwapChain->BindModel(pModel);
 			m_pDescriptorPool->UpdateDescriptorSets(pModel);
 			m_pSwapChain->DrawModel(pPipeline, pModel);
+			index++;
 		}
 
 		m_pSwapChain->EndRecordCommandBuffer();

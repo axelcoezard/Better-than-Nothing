@@ -38,6 +38,7 @@ namespace BetterThanNothing
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 		void								LoadModel(const std::string& modelID, const std::string& modelPath, const std::string& texturePath);
 
+		void								PrepareFrame();
 		void								DrawFrame();
 
 	public:

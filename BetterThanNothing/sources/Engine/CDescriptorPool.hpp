@@ -28,9 +28,9 @@ namespace BetterThanNothing
 	private:
 		void 							CreateDescriptorSetLayout();
 		void							CreateDescriptorPool();
-		void							CreateDescriptorSets();
 
 	public:
+		void							CreateDescriptorSets();
 		void							UpdateDescriptorSets(CModel* model);
 
 	public:

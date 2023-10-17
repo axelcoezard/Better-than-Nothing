@@ -25,11 +25,7 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
 
-	//pRenderer->LoadModel(
-	//	"stall",
-	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/stall/stall.obj",
-	//	"/home/acoezard/lab/better-than-nothing/Assets/Models/stall/stall.png");
-
+	pRenderer->PrepareFrame();
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 		pRenderer->DrawFrame();

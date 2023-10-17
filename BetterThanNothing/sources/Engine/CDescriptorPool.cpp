@@ -8,19 +8,21 @@
 namespace BetterThanNothing
 {
 	CDescriptorPool::CDescriptorPool(CDevice* pDevice, CSwapChain* pSwapChain)
-		: m_pDevice(pDevice), m_pSwapChain(pSwapChain) {
+		: m_pDevice(pDevice), m_pSwapChain(pSwapChain)
+	{
 		CreateDescriptorSetLayout();
 		CreateDescriptorPool();
-		CreateDescriptorSets();
 	}
 
-	CDescriptorPool::~CDescriptorPool() {
+	CDescriptorPool::~CDescriptorPool()
+	{
 		auto device = m_pDevice->GetVkDevice();
 		vkDestroyDescriptorPool(device, m_DescriptorPool, nullptr);
 		vkDestroyDescriptorSetLayout(m_pDevice->GetVkDevice(), m_DescriptorSetLayout, nullptr);
 	}
 
-	void CDescriptorPool::CreateDescriptorSetLayout() {
+	void CDescriptorPool::CreateDescriptorSetLayout()
+	{
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;
 		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -43,14 +45,14 @@ namespace BetterThanNothing
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
 		layoutInfo.pBindings = bindings.data();
-		layoutInfo.flags = VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
 
 		if (vkCreateDescriptorSetLayout(m_pDevice->GetVkDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
 	}
 
-	void CDescriptorPool::CreateDescriptorPool() {
+	void CDescriptorPool::CreateDescriptorPool()
+	{
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
@@ -68,7 +70,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDescriptorPool::CreateDescriptorSets() {
+	void CDescriptorPool::CreateDescriptorSets()
+	{
 		auto device = m_pDevice->GetVkDevice();
 
 		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_DescriptorSetLayout);
