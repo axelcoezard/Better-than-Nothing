@@ -88,7 +88,7 @@ namespace BetterThanNothing
 		void							BindDescriptorPool(CDescriptorPool* pDescriptorPool);
 		void							BeginRecordCommandBuffer(CPipeline* pPipeline);
 		void							BindModel(CModel* pModel);
-		void							DrawModel(CPipeline* pPipeline, CModel* pModel);
+		void							DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex);
 		void							EndRecordCommandBuffer();
 
 	private:

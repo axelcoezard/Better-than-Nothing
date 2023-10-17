@@ -24,8 +24,8 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		for (auto entry : m_pModels) {
-			delete entry.second;
+		for (uint32_t i = 0; i < m_pModels.size(); i++) {
+			delete m_pModels[i];
 		}
 
 		delete m_pDescriptorPool;
@@ -41,18 +41,18 @@ namespace BetterThanNothing
 		m_pPipeLines.insert(entry);
 	}
 
-	void CRenderer::LoadModel(const std::string& modelID, const std::string& modelPath, const std::string& texturePath)
+	void CRenderer::LoadModel(const std::string& modelPath, const std::string& texturePath)
 	{
 		auto model = new CModel(m_pDevice, this);
 		model->LoadFromFiles(modelPath, texturePath);
 
-		auto entry = std::pair<std::string, CModel*>(modelID, model);
-		m_pModels.insert(entry);
+		m_pModels.push_back(model);
 	}
 
 	void CRenderer::PrepareFrame()
 	{
-		m_pDescriptorPool->CreateDescriptorSets();
+		m_pDescriptorPool->CreateDescriptorPool(m_pModels);
+		m_pDescriptorPool->CreateDescriptorSets(m_pModels);
 	}
 
 	void CRenderer::DrawFrame()
@@ -62,14 +62,9 @@ namespace BetterThanNothing
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 		m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
 
-		auto index = 0;
-		for (auto & entry : m_pModels) {
-			auto pModel = entry.second;
-
-			m_pSwapChain->BindModel(pModel);
-			m_pDescriptorPool->UpdateDescriptorSets(pModel);
-			m_pSwapChain->DrawModel(pPipeline, pModel);
-			index++;
+		for (uint32_t i = 0; i < m_pModels.size(); i++) {
+			m_pSwapChain->BindModel(m_pModels[i]);
+			m_pSwapChain->DrawModel(pPipeline, m_pModels[i], i);
 		}
 
 		m_pSwapChain->EndRecordCommandBuffer();

@@ -570,14 +570,14 @@ namespace BetterThanNothing
 		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel)
+	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			pPipeline->GetVkPipelineLayout(), 0, 1,
-			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame], 0, nullptr);
+			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][modelIndex], 0, nullptr);
 
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
 	}

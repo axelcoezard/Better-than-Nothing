@@ -16,14 +16,16 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 
 	pRenderer->LoadModel(
-		"42",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
 
 	pRenderer->LoadModel(
-		"viking_room",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
+
+	pRenderer->LoadModel(
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
 	pRenderer->PrepareFrame();
 	while (!pWindow->ShouldClose()) {

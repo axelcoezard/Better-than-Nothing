@@ -14,7 +14,8 @@ namespace BetterThanNothing
 
 		VkDescriptorSetLayout			m_DescriptorSetLayout;
 		VkDescriptorPool				m_DescriptorPool;
-		std::vector<VkDescriptorSet>	m_DescriptorSets;
+		//std::vector<VkDescriptorSet>	m_DescriptorSets;
+		std::vector<std::vector<VkDescriptorSet>> m_DescriptorSets;
 
 	public:
 										CDescriptorPool(CDevice* pDevice, CSwapChain* pSwapChain);
@@ -27,15 +28,15 @@ namespace BetterThanNothing
 
 	private:
 		void 							CreateDescriptorSetLayout();
-		void							CreateDescriptorPool();
 
 	public:
-		void							CreateDescriptorSets();
-		void							UpdateDescriptorSets(CModel* model);
+		void							CreateDescriptorPool(std::vector<CModel*> pModels);
+		void							CreateDescriptorSets(std::vector<CModel*> pModels);
+		void							UpdateDescriptorSets(CModel* model, uint32_t modelIndex);
 
 	public:
 		VkDescriptorSetLayout&			GetVkDescriptorSetLayout() { return m_DescriptorSetLayout; }
 		VkDescriptorPool&				GetVkDescriptorPool() { return m_DescriptorPool; }
-		std::vector<VkDescriptorSet>&	GetVkDescriptorSets() { return m_DescriptorSets; }
+		std::vector<std::vector<VkDescriptorSet>>&	GetVkDescriptorSets() { return m_DescriptorSets; }
 	};
 };
