@@ -19,7 +19,7 @@ namespace BetterThanNothing
 		VkPipeline						m_GraphicsPipeline;
 
 	public:
-										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain, CDescriptorPool* pDescriptorPool);
+										CPipeline(CDevice* pDevice, CSwapChain* pSwapChain, CDescriptorPool* pDescriptorPool, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 										~CPipeline();
 
 										CPipeline(const CPipeline&) = delete;

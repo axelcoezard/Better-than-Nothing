@@ -23,6 +23,7 @@ namespace BetterThanNothing
 		VkSampler			m_Sampler;
 		VkImageView			m_ImageView;
 
+		std::string			m_FilePath;
 
 	public:
 							CTexture(CDevice* pDevice, CCommandPool* pCommandPool, CSwapChain* pSwapChain);
@@ -33,22 +34,24 @@ namespace BetterThanNothing
 							CTexture(CTexture&&) = delete;
 		CTexture&			operator=(CTexture&&) = delete;
 
-		void				CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void				LoadFromFile(const std::string& filePath);
 		void				GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
 	private:
-		void				CreateTextureImage();
+		void				CreateTextureImage(const std::string& filePath);
 		void				CreateTextureImageView();
 		void				CreateTextureSampler();
 
 	public:
-		void				TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
-		void				CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		static void			CreateImage(CDevice* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		static void			TransitionImageLayout(CSwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+		static void			CopyBufferToImage(CSwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 	public:
 		VkImage&			GetVkImage()				{ return m_Image; }
 		VkDeviceMemory&		GetVkImageMemory()			{ return m_ImageMemory; }
 		VkSampler&			GetVkTextureSampler()		{ return m_Sampler; }
 		VkImageView&		GetVkTextureImageView()		{ return m_ImageView; }
+		std::string&		GetFilePath()				{ return m_FilePath; }
 	};
 };

@@ -3,7 +3,9 @@
 namespace BetterThanNothing
 {
 	CWindow::CWindow(std::string_view title, uint32_t width, uint32_t height)
-		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height) {}
+		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height) {
+		Open();
+	}
 
 	CWindow::~CWindow() {
 		if (m_pWindow != nullptr) {

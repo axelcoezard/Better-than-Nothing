@@ -1,39 +1,41 @@
 
 #include "Engine/CWindow.hpp"
 #include "Engine/CDevice.hpp"
-#include "Engine/CCommandPool.hpp"
-#include "Engine/CSwapChain.hpp"
-#include "Engine/CDescriptorPool.hpp"
-#include "Engine/CTexture.hpp"
-#include "Engine/CPipeline.hpp"
+#include "Engine/CRenderer.hpp"
 
 using namespace BetterThanNothing;
 
 int main(void) {
 	auto pWindow = new CWindow("better than nothing", 720, 720);
-	pWindow->Open();
-
-	// unique instances
 	auto pDevice = new CDevice(pWindow);
-	auto pCommandPool = new CCommandPool(pDevice);
-	auto pSwapChain = new CSwapChain(pWindow, pDevice, pCommandPool);
-	auto pDescriptorPool = new CDescriptorPool(pDevice, pSwapChain);
+	auto pRenderer = new CRenderer(pWindow, pDevice);
 
-	// one per shaders couple
-	auto pPipeLine = new CPipeline(pDevice, pSwapChain, pDescriptorPool);
+	pRenderer->LoadPipeline(
+		"main",
+		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
+		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 
+	pRenderer->LoadModel(
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
+
+	pRenderer->LoadModel(
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
+
+	pRenderer->LoadModel(
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
+
+	pRenderer->PrepareFrame();
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
-		pSwapChain->DrawFrame(pDescriptorPool, pPipeLine);
-		// Update, clear and render
+		pRenderer->DrawFrame();
 	}
 
-	vkDeviceWaitIdle(pDevice->GetVkDevice());
+	pDevice->Idle();
 
-	delete pPipeLine;
-	delete pDescriptorPool;
-	delete pSwapChain;
-	delete pCommandPool;
+	delete pRenderer;
 	delete pDevice;
 	delete pWindow;
 
