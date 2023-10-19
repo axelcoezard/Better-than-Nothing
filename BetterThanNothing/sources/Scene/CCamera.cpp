@@ -81,9 +81,6 @@ namespace BetterThanNothing
 
 		CalculateViewMatrix();
 		CalculateProjectionMatrix();
-
-		std::cout << "Camera position: " << m_Position.x << ", " << m_Position.y << ", " << m_Position.z << std::endl;
-		std::cout << "Camera rotation"	<< m_Yaw << ", " << m_Pitch << std::endl;
 	}
 
 	void CCamera::CalculateCameraVectors()
