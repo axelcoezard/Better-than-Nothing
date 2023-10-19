@@ -22,7 +22,6 @@ namespace BetterThanNothing
 		CDescriptorPool*					m_pDescriptorPool;
 
 		std::map<std::string, CPipeline*>	m_pPipeLines;
-		std::map<std::string, CTexture*>	m_pTextures;
 		std::vector<CModel*>				m_pModels;
 
 	public:
@@ -39,7 +38,7 @@ namespace BetterThanNothing
 		void								LoadModel(const std::string& modelPath, const std::string& texturePath);
 
 		void								PrepareFrame();
-		void								DrawFrame();
+		void								Render();
 
 		void								MoveCamera(float x, float y, float z);
 

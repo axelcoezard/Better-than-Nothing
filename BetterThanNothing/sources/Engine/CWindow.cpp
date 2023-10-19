@@ -1,21 +1,24 @@
 #include "Engine/CWindow.hpp"
-#include "Handlers/CKeyboardHandler.hpp"
+#include "Handlers/CInput.hpp"
 
 namespace BetterThanNothing
 {
 	CWindow::CWindow(std::string_view title, uint32_t width, uint32_t height)
-		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height) {
+		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height)
+	{
 		Open();
 	}
 
-	CWindow::~CWindow() {
+	CWindow::~CWindow()
+	{
 		if (m_pWindow != nullptr) {
 			glfwDestroyWindow(m_pWindow);
 			glfwTerminate();
 		}
 	}
 
-	void CWindow::Open() {
+	void CWindow::Open()
+	{
 		glfwInit();
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -28,7 +31,8 @@ namespace BetterThanNothing
 		glfwSetKeyCallback(m_pWindow, KeyCallback);
 	}
 
-	void CWindow::ResizeCallback(GLFWwindow* pWindow, int width, int height) {
+	void CWindow::ResizeCallback(GLFWwindow* pWindow, int width, int height)
+	{
 		(void) width;
 		(void) height;
 
@@ -36,12 +40,34 @@ namespace BetterThanNothing
 		window->SetResized(true);
 	}
 
-	void CWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	void CWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
 		(void) scancode;
 		(void) mods;
+
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
-		CKeyboardHandler::UpdateKey(key, action);
+		CInput::UpdateKey(key, action);
+	}
+
+	void CWindow::MouseCursorCallback(GLFWwindow* window, double xpos, double ypos)
+	{
+		(void) window;
+		CInput::UpdateMousePosition(xpos, ypos);
+	}
+
+	void CWindow::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		(void) window;
+		(void) xoffset;
+		CInput::UpdateMouseScroll(yoffset);
+	}
+
+	void CWindow::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	{
+		(void) window;
+		(void) mods;
+		CInput::UpdateMouseButton(button, action);
 	}
 };

@@ -60,7 +60,7 @@ namespace BetterThanNothing
 		m_pSwapChain->MoveCamera(x, y, z);
 	}
 
-	void CRenderer::DrawFrame()
+	void CRenderer::Render()
 	{
 		auto pPipeline = m_pPipeLines.at("main");
 

@@ -25,6 +25,9 @@ namespace BetterThanNothing
 
 		static void		ResizeCallback(GLFWwindow* window, int width, int height);
 		static void		KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void		MouseCursorCallback(GLFWwindow* window, double xpos, double ypos);
+		static void		MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+		static void		MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 		GLFWwindow*		GetPointer()				{ return m_pWindow; }
 		std::string&	GetTitle()					{ return m_Title; }
