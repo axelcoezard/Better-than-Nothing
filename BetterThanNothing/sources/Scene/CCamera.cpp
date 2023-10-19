@@ -28,37 +28,48 @@ namespace BetterThanNothing
 		m_ZFar = zFar;
 	}
 
-	void CCamera::Update()
+	void CCamera::Update(float deltatime)
 	{
+		static bool firstMouse = true;
 		static float lastMouseX = 0;
 		static float lastMouseY = 0;
 
-		float velocity = 0.01f;
-		float sensitivity = 0.001f;
+		float velocity = 100.0f * deltatime;
+		float sensitivity = 1.0f * deltatime;
 
 		// compute keyboard inputs
+		glm::vec3 movement = glm::vec3(0.0f);
+
 		if (CInput::IsKeyPressed(GLFW_KEY_W)) {
-			m_Position += velocity * m_Front;
+			movement += velocity * m_Front;
 		}
 		if (CInput::IsKeyPressed(GLFW_KEY_S)) {
-			m_Position -= velocity * m_Front;
+			movement -= velocity * m_Front;
 		}
 		if (CInput::IsKeyPressed(GLFW_KEY_A)) {
-			m_Position -= velocity * m_Right;
+			movement -= velocity * m_Right;
 		}
 		if (CInput::IsKeyPressed(GLFW_KEY_D)) {
-			m_Position += velocity * m_Right;
+			movement += velocity * m_Right;
 		}
 		if (CInput::IsKeyPressed(GLFW_KEY_SPACE)) {
-			m_Position += velocity * m_Up;
+			movement += velocity * m_Up;
 		}
 		if (CInput::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
-			m_Position -= velocity * m_Up;
+			movement -= velocity * m_Up;
 		}
+
+		m_Position += movement;
 
 		// compute mouse inputs
 		if (CInput::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
 			glm::vec2 mousePosition = CInput::GetMousePosition();
+
+			if (firstMouse) {
+				lastMouseX = mousePosition.x;
+				lastMouseY = mousePosition.y;
+				firstMouse = false;
+			}
 
 			glm::vec2 offset = glm::vec2(mousePosition.x - lastMouseX, lastMouseY - mousePosition.y);
 			lastMouseX = mousePosition.x;
@@ -77,7 +88,15 @@ namespace BetterThanNothing
 			}
 
 			CalculateCameraVectors();
+		} else {
+			firstMouse = true;
 		}
+
+		// reset console and print camera position
+		std::cout << "\033[2J\033[1;1H";
+		std::cout << m_Position.x << " " << m_Position.y << " " << m_Position.z << std::endl;
+		std::cout << m_Yaw << " " << m_Pitch << std::endl;
+		std::cout << "Fps: " << 1.0f / deltatime << " (" << deltatime << " spf) " << std::endl;
 
 		CalculateViewMatrix();
 		CalculateProjectionMatrix();

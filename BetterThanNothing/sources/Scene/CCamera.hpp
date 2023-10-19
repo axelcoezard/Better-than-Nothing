@@ -33,7 +33,7 @@ namespace BetterThanNothing
 	public:
 		void					SetPerspectiveProjection(float fov, float zNear, float zFar);
 
-		void 					Update();
+		void 					Update(float deltatime);
 
 	private:
 		void					CalculateCameraVectors();

@@ -34,8 +34,8 @@ namespace BetterThanNothing
 		m_pModels.push_back(model);
 	}
 
-	void CScene::Update()
+	void CScene::Update(float deltatime)
 	{
-		m_pCamera->Update();
+		m_pCamera->Update(deltatime);
 	}
 };

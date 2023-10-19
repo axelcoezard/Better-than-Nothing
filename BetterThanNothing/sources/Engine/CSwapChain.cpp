@@ -485,7 +485,8 @@ namespace BetterThanNothing
 	{
 		CUniformBufferObject ubo{};
 
-		ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.m_Model = glm::mat4(1.0f);
+		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
 		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
 

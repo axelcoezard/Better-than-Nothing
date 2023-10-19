@@ -21,7 +21,7 @@ int main(void) {
 	CScene* pScene = new CScene("world");
 
 	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, -90.0f, 0.0f);
-	pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
+	pCamera->SetPerspectiveProjection(glm::radians(90.0f), 0.1f, 1000000.0f);
 
 	pScene->LoadModel(
 		pRenderer,
@@ -38,12 +38,26 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
+	float deltatime = 0.0f;
+	float lastFrame = 0.0f;
+	float frameTime = 1.0f / 60.0f;
+
 	pRenderer->PrepareFrame(pScene);
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 
-		pScene->Update();
+		float currentFrame = glfwGetTime();
+		deltatime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		pScene->Update(deltatime);
 		pRenderer->Render(pScene);
+
+		useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
+		float elapsedTime = glfwGetTime() - currentFrame;
+		if (elapsedTime < frameTime) {
+			usleep(frameTimeMicroseconds - static_cast<useconds_t>(elapsedTime * 1000000));
+		}
 	}
 
 	pDevice->Idle();

@@ -26,7 +26,7 @@ namespace BetterThanNothing
 		CCamera*				InitCamera(double x, double y, double z, double yaw, double pitch);
 		void					LoadModel(CRenderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
 
-		void					Update();
+		void					Update(float deltatime);
 
 	public:
 		std::string&			GetName()	{ return m_Name; }
