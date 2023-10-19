@@ -23,15 +23,14 @@ namespace BetterThanNothing
 		CScene&					operator=(CScene&&) = delete;
 
 	public:
-		void					InitCamera(double x, double y, double z, double pitch, double yaw, double roll);
+		CCamera*				InitCamera(double x, double y, double z, double yaw, double pitch);
 		void					LoadModel(CRenderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
 
-		void					MoveCamera(float x, float y, float z);
-		void					RotateCamera(float pitch, float yaw, float roll);
+		void					Update();
 
 	public:
-		std::string&			GetName()			{ return m_Name; }
-		CCamera*				GetCamera()			{ return m_pCamera; }
-		std::vector<CModel*>&	GetModels()			{ return m_pModels; }
+		std::string&			GetName()	{ return m_Name; }
+		CCamera*				GetCamera()	{ return m_pCamera; }
+		std::vector<CModel*>&	GetModels()	{ return m_pModels; }
 	};
 };

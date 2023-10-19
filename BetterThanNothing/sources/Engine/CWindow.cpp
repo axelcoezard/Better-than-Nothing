@@ -29,6 +29,9 @@ namespace BetterThanNothing
 		glfwSetWindowUserPointer(m_pWindow, this);
 		glfwSetFramebufferSizeCallback(m_pWindow, ResizeCallback);
 		glfwSetKeyCallback(m_pWindow, KeyCallback);
+		glfwSetCursorPosCallback(m_pWindow, MouseCursorCallback);
+		glfwSetScrollCallback(m_pWindow, MouseScrollCallback);
+		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
 	}
 
 	void CWindow::ResizeCallback(GLFWwindow* pWindow, int width, int height)

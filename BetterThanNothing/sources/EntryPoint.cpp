@@ -1,13 +1,15 @@
-
 #include "Engine/CWindow.hpp"
 #include "Engine/CDevice.hpp"
 #include "Engine/CRenderer.hpp"
+#include "Engine/CModel.hpp"
 #include "Handlers/CInput.hpp"
+#include "Scene/CScene.hpp"
+#include "Scene/CCamera.hpp"
 
 using namespace BetterThanNothing;
 
 int main(void) {
-	auto pWindow = new CWindow("better than nothing", 720, 720);
+	auto pWindow = new CWindow("better than nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
 	auto pDevice = new CDevice(pWindow);
 	auto pRenderer = new CRenderer(pWindow, pDevice);
 
@@ -16,35 +18,37 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 
-	pRenderer->LoadModel(
+	CScene* pScene = new CScene("world");
+
+	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, -90.0f, 0.0f);
+	pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
+
+	pScene->LoadModel(
+		pRenderer,
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
 
-	pRenderer->LoadModel(
+	pScene->LoadModel(
+		pRenderer,
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/viking_room/viking_room.png");
 
-	pRenderer->LoadModel(
+	pScene->LoadModel(
+		pRenderer,
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
-	pRenderer->PrepareFrame();
+	pRenderer->PrepareFrame(pScene);
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 
-		if (CInput::IsKeyPressed(GLFW_KEY_W)) {
-			pRenderer->MoveCamera(-.001f, 0.0f, -.001f);
-		}
-
-		if (CInput::IsKeyPressed(GLFW_KEY_S)) {
-			pRenderer->MoveCamera(.001f, 0.0f, .001f);
-		}
-
-		pRenderer->Render();
+		pScene->Update();
+		pRenderer->Render(pScene);
 	}
 
 	pDevice->Idle();
 
+	delete pScene;
 	delete pRenderer;
 	delete pDevice;
 	delete pWindow;

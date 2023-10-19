@@ -16,3 +16,6 @@
 #include <glm/gtx/hash.hpp>
 
 #define MAX_FRAMES_IN_FLIGHT 60
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600

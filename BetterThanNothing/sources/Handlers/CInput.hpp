@@ -10,6 +10,7 @@ namespace BetterThanNothing
 		static int m_Keys[KEYBOARD_KEY_COUNT];
 
 		static double m_MouseX, m_MouseY;
+		static double m_LastMouseX, m_LastMouseY;
 		static double m_MouseScroll;
 		static int m_Buttons[MOUSE_BUTTON_COUNT];
 
@@ -29,7 +30,9 @@ namespace BetterThanNothing
 		static void ReleaseMouseButton(int button);
 
 		static void UpdateMousePosition(double x, double y);
-		static void GetMousePosition(double& x, double& y);
+		static glm::vec2 GetMousePosition();
+		static glm::vec2 GetLastMousePosition();
+		static glm::vec2 GetMouseDelta();
 
 		static void UpdateMouseScroll(double y);
 		static double GetMouseScroll(void);

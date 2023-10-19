@@ -7,6 +7,9 @@ namespace BetterThanNothing
 
 	double CInput::m_MouseX = 0;
 	double CInput::m_MouseY = 0;
+	double CInput::m_LastMouseX = 0;
+	double CInput::m_LastMouseY = 0;
+
 	double CInput::m_MouseScroll = 0;
 	int CInput::m_Buttons[MOUSE_BUTTON_COUNT] = {};
 
@@ -51,14 +54,25 @@ namespace BetterThanNothing
 
 	void CInput::UpdateMousePosition(double x, double y)
 	{
+		CInput::m_LastMouseX = CInput::m_MouseX;
+		CInput::m_LastMouseY = CInput::m_MouseY;
 		CInput::m_MouseX = x;
 		CInput::m_MouseY = y;
 	}
 
-	void CInput::GetMousePosition(double& x, double& y)
+	glm::vec2 CInput::GetMousePosition()
 	{
-		x = CInput::m_MouseX;
-		y = CInput::m_MouseY;
+		return glm::vec2(CInput::m_MouseX, CInput::m_MouseY);
+	}
+
+	glm::vec2 CInput::GetLastMousePosition()
+	{
+		return glm::vec2(CInput::m_LastMouseX, CInput::m_LastMouseY);
+	}
+
+	glm::vec2 CInput::GetMouseDelta()
+	{
+		return glm::vec2(CInput::m_MouseX - CInput::m_LastMouseX, CInput::m_LastMouseY - CInput::m_MouseY);
 	}
 
 	void CInput::UpdateMouseScroll(double y)
