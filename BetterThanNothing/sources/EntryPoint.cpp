@@ -20,8 +20,8 @@ int main(void) {
 
 	CScene* pScene = new CScene("world");
 
-	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, -90.0f, 0.0f);
-	pCamera->SetPerspectiveProjection(glm::radians(90.0f), 0.1f, 1000000.0f);
+	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, 0.0f, 0.0f);
+	pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
 
 	pScene->LoadModel(
 		pRenderer,

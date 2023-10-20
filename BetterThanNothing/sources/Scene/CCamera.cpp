@@ -6,8 +6,8 @@ namespace BetterThanNothing
 	CCamera::CCamera(float x, float y, float z, double yaw, double pitch)
 	{
 		m_Position = glm::vec3(x, y, z);
-		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
+		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		m_Yaw = yaw;
@@ -35,7 +35,7 @@ namespace BetterThanNothing
 		static float lastMouseY = 0;
 
 		float velocity = 100.0f * deltatime;
-		float sensitivity = 1.0f * deltatime;
+		float sensitivity = 10.0f * deltatime;
 
 		// compute keyboard inputs
 		glm::vec3 movement = glm::vec3(0.0f);
@@ -77,7 +77,7 @@ namespace BetterThanNothing
 
 			offset *= sensitivity;
 
-			m_Yaw += offset.x;
+			m_Yaw = glm::mod(m_Yaw + offset.x, 360.0f);
 			m_Pitch += offset.y;
 
 			if (m_Pitch > 89.0f) {
@@ -105,9 +105,9 @@ namespace BetterThanNothing
 	void CCamera::CalculateCameraVectors()
 	{
 		glm::vec3 front;
-		front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		front.x = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 		front.y = sin(glm::radians(m_Pitch));
-		front.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		front.z = -1 * cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 
 		m_Front = glm::normalize(front);
 		m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
