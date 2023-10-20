@@ -27,9 +27,6 @@ namespace BetterThanNothing
 		CreateRenderPass();
 		CreateFramebuffers();
 		CreateSyncObjects();
-
-		CreateUniformBuffer();
-		CreateCommandBuffers();
 	}
 
 	CSwapChain::~CSwapChain()
@@ -46,15 +43,25 @@ namespace BetterThanNothing
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
-		vkFreeCommandBuffers(
-			m_pDevice->GetVkDevice(),
-			m_pCommandPool->GetVkCommandPool(),
-			m_CommandBuffers.size(),
-			m_CommandBuffers.data());
+		for (uint32_t i = 0; i < m_CommandBuffers.size(); i++) {
+			vkFreeCommandBuffers(
+				m_pDevice->GetVkDevice(),
+				m_pCommandPool->GetVkCommandPool(),
+				m_CommandBuffers[i].size(),
+				m_CommandBuffers[i].data());
+		}
 
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			vkDestroyBuffer(device, m_UniformBuffers[i], nullptr);
-			vkFreeMemory(device, m_UniformBuffersMemory[i], nullptr);
+
+		for (uint32_t j = 0; j < m_UniformBuffers.size(); j++) {
+			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+				vkDestroyBuffer(device, m_UniformBuffers[j][i], nullptr);
+			}
+		}
+
+		for (uint32_t j = 0; j < m_UniformBuffersMemory.size(); j++) {
+			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+				vkFreeMemory(device, m_UniformBuffersMemory[j][i], nullptr);
+			}
 		}
 	}
 
@@ -340,7 +347,7 @@ namespace BetterThanNothing
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CSwapChain::CreateUniformBuffer()
+	void CSwapChain::CreateUniformBuffers(CScene* pScene)
 	{
 		VkDeviceSize bufferSize = sizeof(CUniformBufferObject);
 
@@ -348,28 +355,39 @@ namespace BetterThanNothing
 		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
 		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
 
+		auto modelCount = pScene->GetModels().size();
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			CreateBuffer(bufferSize,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				m_UniformBuffers[i],
-				m_UniformBuffersMemory[i]);
-			vkMapMemory(m_pDevice->GetVkDevice(), m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
+			m_UniformBuffers[i].resize(modelCount);
+			m_UniformBuffersMemory[i].resize(modelCount);
+			m_UniformBuffersMapped[i].resize(modelCount);
+			for (size_t j = 0; j < modelCount; j++) {
+				CreateBuffer(bufferSize,
+					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+					m_UniformBuffers[i][j],
+					m_UniformBuffersMemory[i][j]);
+				vkMapMemory(m_pDevice->GetVkDevice(), m_UniformBuffersMemory[i][j], 0, bufferSize, 0, &m_UniformBuffersMapped[i][j]);
+			}
 		}
 	}
 
-	void CSwapChain::CreateCommandBuffers()
+	void CSwapChain::CreateCommandBuffers(CScene* pScene)
 	{
-		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		auto modelCount = pScene->GetModels().size();
 
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = m_CommandBuffers.size();
+		m_CommandBuffers.resize(modelCount);
+		for (size_t i = 0; i < modelCount; i++) {
+			m_CommandBuffers[i].resize(MAX_FRAMES_IN_FLIGHT);
 
-		if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate command buffers!");
+			VkCommandBufferAllocateInfo allocInfo{};
+			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+			allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
+			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
+
+			if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers[i].data()) != VK_SUCCESS) {
+				throw std::runtime_error("failed to allocate command buffers!");
+			}
 		}
 	}
 
@@ -481,26 +499,14 @@ namespace BetterThanNothing
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void CSwapChain::UpdateUniformBuffer(CScene* pScene)
-	{
-		CUniformBufferObject ubo{};
-
-		ubo.m_Model = glm::mat4(1.0f);
-		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
-		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
-
-		memcpy(m_UniformBuffersMapped[m_CurrentFrame], &ubo, sizeof(ubo));
-	}
-
 	void CSwapChain::BindDescriptorPool(CDescriptorPool* pDescriptorPool)
 	{
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
+	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, int modelIndex)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
 
 		WaitForFences();
 		VkResult result = AcquireNextImage();
@@ -513,9 +519,9 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		UpdateUniformBuffer(pScene);
+		// Old Uniform Buffer Object (UBO) update place
 		ResetFences();
-		ResetCommandBuffer();
+		vkResetCommandBuffer(commandBuffer, 0);
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -558,9 +564,31 @@ namespace BetterThanNothing
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 	}
 
-	void CSwapChain::BindModel(CModel* pModel)
+	void CSwapChain::UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CUniformBufferObject ubo{};
+
+		ubo.m_Model = glm::mat4(1.0f);
+		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(1.0f, 1.0f, 1.0f));
+		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
+		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		std::cout << "Position: " << pModel->GetPosition().x << " " << pModel->GetPosition().y << " " << pModel->GetPosition().z << std::endl;
+		std::cout << "Rotation: " << pModel->GetRotation().x << " " << pModel->GetRotation().y << " " << pModel->GetRotation().z << std::endl;
+		std::cout << "Scale: " << pModel->GetScale() << std::endl;
+
+		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
+		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
+
+		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
+	}
+
+	void CSwapChain::BindModel(CModel* pModel, int modelIndex)
+	{
+		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
 
 		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
 		VkDeviceSize offsets[] = {0};
@@ -568,9 +596,9 @@ namespace BetterThanNothing
 		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex)
+	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -580,9 +608,9 @@ namespace BetterThanNothing
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
 	}
 
-	void CSwapChain::EndRecordCommandBuffer()
+	void CSwapChain::EndRecordCommandBuffer(int modelIndex)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
 
 		vkCmdEndRenderPass(commandBuffer);
 
@@ -642,11 +670,6 @@ namespace BetterThanNothing
 			m_ImageAvailableSemaphores[m_CurrentFrame],
 			VK_NULL_HANDLE,
 			&m_CurrentImageIndex);
-	}
-
-	void CSwapChain::ResetCommandBuffer()
-	{
-		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
 	}
 
 	void CSwapChain::WaitForFences()

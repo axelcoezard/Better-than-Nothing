@@ -14,7 +14,12 @@
 namespace BetterThanNothing
 {
 	CModel::CModel(CDevice* pDevice, CRenderer* pRenderer)
-		: m_pDevice(pDevice), m_pRenderer(pRenderer) { }
+		: m_pDevice(pDevice), m_pRenderer(pRenderer)
+	{
+		m_Position = {0.0f, 0.0f, 0.0f};
+		m_Rotation = {0.0f, 0.0f, 0.0f};
+		m_Scale	   = 1.0f;
+	}
 
 	CModel::~CModel()
 	{

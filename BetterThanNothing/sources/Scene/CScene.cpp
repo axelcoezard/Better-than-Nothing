@@ -37,5 +37,6 @@ namespace BetterThanNothing
 	void CScene::Update(float deltatime)
 	{
 		m_pCamera->Update(deltatime);
+
 	}
 };
