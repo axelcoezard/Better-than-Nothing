@@ -40,18 +40,24 @@ int main(void) {
 
 	float deltatime = 0.0f;
 	float lastFrame = 0.0f;
-	float frameTime = 1.0f / 60.0f;
+	float frameTime = 1.0f / 240.0f;
+	uint32_t frameCount = 0;
 
-	pRenderer->PrepareFrame(pScene);
+	pRenderer->Prepare(pScene);
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 
 		float currentFrame = glfwGetTime();
 		deltatime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		frameCount += 1;
 
 		pScene->Update(deltatime);
 		pRenderer->Render(pScene);
+
+		std::cout << "\033[2J\033[1;1H";
+		std::cout << "Frame time: " << deltatime << " (" << (1.0f / deltatime) << " fps) " << std::endl;
+		std::cout << "Frame count: " << frameCount << std::endl;
 
 		useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 		float elapsedTime = glfwGetTime() - currentFrame;

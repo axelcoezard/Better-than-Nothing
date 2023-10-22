@@ -25,13 +25,13 @@ namespace BetterThanNothing
 	{
 		auto device = m_pDevice->GetVkDevice();
 
+		delete m_pTexture;
+
 		vkDestroyBuffer(device, m_IndexBuffer, nullptr);
 		vkFreeMemory(device, m_IndexBufferMemory, nullptr);
 
 		vkDestroyBuffer(device, m_VertexBuffer, nullptr);
 		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
-
-		delete m_pTexture;
 	}
 
 	void CModel::LoadFromFiles(const std::string& filePath, const std::string& texturePath)

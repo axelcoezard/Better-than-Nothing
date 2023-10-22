@@ -48,6 +48,7 @@ namespace BetterThanNothing
 		uint32_t									m_CurrentFrame = 0;
 		uint32_t									m_CurrentImageIndex = 0;
 		CDescriptorPool*							m_pDescriptorPool = nullptr;
+
 	public:
 													CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
 													~CSwapChain();

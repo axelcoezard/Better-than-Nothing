@@ -49,7 +49,6 @@ namespace BetterThanNothing
 			m_CommandBuffers.size(),
 			m_CommandBuffers.data());
 
-
 		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			for (uint32_t j = 0; j < m_UniformBuffers.size(); j++) {
 				vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
@@ -512,12 +511,12 @@ namespace BetterThanNothing
 		}
 
 		// Old Uniform Buffer Object (UBO) update place
-		ResetFences();
-		vkResetCommandBuffer(commandBuffer, 0);
-
 		for (size_t i = 0; i < pScene->GetModels().size(); i++) {
 			UpdateUniformBuffer(pScene, pScene->GetModels()[i], i);
 		}
+
+		ResetFences();
+		vkResetCommandBuffer(commandBuffer, 0);
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -563,17 +562,13 @@ namespace BetterThanNothing
 	{
 		CUniformBufferObject ubo{};
 
+		// move all those calculus to shader
 		ubo.m_Model = glm::mat4(1.0f);
-		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(1.0f, 1.0f, 1.0f));
-		//ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
-		//ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
-		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		std::cout << "Position: " << pModel->GetPosition().x << " " << pModel->GetPosition().y << " " << pModel->GetPosition().z << std::endl;
-		std::cout << "Rotation: " << pModel->GetRotation().x << " " << pModel->GetRotation().y << " " << pModel->GetRotation().z << std::endl;
-		std::cout << "Scale: " << pModel->GetScale() << std::endl;
+		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
+		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
 		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();

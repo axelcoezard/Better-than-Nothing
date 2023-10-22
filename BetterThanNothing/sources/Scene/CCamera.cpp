@@ -92,12 +92,6 @@ namespace BetterThanNothing
 			firstMouse = true;
 		}
 
-		// reset console and print camera position
-		std::cout << "\033[2J\033[1;1H";
-		std::cout << m_Position.x << " " << m_Position.y << " " << m_Position.z << std::endl;
-		std::cout << m_Yaw << " " << m_Pitch << std::endl;
-		std::cout << "Fps: " << 1.0f / deltatime << " (" << deltatime << " spf) " << std::endl;
-
 		CalculateViewMatrix();
 		CalculateProjectionMatrix();
 	}

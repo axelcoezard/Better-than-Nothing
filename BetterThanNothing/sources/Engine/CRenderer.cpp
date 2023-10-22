@@ -39,7 +39,7 @@ namespace BetterThanNothing
 		m_pPipeLines.insert(entry);
 	}
 
-	void CRenderer::PrepareFrame(CScene* pScene)
+	void CRenderer::Prepare(CScene* pScene)
 	{
 		auto models = pScene->GetModels();
 
