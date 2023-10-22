@@ -27,7 +27,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>						m_Images;
 		std::vector<VkImageView>					m_ImageViews;
 		std::vector<VkFramebuffer>					m_Framebuffers;
-		std::vector<std::vector<VkCommandBuffer>>	m_CommandBuffers;
+		std::vector<VkCommandBuffer>				m_CommandBuffers;
 
 		VkImage										m_DepthImage;
 		VkDeviceMemory								m_DepthImageMemory;
@@ -48,11 +48,6 @@ namespace BetterThanNothing
 		uint32_t									m_CurrentFrame = 0;
 		uint32_t									m_CurrentImageIndex = 0;
 		CDescriptorPool*							m_pDescriptorPool = nullptr;
-
-		float										m_CameraX = 0.0f;
-		float										m_CameraY = 0.0f;
-		float										m_CameraZ = 0.0f;
-
 	public:
 													CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
 													~CSwapChain();
@@ -87,14 +82,14 @@ namespace BetterThanNothing
 		bool										HasStencilComponent(VkFormat format);
 
 		void										CreateUniformBuffers(CScene* pScene);
-		void										CreateCommandBuffers(CScene* pScene);
+		void										CreateCommandBuffers();
 
 		void										BindDescriptorPool(CDescriptorPool* pDescriptorPool);
-		void										BeginRecordCommandBuffer(CPipeline* pPipeline, int modelIndex);
-		void										BindModel(CModel* pModel, int modelIndex);
+		void										BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene);
+		void										BindModel(CModel* pModel);
 		void										UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex);
 		void										DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex);
-		void										EndRecordCommandBuffer(int modelIndex);
+		void										EndRecordCommandBuffer();
 
 	private:
 		void										ResetCommandBuffer();
@@ -116,7 +111,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>&						GetImages()						{ return m_Images; }
 		std::vector<VkImageView>&					GetImageViews()					{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&					GetFramebuffers()				{ return m_Framebuffers; }
-		std::vector<std::vector<VkCommandBuffer>>&	GetVkCommandBuffer()			{ return m_CommandBuffers; }
+		std::vector<VkCommandBuffer>&				GetVkCommandBuffer()			{ return m_CommandBuffers; }
 		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
 		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }

@@ -44,7 +44,7 @@ namespace BetterThanNothing
 		auto models = pScene->GetModels();
 
 		m_pSwapChain->CreateUniformBuffers(pScene);
-		m_pSwapChain->CreateCommandBuffers(pScene);
+		m_pSwapChain->CreateCommandBuffers();
 
 		m_pDescriptorPool->CreateDescriptorPool(models);
 		m_pDescriptorPool->CreateDescriptorSets(models);
@@ -57,14 +57,13 @@ namespace BetterThanNothing
 
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 
+		m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene);
 		for (uint32_t i = 0; i < models.size(); i++) {
-			m_pSwapChain->BeginRecordCommandBuffer(pPipeline, i);
 
-			m_pSwapChain->BindModel(models[i], i);
-			m_pSwapChain->UpdateUniformBuffer(pScene, models[i], i);
+			m_pSwapChain->BindModel(models[i]);
 			m_pSwapChain->DrawModel(pPipeline, models[i], i);
 
-			m_pSwapChain->EndRecordCommandBuffer(i);
 		}
+		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }

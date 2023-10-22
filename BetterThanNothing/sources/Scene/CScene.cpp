@@ -38,5 +38,7 @@ namespace BetterThanNothing
 	{
 		m_pCamera->Update(deltatime);
 
+		m_pModels[0]->SetPosition(glm::vec3(10.0f, 0.0f, 0.0f));
+		m_pModels[0]->SetRotation(glm::vec3(0.0f, 10.0f, 0.0f));
 	}
 };

@@ -43,24 +43,20 @@ namespace BetterThanNothing
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
-		for (uint32_t i = 0; i < m_CommandBuffers.size(); i++) {
-			vkFreeCommandBuffers(
-				m_pDevice->GetVkDevice(),
-				m_pCommandPool->GetVkCommandPool(),
-				m_CommandBuffers[i].size(),
-				m_CommandBuffers[i].data());
-		}
+		vkFreeCommandBuffers(
+			m_pDevice->GetVkDevice(),
+			m_pCommandPool->GetVkCommandPool(),
+			m_CommandBuffers.size(),
+			m_CommandBuffers.data());
 
 
-		for (uint32_t j = 0; j < m_UniformBuffers.size(); j++) {
-			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-				vkDestroyBuffer(device, m_UniformBuffers[j][i], nullptr);
+		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			for (uint32_t j = 0; j < m_UniformBuffers.size(); j++) {
+				vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
 			}
-		}
 
-		for (uint32_t j = 0; j < m_UniformBuffersMemory.size(); j++) {
-			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-				vkFreeMemory(device, m_UniformBuffersMemory[j][i], nullptr);
+			for (uint32_t j = 0; j < m_UniformBuffersMemory.size(); j++) {
+				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
 			}
 		}
 	}
@@ -371,23 +367,18 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateCommandBuffers(CScene* pScene)
+	void CSwapChain::CreateCommandBuffers()
 	{
-		auto modelCount = pScene->GetModels().size();
+		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
-		m_CommandBuffers.resize(modelCount);
-		for (size_t i = 0; i < modelCount; i++) {
-			m_CommandBuffers[i].resize(MAX_FRAMES_IN_FLIGHT);
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
 
-			VkCommandBufferAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
-			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
-
-			if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers[i].data()) != VK_SUCCESS) {
-				throw std::runtime_error("failed to allocate command buffers!");
-			}
+		if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate command buffers!");
 		}
 	}
 
@@ -504,9 +495,9 @@ namespace BetterThanNothing
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, int modelIndex)
+	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
 	{
-		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		WaitForFences();
 		VkResult result = AcquireNextImage();
@@ -520,6 +511,10 @@ namespace BetterThanNothing
 		}
 
 		// Old Uniform Buffer Object (UBO) update place
+		for (size_t i = 0; i < pScene->GetModels().size(); i++) {
+			UpdateUniformBuffer(pScene, pScene->GetModels()[i], i);
+		}
+
 		ResetFences();
 		vkResetCommandBuffer(commandBuffer, 0);
 
@@ -570,11 +565,11 @@ namespace BetterThanNothing
 
 		ubo.m_Model = glm::mat4(1.0f);
 		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(1.0f, 1.0f, 1.0f));
-		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
-		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+		//ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
+		//ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
+		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+		//ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 		std::cout << "Position: " << pModel->GetPosition().x << " " << pModel->GetPosition().y << " " << pModel->GetPosition().z << std::endl;
 		std::cout << "Rotation: " << pModel->GetRotation().x << " " << pModel->GetRotation().y << " " << pModel->GetRotation().z << std::endl;
@@ -586,9 +581,9 @@ namespace BetterThanNothing
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
 	}
 
-	void CSwapChain::BindModel(CModel* pModel, int modelIndex)
+	void CSwapChain::BindModel(CModel* pModel)
 	{
-		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
 		VkDeviceSize offsets[] = {0};
@@ -598,7 +593,7 @@ namespace BetterThanNothing
 
 	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex)
 	{
-		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -608,9 +603,9 @@ namespace BetterThanNothing
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
 	}
 
-	void CSwapChain::EndRecordCommandBuffer(int modelIndex)
+	void CSwapChain::EndRecordCommandBuffer()
 	{
-		auto commandBuffer = m_CommandBuffers[modelIndex][m_CurrentFrame];
+		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		vkCmdEndRenderPass(commandBuffer);
 
