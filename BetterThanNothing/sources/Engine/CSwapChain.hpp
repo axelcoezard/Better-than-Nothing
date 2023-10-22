@@ -85,7 +85,7 @@ namespace BetterThanNothing
 		void										CreateCommandBuffers();
 
 		void										BindDescriptorPool(CDescriptorPool* pDescriptorPool);
-		void										BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene);
+		bool										BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene);
 		void										BindModel(CModel* pModel);
 		void										UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex);
 		void										DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex);

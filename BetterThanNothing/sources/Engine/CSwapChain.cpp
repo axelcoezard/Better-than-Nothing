@@ -495,7 +495,7 @@ namespace BetterThanNothing
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
+	bool CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -503,7 +503,8 @@ namespace BetterThanNothing
 		VkResult result = AcquireNextImage();
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			return (void) RecreateSwapChain();
+			RecreateSwapChain();
+			return false;
 		}
 
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -511,12 +512,12 @@ namespace BetterThanNothing
 		}
 
 		// Old Uniform Buffer Object (UBO) update place
+		ResetFences();
+		vkResetCommandBuffer(commandBuffer, 0);
+
 		for (size_t i = 0; i < pScene->GetModels().size(); i++) {
 			UpdateUniformBuffer(pScene, pScene->GetModels()[i], i);
 		}
-
-		ResetFences();
-		vkResetCommandBuffer(commandBuffer, 0);
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -525,14 +526,12 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 
-		auto swapChainExtent = m_Extent;
-
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_RenderPass;
 		renderPassInfo.framebuffer = m_Framebuffers[m_CurrentImageIndex];
 		renderPassInfo.renderArea.offset = {0, 0};
-		renderPassInfo.renderArea.extent = swapChainExtent;
+		renderPassInfo.renderArea.extent = m_Extent;
 
 		std::array<VkClearValue, 2> clearValues{};
 		clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
@@ -547,16 +546,17 @@ namespace BetterThanNothing
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(swapChainExtent.width);
-		viewport.height = static_cast<float>(swapChainExtent.height);
+		viewport.width = static_cast<float>(m_Extent.width);
+		viewport.height = static_cast<float>(m_Extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = {0, 0};
-		scissor.extent = swapChainExtent;
+		scissor.extent = m_Extent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		return true;
 	}
 
 	void CSwapChain::UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex)
