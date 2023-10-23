@@ -1,14 +1,15 @@
-#include <iostream>
-#include "AudioSystem/CAudioSystem.hpp"
+#include "Systems/AudioSystem.hpp"
 
-namespace BetterThanNothing {
-	CAudioSystem* CAudioSystem::m_pInstance = nullptr;
+namespace BetterThanNothing
+{
+	AudioSystem* AudioSystem::m_pInstance = nullptr;
 
-	CAudioSystem::CAudioSystem(void) = default;
-	CAudioSystem::~CAudioSystem(void) = default;
+	AudioSystem::AudioSystem() = default;
+	AudioSystem::~AudioSystem() = default;
 
-	bool CAudioSystem::Initialize() {
-		CAudioSystem* instance = CAudioSystem::GetInstance();
+	bool AudioSystem::Initialize()
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
 
 		instance->m_pDevice = alcOpenDevice(nullptr);
 		if (!instance->m_pDevice)
@@ -24,8 +25,9 @@ namespace BetterThanNothing {
 		return true;
 	}
 
-	void CAudioSystem::GetDevices() {
-		CAudioSystem* instance = CAudioSystem::GetInstance();
+	void AudioSystem::GetDevices()
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
 
 		instance->m_Devices.clear();
 
@@ -37,19 +39,25 @@ namespace BetterThanNothing {
 		}
 	}
 
-	void CAudioSystem::Shutdown() {
-		CAudioSystem* instance = CAudioSystem::GetInstance();
+	void AudioSystem::Shutdown()
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
 
 		alcMakeContextCurrent(nullptr);
+
 		if (instance->m_pContext != nullptr) {
 			alcDestroyContext(instance->m_pContext);
 		}
+
 		if (instance->m_pDevice != nullptr) {
 			alcCloseDevice(instance->m_pDevice);
 		}
 	}
 
-	uint32_t CAudioSystem::LoadSound(const std::string& fileName) {
+	SoundID AudioSystem::LoadSound(const std::string& fileName)
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
+
 		SF_INFO fileInfos;
 		SNDFILE* file = sf_open(fileName.c_str(), SFM_READ, &fileInfos);
 		if (!file)
@@ -77,25 +85,60 @@ namespace BetterThanNothing {
 		if (alGetError() != AL_NO_ERROR)
 			return 0;
 
-		return buffer;
+		SoundID id = instance->m_Sounds.size() + 1;
+		instance->m_Sounds.push_back({
+			.m_Id = id,
+			.m_Buffer = buffer,
+			.m_IsPlaying = false
+		});
+		return id;
 	}
 
-	void CAudioSystem::PlaySound(uint32_t buffer) {
+	void AudioSystem::PlaySound(SoundID id)
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
+
+		if (id - 1 >= instance->m_Sounds.size())
+			return;
+
 		ALuint source;
 		alGenSources(1, &source);
-
-		alSourcei(source, AL_BUFFER, buffer);
+		alSourcei(source, AL_BUFFER, instance->m_Sounds[id].m_Buffer);
 		alSourcePlay(source);
 
-		// TODO: Delete sound when fully played
-		//alDeleteBuffers(1, &buffer);
-		//alSourcei(source, AL_BUFFER, 0);
-		//alDeleteSources(1, &source);
+		instance->m_Sounds[id].m_Source = source;
 	}
 
-	CAudioSystem* CAudioSystem::GetInstance() {
+
+	void AudioSystem::FlushSounds()
+	{
+		AudioSystem* instance = AudioSystem::GetInstance();
+
+		for (Sound& sound : instance->m_Sounds)
+		{
+			ALint state;
+			alGetSourcei(sound.m_Source, AL_SOURCE_STATE, &state);
+			if (state != AL_STOPPED) {
+				continue;
+			}
+
+			alDeleteBuffers(1, &sound.m_Buffer);
+			alSourcei(sound.m_Source, AL_BUFFER, 0);
+			alDeleteSources(1, &sound.m_Source);
+
+			for (auto it = instance->m_Sounds.begin(); it != instance->m_Sounds.end(); it++) {
+				if (it->m_Id == sound.m_Id) {
+					instance->m_Sounds.erase(it);
+					break;
+				}
+			}
+		}
+	}
+
+	AudioSystem* AudioSystem::GetInstance()
+	{
 		if (m_pInstance == nullptr) {
-			m_pInstance = new CAudioSystem();
+			m_pInstance = new AudioSystem();
 		}
 		return m_pInstance;
 	}

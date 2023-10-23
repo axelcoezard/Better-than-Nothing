@@ -16,3 +16,9 @@
 [submodule "ThirdParty/tinyobjloader2"]
 	path = ThirdParty/tinyobjloader2
 	url = https://github.com/tinyobjloader/tinyobjloader.git
+[submodule "ThirdParty/openal"]
+	path = ThirdParty/openal
+	url = https://github.com/axelcoezard/better-than-nothing-openal.git
+[submodule "ThirdParty/libsndfile"]
+	path = ThirdParty/libsndfile
+	url = https://github.com/axelcoezard/better-than-nothing-libsndfile.git

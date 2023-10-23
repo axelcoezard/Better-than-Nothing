@@ -15,6 +15,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
+#include <sndfile.h>
+
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #define MAX_FRAMES_IN_FLIGHT 60
 
 #define WINDOW_WIDTH 800
