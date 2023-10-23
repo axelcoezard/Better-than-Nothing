@@ -20,7 +20,7 @@ namespace BetterThanNothing
 		Device*								m_pDevice;
 		CommandPool*						m_pCommandPool;
 		SwapChain*							m_pSwapChain;
-		DescriptorPool*					m_pDescriptorPool;
+		DescriptorPool*						m_pDescriptorPool;
 
 		std::map<std::string, Pipeline*>	m_pPipeLines;
 
@@ -40,11 +40,11 @@ namespace BetterThanNothing
 		void								Render(Scene* pScene);
 
 	public:
-		Window*							GetWindow()			{ return m_pWindow; }
-		Device*							GetDevice()			{ return m_pDevice; }
+		Window*								GetWindow()			{ return m_pWindow; }
+		Device*								GetDevice()			{ return m_pDevice; }
 		CommandPool*						GetCommandPool()	{ return m_pCommandPool; }
 		SwapChain*							GetSwapChain()		{ return m_pSwapChain; }
-		DescriptorPool*					GetDescriptorPool()	{ return m_pDescriptorPool; }
+		DescriptorPool*						GetDescriptorPool()	{ return m_pDescriptorPool; }
 		std::map<std::string, Pipeline*>	GetPipeLines()		{ return m_pPipeLines; }
 	};
 };

@@ -12,11 +12,11 @@ namespace BetterThanNothing
 
 		bool			m_bResized = false;
 	public:
-		Window(std::string_view title, uint32_t width, uint32_t height);
-		~Window();
+						Window(std::string_view title, uint32_t width, uint32_t height);
+						~Window();
 
-		Window(const Window&) = delete;
-		Window& operator=(const Window&) = delete;
+						Window(const Window&) = delete;
+						Window& operator=(const Window&) = delete;
 
 		void			Open();
 		void			Poll()						{ glfwPollEvents(); }

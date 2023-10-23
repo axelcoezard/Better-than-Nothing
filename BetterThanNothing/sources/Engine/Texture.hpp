@@ -9,7 +9,7 @@ namespace BetterThanNothing
 	class Texture
 	{
 	private:
-		Device*			m_pDevice;
+		Device*				m_pDevice;
 		CommandPool*		m_pCommandPool;
 		SwapChain*			m_pSwapChain;
 

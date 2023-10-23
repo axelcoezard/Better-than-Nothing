@@ -9,7 +9,7 @@ namespace BetterThanNothing
 	class DescriptorPool
 	{
 	private:
-		Device*									m_pDevice;
+		Device*										m_pDevice;
 		SwapChain*									m_pSwapChain;
 
 		VkDescriptorSetLayout						m_DescriptorSetLayout;
@@ -21,9 +21,9 @@ namespace BetterThanNothing
 													~DescriptorPool();
 
 													DescriptorPool(const DescriptorPool&) = delete;
-		DescriptorPool&							operator=(const DescriptorPool&) = delete;
+		DescriptorPool&								operator=(const DescriptorPool&) = delete;
 													DescriptorPool(DescriptorPool&&) = delete;
-		DescriptorPool&							operator=(DescriptorPool&&) = delete;
+		DescriptorPool&								operator=(DescriptorPool&&) = delete;
 
 	private:
 		void 										CreateDescriptorSetLayout();
