@@ -1,24 +1,24 @@
-#include "Engine/CWindow.hpp"
-#include "Engine/CDevice.hpp"
-#include "Engine/CRenderer.hpp"
-#include "Engine/CModel.hpp"
-#include "Handlers/CInput.hpp"
-#include "Scene/CScene.hpp"
-#include "Scene/CCamera.hpp"
+#include "Engine/Window.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/Renderer.hpp"
+#include "Engine/Model.hpp"
+#include "Handlers/Input.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Camera.hpp"
 
 using namespace BetterThanNothing;
 
 int main(void) {
-	auto pWindow = new CWindow("better than nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
-	auto pDevice = new CDevice(pWindow);
-	auto pRenderer = new CRenderer(pWindow, pDevice);
+	auto pWindow = new Window("better than nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
+	auto pDevice = new Device(pWindow);
+	auto pRenderer = new Renderer(pWindow, pDevice);
 
 	pRenderer->LoadPipeline(
 		"main",
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 
-	CScene* pScene = new CScene("world");
+	Scene* pScene = new Scene("world");
 
 	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, 0.0f, 0.0f);
 	pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);

@@ -1,15 +1,15 @@
-#include "Engine/CWindow.hpp"
-#include "Handlers/CInput.hpp"
+#include "Engine/Window.hpp"
+#include "Handlers/Input.hpp"
 
 namespace BetterThanNothing
 {
-	CWindow::CWindow(std::string_view title, uint32_t width, uint32_t height)
+	Window::Window(std::string_view title, uint32_t width, uint32_t height)
 		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height)
 	{
 		Open();
 	}
 
-	CWindow::~CWindow()
+	Window::~Window()
 	{
 		if (m_pWindow != nullptr) {
 			glfwDestroyWindow(m_pWindow);
@@ -17,7 +17,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CWindow::Open()
+	void Window::Open()
 	{
 		glfwInit();
 
@@ -34,16 +34,16 @@ namespace BetterThanNothing
 		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
 	}
 
-	void CWindow::ResizeCallback(GLFWwindow* pWindow, int width, int height)
+	void Window::ResizeCallback(GLFWwindow* pWindow, int width, int height)
 	{
 		(void) width;
 		(void) height;
 
-		auto window = reinterpret_cast<CWindow*>(glfwGetWindowUserPointer(pWindow));
+		auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(pWindow));
 		window->SetResized(true);
 	}
 
-	void CWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		(void) scancode;
 		(void) mods;
@@ -51,26 +51,26 @@ namespace BetterThanNothing
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
-		CInput::UpdateKey(key, action);
+		Input::UpdateKey(key, action);
 	}
 
-	void CWindow::MouseCursorCallback(GLFWwindow* window, double xpos, double ypos)
+	void Window::MouseCursorCallback(GLFWwindow* window, double xpos, double ypos)
 	{
 		(void) window;
-		CInput::UpdateMousePosition(xpos, ypos);
+		Input::UpdateMousePosition(xpos, ypos);
 	}
 
-	void CWindow::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	void Window::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		(void) window;
 		(void) xoffset;
-		CInput::UpdateMouseScroll(yoffset);
+		Input::UpdateMouseScroll(yoffset);
 	}
 
-	void CWindow::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
 		(void) window;
 		(void) mods;
-		CInput::UpdateMouseButton(button, action);
+		Input::UpdateMouseButton(button, action);
 	}
 };

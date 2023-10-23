@@ -5,7 +5,7 @@
 
 namespace BetterThanNothing
 {
-	struct CInput {
+	struct Input {
 	protected:
 		static int m_Keys[KEYBOARD_KEY_COUNT];
 
@@ -15,11 +15,11 @@ namespace BetterThanNothing
 		static int m_Buttons[MOUSE_BUTTON_COUNT];
 
 	public:
-		CInput(void);
-		~CInput(void);
+		Input(void);
+		~Input(void);
 
-		CInput(CInput&) = delete;
-		void operator=(const CInput&) = delete;
+		Input(Input&) = delete;
+		void operator=(const Input&) = delete;
 
 		static void UpdateKey(int key, int action);
 		static void PressKey(int key);

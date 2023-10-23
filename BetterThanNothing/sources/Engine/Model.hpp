@@ -2,17 +2,18 @@
 
 namespace BetterThanNothing
 {
-	class CDevice;
-	class CRenderer;
-	class CVertex;
+	class Device;
+	class Renderer;
+	class Vertex;
+	class Texture;
 
-	class CModel
+	class Model
 	{
 	private:
-		CDevice*						m_pDevice;
-		CRenderer*						m_pRenderer;
+		Device*							m_pDevice;
+		Renderer*						m_pRenderer;
 
-		std::vector<CVertex>			m_Vertices;
+		std::vector<Vertex>				m_Vertices;
 		std::vector<uint32_t>			m_Indices;
 
 		VkBuffer						m_VertexBuffer;
@@ -20,20 +21,20 @@ namespace BetterThanNothing
 		VkBuffer						m_IndexBuffer;
 		VkDeviceMemory					m_IndexBufferMemory;
 
-		CTexture*						m_pTexture;
+		Texture*						m_pTexture;
 
 		glm::vec3						m_Position;
 		glm::vec3						m_Rotation;
 		float							m_Scale;
 
 	public:
-										CModel(CDevice* pDevice, CRenderer* pRenderer);
-										~CModel();
+										Model(Device* pDevice, Renderer* pRenderer);
+										~Model();
 
-										CModel(const CModel&) = delete;
-		CModel&							operator=(const CModel&) = delete;
-										CModel(CModel&&) = delete;
-		CModel&							operator=(CModel&&) = delete;
+										Model(const Model&) = delete;
+		Model&							operator=(const Model&) = delete;
+										Model(Model&&) = delete;
+		Model&							operator=(Model&&) = delete;
 
 		void							LoadFromFiles(const std::string& filePath, const std::string& texturePath);
 		void							Bind(VkCommandBuffer commandBuffer);
@@ -48,7 +49,7 @@ namespace BetterThanNothing
 		VkBuffer&						GetVertexBuffer() { return m_VertexBuffer; }
 		VkBuffer&						GetIndexBuffer() { return m_IndexBuffer; }
 		uint32_t						GetIndicesCount() { return static_cast<uint32_t>(m_Indices.size()); }
-		CTexture*						GetTexture() { return m_pTexture; }
+		Texture*						GetTexture() { return m_pTexture; }
 
 		glm::vec3&						GetPosition() { return m_Position; }
 		glm::vec3&						GetRotation() { return m_Rotation; }

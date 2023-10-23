@@ -1,26 +1,26 @@
-#include "CDevice.hpp"
-#include "CSwapChain.hpp"
-#include "CTexture.hpp"
-#include "CDescriptorPool.hpp"
-#include "CUniformBufferObject.hpp"
-#include "CModel.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/SwapChain.hpp"
+#include "Engine/Texture.hpp"
+#include "Engine/DescriptorPool.hpp"
+#include "Engine/UniformBufferObject.hpp"
+#include "Engine/Model.hpp"
 
 namespace BetterThanNothing
 {
-	CDescriptorPool::CDescriptorPool(CDevice* pDevice, CSwapChain* pSwapChain)
+	DescriptorPool::DescriptorPool(Device* pDevice, SwapChain* pSwapChain)
 		: m_pDevice(pDevice), m_pSwapChain(pSwapChain)
 	{
 		CreateDescriptorSetLayout();
 	}
 
-	CDescriptorPool::~CDescriptorPool()
+	DescriptorPool::~DescriptorPool()
 	{
 		auto device = m_pDevice->GetVkDevice();
 		vkDestroyDescriptorPool(device, m_DescriptorPool, nullptr);
 		vkDestroyDescriptorSetLayout(m_pDevice->GetVkDevice(), m_DescriptorSetLayout, nullptr);
 	}
 
-	void CDescriptorPool::CreateDescriptorSetLayout()
+	void DescriptorPool::CreateDescriptorSetLayout()
 	{
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;
@@ -50,7 +50,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDescriptorPool::CreateDescriptorPool(std::vector<CModel*> pModels)
+	void DescriptorPool::CreateDescriptorPool(std::vector<Model*> pModels)
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -69,7 +69,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDescriptorPool::CreateDescriptorSets(std::vector<CModel*> pModels)
+	void DescriptorPool::CreateDescriptorSets(std::vector<Model*> pModels)
 	{
 		auto device = m_pDevice->GetVkDevice();
 		auto modelCount = pModels.size();
@@ -93,7 +93,7 @@ namespace BetterThanNothing
 				VkDescriptorBufferInfo bufferInfo{};
 				bufferInfo.buffer = m_pSwapChain->GetUniformBuffers()[i][j];
 				bufferInfo.offset = 0;
-				bufferInfo.range = sizeof(CUniformBufferObject);
+				bufferInfo.range = sizeof(UniformBufferObject);
 
 				VkDescriptorImageInfo imageInfo{};
 				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

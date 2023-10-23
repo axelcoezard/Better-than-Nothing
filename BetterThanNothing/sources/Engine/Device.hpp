@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/CWindow.hpp"
+#include "Engine/Window.hpp"
 
 namespace BetterThanNothing
 {
@@ -21,10 +21,10 @@ namespace BetterThanNothing
 		std::vector<VkPresentModeKHR>	m_PresentationModes;
 	};
 
-	class CDevice
+	class Device
 	{
 	private:
-		CWindow*						m_pWindow;
+		Window*							m_pWindow;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -41,13 +41,13 @@ namespace BetterThanNothing
 		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
 
 	public:
-										CDevice(CWindow* pWindow);
-										~CDevice();
+										Device(Window* pWindow);
+										~Device();
 
-										CDevice(const CDevice&) = delete;
-		CDevice&						operator=(const CDevice&) = delete;
-										CDevice(CDevice&&) = delete;
-		CDevice&						operator=(CDevice&&) = delete;
+										Device(const Device&) = delete;
+		Device&							operator=(const Device&) = delete;
+										Device(Device&&) = delete;
+		Device&							operator=(Device&&) = delete;
 
 	private:
 		void							CreateInstance();

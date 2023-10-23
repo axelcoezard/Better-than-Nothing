@@ -1,15 +1,15 @@
-#include "CDevice.hpp"
-#include "CSwapChain.hpp"
-#include "CPipeline.hpp"
-#include "CVertex.hpp"
-#include "CDescriptorPool.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/SwapChain.hpp"
+#include "Engine/Pipeline.hpp"
+#include "Engine/Vertex.hpp"
+#include "Engine/DescriptorPool.hpp"
 
 namespace BetterThanNothing
 {
-	CPipeline::CPipeline(
-		CDevice* pDevice,
-		CSwapChain* pSwapChain,
-		CDescriptorPool* pDescriptorPool,
+	Pipeline::Pipeline(
+		Device* pDevice,
+		SwapChain* pSwapChain,
+		DescriptorPool* pDescriptorPool,
 		const std::string& vertexShaderFilePath,
 		const std::string& fragmentShaderFilePath
 	) : m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pDescriptorPool(pDescriptorPool) {
@@ -17,14 +17,14 @@ namespace BetterThanNothing
 		CreateGraphicsPipeline();
 	}
 
-	CPipeline::~CPipeline() {
+	Pipeline::~Pipeline() {
 		auto device = m_pDevice->GetVkDevice();
 
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
-	std::vector<char> CPipeline::ReadFile(const std::string& filePath) {
+	std::vector<char> Pipeline::ReadFile(const std::string& filePath) {
 		std::ifstream file(filePath, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open()) {
@@ -40,7 +40,7 @@ namespace BetterThanNothing
 		return buffer;
 	}
 
-	void CPipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
 		auto vertexShaderCode = ReadFile(vertexShaderFilePath);
 		m_VertexShaderModule = CreateShaderModule(vertexShaderCode);
 
@@ -48,7 +48,7 @@ namespace BetterThanNothing
 		m_FragmentShaderModule = CreateShaderModule(fragmentShaderCode);
 	}
 
-	VkShaderModule CPipeline::CreateShaderModule(const std::vector<char>& code) {
+	VkShaderModule Pipeline::CreateShaderModule(const std::vector<char>& code) {
 		if (code.data() == nullptr || code.size() == 0) {
 			throw std::runtime_error("Invalid shader code");
 		}
@@ -65,7 +65,7 @@ namespace BetterThanNothing
 		return shaderModule;
 	}
 
-	void CPipeline::CreateGraphicsPipeline() {
+	void Pipeline::CreateGraphicsPipeline() {
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -80,8 +80,8 @@ namespace BetterThanNothing
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
-		auto bindingDescription = CVertex::GetBindingDescription();
-		auto attributeDescriptions = CVertex::GetAttributeDescriptions();
+		auto bindingDescription = Vertex::GetBindingDescription();
+		auto attributeDescriptions = Vertex::GetAttributeDescriptions();
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

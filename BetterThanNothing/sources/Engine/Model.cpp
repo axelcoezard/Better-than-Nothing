@@ -1,10 +1,10 @@
-#include "CWindow.hpp"
-#include "CDevice.hpp"
-#include "CSwapChain.hpp"
-#include "CVertex.hpp"
-#include "CRenderer.hpp"
-#include "CModel.hpp"
-#include "CTexture.hpp"
+#include "Engine/Window.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/SwapChain.hpp"
+#include "Engine/Vertex.hpp"
+#include "Engine/Renderer.hpp"
+#include "Engine/Model.hpp"
+#include "Engine/Texture.hpp"
 
 #ifndef TINYOBJLOADER_IMPLEMENTATION
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -13,7 +13,7 @@
 
 namespace BetterThanNothing
 {
-	CModel::CModel(CDevice* pDevice, CRenderer* pRenderer)
+	Model::Model(Device* pDevice, Renderer* pRenderer)
 		: m_pDevice(pDevice), m_pRenderer(pRenderer)
 	{
 		m_Position = {0.0f, 0.0f, 0.0f};
@@ -21,7 +21,7 @@ namespace BetterThanNothing
 		m_Scale	   = 1.0f;
 	}
 
-	CModel::~CModel()
+	Model::~Model()
 	{
 		auto device = m_pDevice->GetVkDevice();
 
@@ -34,7 +34,7 @@ namespace BetterThanNothing
 		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
 	}
 
-	void CModel::LoadFromFiles(const std::string& filePath, const std::string& texturePath)
+	void Model::LoadFromFiles(const std::string& filePath, const std::string& texturePath)
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
@@ -45,11 +45,11 @@ namespace BetterThanNothing
 			throw std::runtime_error(warn + err);
 		}
 
-		std::unordered_map<CVertex, uint32_t> uniqueVertices{};
+		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
 		for (const auto& shape : shapes) {
 			for (const auto& index : shape.mesh.indices) {
-				CVertex vertex{};
+				Vertex vertex{};
 
 				vertex.m_Position = {
 					attrib.vertices[3 * index.vertex_index + 0],
@@ -78,7 +78,7 @@ namespace BetterThanNothing
 		CreateTexture(texturePath);
 	}
 
-	void CModel::CreateVertexBuffer()
+	void Model::CreateVertexBuffer()
 	{
 		auto device = m_pDevice->GetVkDevice();
 		auto pSwapChain = m_pRenderer->GetSwapChain();
@@ -108,7 +108,7 @@ namespace BetterThanNothing
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
-	void CModel::CreateIndexBuffer()
+	void Model::CreateIndexBuffer()
 	{
 		auto device = m_pDevice->GetVkDevice();
 		auto pSwapChain = m_pRenderer->GetSwapChain();
@@ -138,9 +138,9 @@ namespace BetterThanNothing
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
-	void CModel::CreateTexture(const std::string& texturePath)
+	void Model::CreateTexture(const std::string& texturePath)
 	{
-		m_pTexture = new CTexture(m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
+		m_pTexture = new Texture(m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
 		m_pTexture->LoadFromFile(texturePath);
 	}
 };

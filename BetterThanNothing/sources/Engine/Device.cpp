@@ -1,4 +1,4 @@
-#include "CDevice.hpp"
+#include "Engine/Device.hpp"
 
 #include <set>
 
@@ -14,7 +14,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
 namespace BetterThanNothing
 {
-	CDevice::CDevice(CWindow* pWindow): m_pWindow(pWindow) {
+	Device::Device(Window* pWindow): m_pWindow(pWindow) {
 		CreateInstance();
 		SetupDebugMessenger();
 		CreateSurface();
@@ -22,7 +22,7 @@ namespace BetterThanNothing
 		CreateLogicalDevice();
 	}
 
-	CDevice::~CDevice() {
+	Device::~Device() {
 		vkDestroyDevice(m_Device, nullptr);
 
 		if (m_EnableValidationLayers) {
@@ -33,7 +33,7 @@ namespace BetterThanNothing
 		vkDestroyInstance(m_Instance, nullptr);
 	}
 
-	void CDevice::CreateInstance() {
+	void Device::CreateInstance() {
 		if (m_EnableValidationLayers && !CheckValidationLayerSupport()) {
 			throw std::runtime_error("validation layers requested, but not available!");
 		}
@@ -69,7 +69,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDevice::SetupDebugMessenger() {
+	void Device::SetupDebugMessenger() {
 		if (!m_EnableValidationLayers) return;
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo;
@@ -80,13 +80,13 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDevice::CreateSurface() {
+	void Device::CreateSurface() {
 		if (glfwCreateWindowSurface(m_Instance, m_pWindow->GetPointer(), nullptr, &m_Surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
 
-	void CDevice::PickPhysicalDevice() {
+	void Device::PickPhysicalDevice() {
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
 
@@ -110,7 +110,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDevice::CreateLogicalDevice() {
+	void Device::CreateLogicalDevice() {
 		QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -156,7 +156,7 @@ namespace BetterThanNothing
 		vkGetDeviceQueue(m_Device, indices.m_PresentationFamily.value(), 0, &m_PresentationQueue);
 	}
 
-	bool CDevice::CheckValidationLayerSupport() {
+	bool Device::CheckValidationLayerSupport() {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -180,7 +180,7 @@ namespace BetterThanNothing
 		return true;
 	}
 
-	bool CDevice::CheckDeviceExtensionSupport(VkPhysicalDevice device) {
+	bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device) {
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
@@ -195,7 +195,7 @@ namespace BetterThanNothing
 		return requiredExtensions.empty();
 	}
 
-	std::vector<const char*> CDevice::GetRequiredExtensions() {
+	std::vector<const char*> Device::GetRequiredExtensions() {
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
 		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -209,7 +209,7 @@ namespace BetterThanNothing
 		return extensions;
 	}
 
-	bool CDevice::IsDeviceSuitable(VkPhysicalDevice device) {
+	bool Device::IsDeviceSuitable(VkPhysicalDevice device) {
 		QueueFamilyIndices indices = FindQueueFamilies(device);
 		bool bExtensionsSupported = CheckDeviceExtensionSupport(device);
 		bool bSwapChainAdequate = false;
@@ -225,7 +225,7 @@ namespace BetterThanNothing
 		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate && supportedFeatures.samplerAnisotropy;
 	}
 
-	VkSampleCountFlagBits CDevice::GetMaxUsableSampleCount() {
+	VkSampleCountFlagBits Device::GetMaxUsableSampleCount() {
 		VkPhysicalDeviceProperties physicalDeviceProperties;
 		vkGetPhysicalDeviceProperties(m_PhysicalDevice, &physicalDeviceProperties);
 
@@ -239,7 +239,7 @@ namespace BetterThanNothing
 		return VK_SAMPLE_COUNT_1_BIT;
 	}
 
-	QueueFamilyIndices CDevice::FindQueueFamilies(VkPhysicalDevice device) {
+	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device) {
 		QueueFamilyIndices indices;
 
 		uint32_t queueFamilyCount = 0;
@@ -268,7 +268,7 @@ namespace BetterThanNothing
 		return indices;
 	}
 
-	SwapChainSupportDetails CDevice::QuerySwapChainSupport(VkPhysicalDevice device) {
+	SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device) {
 		SwapChainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.m_Capabilities);
 
@@ -290,7 +290,7 @@ namespace BetterThanNothing
 		return details;
 	}
 
-	uint32_t CDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+	uint32_t Device::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &memProperties);
 
@@ -304,7 +304,7 @@ namespace BetterThanNothing
 		throw std::runtime_error("failed to find suitable memory type!");
 	}
 
-	VkFormat CDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+	VkFormat Device::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
 		for (VkFormat format : candidates) {
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &props);
@@ -322,7 +322,7 @@ namespace BetterThanNothing
 	}
 
 
-	VkResult CDevice::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+	VkResult Device::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if (func != nullptr) {
 			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -331,14 +331,14 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CDevice::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+	void Device::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
 		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 		if (func != nullptr) {
 			func(instance, debugMessenger, pAllocator);
 		}
 	}
 
-	void CDevice::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+	void Device::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;

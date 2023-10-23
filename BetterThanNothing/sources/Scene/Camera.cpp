@@ -1,9 +1,9 @@
-#include "Scene/CCamera.hpp"
-#include "Handlers/CInput.hpp"
+#include "Scene/Camera.hpp"
+#include "Handlers/Input.hpp"
 
 namespace BetterThanNothing
 {
-	CCamera::CCamera(float x, float y, float z, double yaw, double pitch)
+	Camera::Camera(float x, float y, float z, double yaw, double pitch)
 	{
 		m_Position = glm::vec3(x, y, z);
 		m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -16,19 +16,19 @@ namespace BetterThanNothing
 		CalculateCameraVectors();
 	}
 
-	CCamera::~CCamera()
+	Camera::~Camera()
 	{
 
 	}
 
-	void CCamera::SetPerspectiveProjection(float fov, float zNear, float zFar)
+	void Camera::SetPerspectiveProjection(float fov, float zNear, float zFar)
 	{
 		m_Fov = fov;
 		m_ZNear = zNear;
 		m_ZFar = zFar;
 	}
 
-	void CCamera::Update(float deltatime)
+	void Camera::Update(float deltatime)
 	{
 		static bool firstMouse = true;
 		static float lastMouseX = 0;
@@ -40,30 +40,30 @@ namespace BetterThanNothing
 		// compute keyboard inputs
 		glm::vec3 movement = glm::vec3(0.0f);
 
-		if (CInput::IsKeyPressed(GLFW_KEY_W)) {
+		if (Input::IsKeyPressed(GLFW_KEY_W)) {
 			movement += velocity * m_Front;
 		}
-		if (CInput::IsKeyPressed(GLFW_KEY_S)) {
+		if (Input::IsKeyPressed(GLFW_KEY_S)) {
 			movement -= velocity * m_Front;
 		}
-		if (CInput::IsKeyPressed(GLFW_KEY_A)) {
+		if (Input::IsKeyPressed(GLFW_KEY_A)) {
 			movement -= velocity * m_Right;
 		}
-		if (CInput::IsKeyPressed(GLFW_KEY_D)) {
+		if (Input::IsKeyPressed(GLFW_KEY_D)) {
 			movement += velocity * m_Right;
 		}
-		if (CInput::IsKeyPressed(GLFW_KEY_SPACE)) {
+		if (Input::IsKeyPressed(GLFW_KEY_SPACE)) {
 			movement += velocity * m_Up;
 		}
-		if (CInput::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+		if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
 			movement -= velocity * m_Up;
 		}
 
 		m_Position += movement;
 
 		// compute mouse inputs
-		if (CInput::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-			glm::vec2 mousePosition = CInput::GetMousePosition();
+		if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+			glm::vec2 mousePosition = Input::GetMousePosition();
 
 			if (firstMouse) {
 				lastMouseX = mousePosition.x;
@@ -96,7 +96,7 @@ namespace BetterThanNothing
 		CalculateProjectionMatrix();
 	}
 
-	void CCamera::CalculateCameraVectors()
+	void Camera::CalculateCameraVectors()
 	{
 		glm::vec3 front;
 		front.x = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
@@ -108,12 +108,12 @@ namespace BetterThanNothing
 		m_Up = glm::normalize(glm::cross(m_Right, m_Front));
 	}
 
-	void CCamera::CalculateViewMatrix()
+	void Camera::CalculateViewMatrix()
 	{
 		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 	}
 
-	void CCamera::CalculateProjectionMatrix()
+	void Camera::CalculateProjectionMatrix()
 	{
 		float aspectRatio = (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT;
 
