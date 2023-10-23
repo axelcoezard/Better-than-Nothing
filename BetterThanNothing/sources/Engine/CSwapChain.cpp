@@ -8,6 +8,8 @@
 #include "CCommandPool.hpp"
 #include "CDescriptorPool.hpp"
 #include "CModel.hpp"
+#include "Scene/CScene.hpp"
+#include "Scene/CCamera.hpp"
 
 #include <unordered_map>
 
@@ -479,18 +481,14 @@ namespace BetterThanNothing
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void CSwapChain::UpdateUniformBuffer()
+	void CSwapChain::UpdateUniformBuffer(CScene* pScene)
 	{
-		static auto startTime = std::chrono::high_resolution_clock::now();
-
-		auto currentTime = std::chrono::high_resolution_clock::now();
-		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
 		CUniformBufferObject ubo{};
-		ubo.m_Model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		ubo.m_View = glm::lookAt(glm::vec3(-10.0f, 2.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.m_Projection = glm::perspective(glm::radians(45.0f), m_Extent.width / (float) m_Extent.height, 0.1f, 1000.0f);
-		ubo.m_Projection[1][1] *= -1;
+
+		ubo.m_Model = glm::mat4(1.0f);
+		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
+		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
 
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame], &ubo, sizeof(ubo));
 	}
@@ -500,7 +498,7 @@ namespace BetterThanNothing
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline)
+	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -515,7 +513,7 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		UpdateUniformBuffer();
+		UpdateUniformBuffer(pScene);
 		ResetFences();
 		ResetCommandBuffer();
 

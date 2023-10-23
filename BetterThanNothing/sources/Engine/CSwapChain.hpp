@@ -10,6 +10,7 @@ namespace BetterThanNothing
 	class CTexture;
 	class CVertex;
 	class CModel;
+	class CScene;
 
 	class CSwapChain
 	{
@@ -48,6 +49,10 @@ namespace BetterThanNothing
 		uint32_t						m_CurrentImageIndex = 0;
 		CDescriptorPool*				m_pDescriptorPool = nullptr;
 
+		float							m_CameraX = 0.0f;
+		float							m_CameraY = 0.0f;
+		float							m_CameraZ = 0.0f;
+
 	public:
 										CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
 										~CSwapChain();
@@ -83,10 +88,12 @@ namespace BetterThanNothing
 
 		VkFormat						FindDepthFormat();
 		bool							HasStencilComponent(VkFormat format);
-		void							UpdateUniformBuffer();
+		void							UpdateUniformBuffer(CScene* pScene);
+
+		void 							MoveCamera(float x, float y, float z);
 
 		void							BindDescriptorPool(CDescriptorPool* pDescriptorPool);
-		void							BeginRecordCommandBuffer(CPipeline* pPipeline);
+		void							BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene);
 		void							BindModel(CModel* pModel);
 		void							DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex);
 		void							EndRecordCommandBuffer();

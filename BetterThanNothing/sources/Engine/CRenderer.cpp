@@ -8,6 +8,8 @@
 #include "Engine/CTexture.hpp"
 #include "Engine/CPipeline.hpp"
 #include "Engine/CModel.hpp"
+#include "Scene/CScene.hpp"
+#include "Scene/CCamera.hpp"
 
 namespace BetterThanNothing
 {
@@ -24,10 +26,6 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		for (uint32_t i = 0; i < m_pModels.size(); i++) {
-			delete m_pModels[i];
-		}
-
 		delete m_pDescriptorPool;
 		delete m_pSwapChain;
 		delete m_pCommandPool;
@@ -41,30 +39,25 @@ namespace BetterThanNothing
 		m_pPipeLines.insert(entry);
 	}
 
-	void CRenderer::LoadModel(const std::string& modelPath, const std::string& texturePath)
+	void CRenderer::PrepareFrame(CScene* pScene)
 	{
-		auto model = new CModel(m_pDevice, this);
-		model->LoadFromFiles(modelPath, texturePath);
+		auto models = pScene->GetModels();
 
-		m_pModels.push_back(model);
+		m_pDescriptorPool->CreateDescriptorPool(models);
+		m_pDescriptorPool->CreateDescriptorSets(models);
 	}
 
-	void CRenderer::PrepareFrame()
-	{
-		m_pDescriptorPool->CreateDescriptorPool(m_pModels);
-		m_pDescriptorPool->CreateDescriptorSets(m_pModels);
-	}
-
-	void CRenderer::DrawFrame()
+	void CRenderer::Render(CScene* pScene)
 	{
 		auto pPipeline = m_pPipeLines.at("main");
+		auto models = pScene->GetModels();
 
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
-		m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
+		m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene);
 
-		for (uint32_t i = 0; i < m_pModels.size(); i++) {
-			m_pSwapChain->BindModel(m_pModels[i]);
-			m_pSwapChain->DrawModel(pPipeline, m_pModels[i], i);
+		for (uint32_t i = 0; i < models.size(); i++) {
+			m_pSwapChain->BindModel(models[i]);
+			m_pSwapChain->DrawModel(pPipeline, models[i], i);
 		}
 
 		m_pSwapChain->EndRecordCommandBuffer();
