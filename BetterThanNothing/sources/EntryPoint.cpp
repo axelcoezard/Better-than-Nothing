@@ -55,8 +55,12 @@ int main(void) {
 		pScene->Update(deltatime);
 		pRenderer->Render(pScene);
 
+		std::cout.precision(3);
 		std::cout << "\033[2J\033[1;1H";
-		std::cout << "Frame time: " << deltatime << " (" << (1.0f / deltatime) << " fps) " << std::endl;
+		std::cout << "Vendor: " << pDevice->GetVendorName() << std::endl;
+		std::cout << "Device: " << pDevice->GetDeviceName() << std::endl;
+		std::cout << "API version: " << pDevice->GetApiVersion() << std::endl;
+		std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
 		std::cout << "Frame count: " << frameCount << std::endl;
 
 		useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);

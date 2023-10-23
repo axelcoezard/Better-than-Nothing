@@ -40,6 +40,10 @@ namespace BetterThanNothing
 
 		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
 
+		std::string						m_VendorName;
+		std::string						m_DeviceName;
+		std::string						m_ApiVersion;
+
 	public:
 										Device(Window* pWindow);
 										~Device();
@@ -62,6 +66,7 @@ namespace BetterThanNothing
 		std::vector<const char*>		GetRequiredExtensions();
 		bool							IsDeviceSuitable(VkPhysicalDevice device);
 		VkSampleCountFlagBits			GetMaxUsableSampleCount();
+		std::string						GetVendorById(uint32_t vendorId) const;
 
 	public:
 		void							Idle() { vkDeviceWaitIdle(m_Device); }
@@ -91,5 +96,9 @@ namespace BetterThanNothing
 		const std::vector<const char*>	GetValidationLayers()		{ return m_ValidationLayers; }
 		const std::vector<const char*>	GetDeviceExtensions()		{ return m_DeviceExtensions; }
 		VkSampleCountFlagBits&			GetMsaaSamples()			{ return m_MsaaSamples; }
+
+		std::string&					GetVendorName() { return m_VendorName; }
+		std::string&					GetDeviceName() { return m_DeviceName; }
+		std::string&					GetApiVersion() { return m_ApiVersion; }
 	};
 };
