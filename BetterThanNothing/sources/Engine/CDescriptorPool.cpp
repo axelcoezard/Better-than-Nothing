@@ -91,7 +91,7 @@ namespace BetterThanNothing
 				}
 
 				VkDescriptorBufferInfo bufferInfo{};
-				bufferInfo.buffer = m_pSwapChain->GetUniformBuffers()[i];
+				bufferInfo.buffer = m_pSwapChain->GetUniformBuffers()[i][j];
 				bufferInfo.offset = 0;
 				bufferInfo.range = sizeof(CUniformBufferObject);
 

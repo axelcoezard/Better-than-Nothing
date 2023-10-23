@@ -27,9 +27,6 @@ namespace BetterThanNothing
 		CreateRenderPass();
 		CreateFramebuffers();
 		CreateSyncObjects();
-
-		CreateUniformBuffer();
-		CreateCommandBuffers();
 	}
 
 	CSwapChain::~CSwapChain()
@@ -53,8 +50,15 @@ namespace BetterThanNothing
 			m_CommandBuffers.data());
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			vkDestroyBuffer(device, m_UniformBuffers[i], nullptr);
-			vkFreeMemory(device, m_UniformBuffersMemory[i], nullptr);
+			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
+				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
+					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
+				}
+			}
+
+			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
+				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
+			}
 		}
 	}
 
@@ -340,7 +344,7 @@ namespace BetterThanNothing
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CSwapChain::CreateUniformBuffer()
+	void CSwapChain::CreateUniformBuffers(CScene* pScene)
 	{
 		VkDeviceSize bufferSize = sizeof(CUniformBufferObject);
 
@@ -348,13 +352,24 @@ namespace BetterThanNothing
 		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
 		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
 
+		auto modelCount = pScene->GetModels().size();
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			CreateBuffer(bufferSize,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				m_UniformBuffers[i],
-				m_UniformBuffersMemory[i]);
-			vkMapMemory(m_pDevice->GetVkDevice(), m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
+			m_UniformBuffers[i].resize(modelCount);
+			m_UniformBuffersMemory[i].resize(modelCount);
+			m_UniformBuffersMapped[i].resize(modelCount);
+
+			for (size_t j = 0; j < modelCount; j++) {
+				CreateBuffer(bufferSize,
+					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+					m_UniformBuffers[i][j],
+					m_UniformBuffersMemory[i][j]);
+
+				vkMapMemory(m_pDevice->GetVkDevice(),
+					m_UniformBuffersMemory[i][j], 0,
+					bufferSize, 0,
+					&m_UniformBuffersMapped[i][j]);
+			}
 		}
 	}
 
@@ -481,24 +496,12 @@ namespace BetterThanNothing
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void CSwapChain::UpdateUniformBuffer(CScene* pScene)
-	{
-		CUniformBufferObject ubo{};
-
-		ubo.m_Model = glm::mat4(1.0f);
-		//ubo.m_Model = glm::rotate(glm::mat4(1.0f), (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
-		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
-
-		memcpy(m_UniformBuffersMapped[m_CurrentFrame], &ubo, sizeof(ubo));
-	}
-
 	void CSwapChain::BindDescriptorPool(CDescriptorPool* pDescriptorPool)
 	{
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	void CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
+	bool CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -506,16 +509,21 @@ namespace BetterThanNothing
 		VkResult result = AcquireNextImage();
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			return (void) RecreateSwapChain();
+			RecreateSwapChain();
+			return false;
 		}
 
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		UpdateUniformBuffer(pScene);
+		auto models = pScene->GetModels();
+		for (size_t i = 0; i < models.size(); i++) {
+			UpdateUniformBuffer(pScene, models[i], i);
+		}
+
 		ResetFences();
-		ResetCommandBuffer();
+		vkResetCommandBuffer(commandBuffer, 0);
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -524,14 +532,12 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 
-		auto swapChainExtent = m_Extent;
-
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_RenderPass;
 		renderPassInfo.framebuffer = m_Framebuffers[m_CurrentImageIndex];
 		renderPassInfo.renderArea.offset = {0, 0};
-		renderPassInfo.renderArea.extent = swapChainExtent;
+		renderPassInfo.renderArea.extent = m_Extent;
 
 		std::array<VkClearValue, 2> clearValues{};
 		clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
@@ -546,16 +552,35 @@ namespace BetterThanNothing
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(swapChainExtent.width);
-		viewport.height = static_cast<float>(swapChainExtent.height);
+		viewport.width = static_cast<float>(m_Extent.width);
+		viewport.height = static_cast<float>(m_Extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = {0, 0};
-		scissor.extent = swapChainExtent;
+		scissor.extent = m_Extent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		return true;
+	}
+
+	void CSwapChain::UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex)
+	{
+		CUniformBufferObject ubo{};
+
+		// move all those calculus to shader
+		ubo.m_Model = glm::mat4(1.0f);
+		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
+		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
+		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
+
+		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
 	}
 
 	void CSwapChain::BindModel(CModel* pModel)
@@ -568,7 +593,7 @@ namespace BetterThanNothing
 		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, uint32_t modelIndex)
+	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -642,11 +667,6 @@ namespace BetterThanNothing
 			m_ImageAvailableSemaphores[m_CurrentFrame],
 			VK_NULL_HANDLE,
 			&m_CurrentImageIndex);
-	}
-
-	void CSwapChain::ResetCommandBuffer()
-	{
-		vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame], 0);
 	}
 
 	void CSwapChain::WaitForFences()

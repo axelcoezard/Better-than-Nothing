@@ -14,19 +14,24 @@
 namespace BetterThanNothing
 {
 	CModel::CModel(CDevice* pDevice, CRenderer* pRenderer)
-		: m_pDevice(pDevice), m_pRenderer(pRenderer) { }
+		: m_pDevice(pDevice), m_pRenderer(pRenderer)
+	{
+		m_Position = {0.0f, 0.0f, 0.0f};
+		m_Rotation = {0.0f, 0.0f, 0.0f};
+		m_Scale	   = 1.0f;
+	}
 
 	CModel::~CModel()
 	{
 		auto device = m_pDevice->GetVkDevice();
+
+		delete m_pTexture;
 
 		vkDestroyBuffer(device, m_IndexBuffer, nullptr);
 		vkFreeMemory(device, m_IndexBufferMemory, nullptr);
 
 		vkDestroyBuffer(device, m_VertexBuffer, nullptr);
 		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
-
-		delete m_pTexture;
 	}
 
 	void CModel::LoadFromFiles(const std::string& filePath, const std::string& texturePath)

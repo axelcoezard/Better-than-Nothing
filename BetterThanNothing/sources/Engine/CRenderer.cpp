@@ -39,12 +39,17 @@ namespace BetterThanNothing
 		m_pPipeLines.insert(entry);
 	}
 
-	void CRenderer::PrepareFrame(CScene* pScene)
+	void CRenderer::Prepare(CScene* pScene)
 	{
 		auto models = pScene->GetModels();
 
+		m_pSwapChain->CreateUniformBuffers(pScene);
+		m_pSwapChain->CreateCommandBuffers();
+
 		m_pDescriptorPool->CreateDescriptorPool(models);
 		m_pDescriptorPool->CreateDescriptorSets(models);
+
+		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 	}
 
 	void CRenderer::Render(CScene* pScene)
@@ -52,14 +57,12 @@ namespace BetterThanNothing
 		auto pPipeline = m_pPipeLines.at("main");
 		auto models = pScene->GetModels();
 
-		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
-		m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene);
-
-		for (uint32_t i = 0; i < models.size(); i++) {
-			m_pSwapChain->BindModel(models[i]);
-			m_pSwapChain->DrawModel(pPipeline, models[i], i);
+		if (m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene)) {
+			for (uint32_t i = 0; i < models.size(); i++) {
+				m_pSwapChain->BindModel(models[i]);
+				m_pSwapChain->DrawModel(pPipeline, models[i], i);
+			}
+			m_pSwapChain->EndRecordCommandBuffer();
 		}
-
-		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }

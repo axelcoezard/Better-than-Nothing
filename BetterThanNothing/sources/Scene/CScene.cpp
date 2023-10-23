@@ -37,5 +37,12 @@ namespace BetterThanNothing
 	void CScene::Update(float deltatime)
 	{
 		m_pCamera->Update(deltatime);
+
+		float rotation = glm::mod(30.0f * (float) glfwGetTime(), 360.0f);
+
+		m_pModels[0]->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+		m_pModels[0]->SetRotation(glm::vec3(0.0f, (float) rotation, 0.0f));
+
+		m_pModels[1]->SetRotation(glm::vec3((float) rotation, 0.0f, 0.0f));
 	}
 };
