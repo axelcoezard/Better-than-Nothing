@@ -49,14 +49,14 @@ namespace BetterThanNothing
 			m_CommandBuffers.size(),
 			m_CommandBuffers.data());
 
-		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (uint32_t j = 0; j < m_UniformBuffers[i].size(); j++) {
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
 				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
 					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
 				}
 			}
 
-			for (uint32_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
+			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
 				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
 			}
 		}
