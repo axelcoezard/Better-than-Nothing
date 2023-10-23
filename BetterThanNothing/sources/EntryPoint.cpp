@@ -26,7 +26,7 @@ int main(void) {
 	pScene->LoadModel(
 		pRenderer,
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.obj",
-		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/metal.jpg");
+		"/home/acoezard/lab/better-than-nothing/Assets/Models/42/42.jpg");
 
 	pScene->LoadModel(
 		pRenderer,
