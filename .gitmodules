@@ -16,3 +16,6 @@
 [submodule "ThirdParty/tinyobjloader2"]
 	path = ThirdParty/tinyobjloader2
 	url = https://github.com/tinyobjloader/tinyobjloader.git
+[submodule "ThirdParty/imgui"]
+	path = ThirdParty/imgui
+	url = https://github.com/axelcoezard/better-than-nothing-imgui.git
