@@ -30,24 +30,42 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )
 
+add_library(imgui
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imconfig.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_internal.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_draw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_demo.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_tables.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_widgets.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_glfw.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_glfw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_vulkan.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp
+)
+
 include_directories(
 	${PROJECT_SOURCE_DIR}/BetterThanNothing/sources
 	${PROJECT_SOURCE_DIR}/Sandbox
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui
 )
 
-add_executable(${PROJECT_NAME} ${ALL_SRCS})
+add_executable(${PROJECT_NAME} ${ALL_SRCS} ${IMGUI_SOURCES})
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/pch.hpp)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(${PROJECT_NAME} glfw vulkan stb) #openal sndfile)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb imgui) #openal sndfile)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glm/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader2)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/imgui)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/imgui/backends)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/libsndfile/include)
 

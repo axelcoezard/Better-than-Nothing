@@ -57,10 +57,21 @@ namespace BetterThanNothing
 		auto models = pScene->GetModels();
 
 		if (m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene)) {
+
 			for (uint32_t i = 0; i < models.size(); i++) {
 				m_pSwapChain->BindModel(models[i]);
 				m_pSwapChain->DrawModel(pPipeline, models[i], i);
 			}
+
+			ImGui_ImplVulkan_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			ImGui::ShowDemoWindow();
+
+			ImGui::Render();
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_pSwapChain->GetCurrentCommandBuffer());
+
 			m_pSwapChain->EndRecordCommandBuffer();
 		}
 	}

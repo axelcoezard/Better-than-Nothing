@@ -2,6 +2,8 @@
 #include "Engine/Device.hpp"
 #include "Engine/Renderer.hpp"
 #include "Engine/Model.hpp"
+#include "Engine/DescriptorPool.hpp"
+#include "Engine/SwapChain.hpp"
 #include "Handlers/Input.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
@@ -44,6 +46,32 @@ int main(void) {
 	uint32_t frameCount = 0;
 
 	pRenderer->Prepare(pScene);
+
+	ImGui::CreateContext();
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+	ImGui_ImplGlfw_InitForVulkan(pWindow->GetPointer(), true);
+
+	ImGui_ImplVulkan_InitInfo info = {};
+	info.Instance = pDevice->GetVkInstance();
+	info.PhysicalDevice = pDevice->GetVkPhysicalDevice();
+	info.Device = pDevice->GetVkDevice();
+	info.DescriptorPool = pRenderer->GetDescriptorPool()->GetVkDescriptorPool();
+	info.ImageCount = MAX_FRAMES_IN_FLIGHT;
+	info.MinImageCount = 2;
+	info.MSAASamples = pDevice->GetMsaaSamples();
+	info.Queue = pDevice->GetVkGraphicsQueue();
+
+	ImGui_ImplVulkan_Init(&info, pRenderer->GetSwapChain()->GetVkRenderPass());
+
+	VkCommandBuffer commandBuffer = pRenderer->GetSwapChain()->BeginSingleTimeCommands();
+	ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+	pRenderer->GetSwapChain()->EndSingleTimeCommands(commandBuffer);
+
+	vkDeviceWaitIdle(pDevice->GetVkDevice());
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
+
+
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 
@@ -71,6 +99,10 @@ int main(void) {
 	}
 
 	pDevice->Idle();
+
+	ImGui_ImplVulkan_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	delete pScene;
 	delete pRenderer;
