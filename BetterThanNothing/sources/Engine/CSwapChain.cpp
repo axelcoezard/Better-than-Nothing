@@ -517,9 +517,9 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		// Old Uniform Buffer Object (UBO) update place
-		for (size_t i = 0; i < pScene->GetModels().size(); i++) {
-			UpdateUniformBuffer(pScene, pScene->GetModels()[i], i);
+		auto models = pScene->GetModels();
+		for (size_t i = 0; i < models.size(); i++) {
+			UpdateUniformBuffer(pScene, models[i], i);
 		}
 
 		ResetFences();
