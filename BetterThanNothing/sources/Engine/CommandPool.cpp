@@ -1,16 +1,16 @@
-#include "CCommandPool.hpp"
+#include "Engine/CommandPool.hpp"
 
 namespace BetterThanNothing
 {
-	CCommandPool::CCommandPool(CDevice* pDevice): m_pDevice(pDevice) {
+	CommandPool::CommandPool(Device* pDevice): m_pDevice(pDevice) {
 		CreateCommandPool();
 	}
 
-	CCommandPool::~CCommandPool() {
+	CommandPool::~CommandPool() {
 		vkDestroyCommandPool(m_pDevice->GetVkDevice(), m_CommandPool, nullptr);
 	}
 
-	void CCommandPool::CreateCommandPool() {
+	void CommandPool::CreateCommandPool() {
 		auto physicalDevice = m_pDevice->GetVkPhysicalDevice();
 		auto queueFamilyIndices = m_pDevice->FindQueueFamilies(physicalDevice);
 

@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	class CWindow
+	class Window
 	{
 	private:
 		GLFWwindow*		m_pWindow;
@@ -12,11 +12,11 @@ namespace BetterThanNothing
 
 		bool			m_bResized = false;
 	public:
-		CWindow(std::string_view title, uint32_t width, uint32_t height);
-		~CWindow();
+		Window(std::string_view title, uint32_t width, uint32_t height);
+		~Window();
 
-		CWindow(const CWindow&) = delete;
-		CWindow& operator=(const CWindow&) = delete;
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
 
 		void			Open();
 		void			Poll()						{ glfwPollEvents(); }

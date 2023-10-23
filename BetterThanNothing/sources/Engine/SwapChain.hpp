@@ -2,22 +2,22 @@
 
 namespace BetterThanNothing
 {
-	class CWindow;
-	class CDevice;
-	class CDescriptorPool;
-	class CCommandPool;
-	class CPipeline;
-	class CTexture;
-	class CVertex;
-	class CModel;
-	class CScene;
+	class Window;
+	class Device;
+	class DescriptorPool;
+	class CommandPool;
+	class Pipeline;
+	class Texture;
+	class Vertex;
+	class Model;
+	class Scene;
 
-	class CSwapChain
+	class SwapChain
 	{
 	private:
-		CWindow*									m_pWindow;
-		CDevice*									m_pDevice;
-		CCommandPool*								m_pCommandPool;
+		Window*									m_pWindow;
+		Device*									m_pDevice;
+		CommandPool*								m_pCommandPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;
@@ -47,16 +47,16 @@ namespace BetterThanNothing
 
 		uint32_t									m_CurrentFrame = 0;
 		uint32_t									m_CurrentImageIndex = 0;
-		CDescriptorPool*							m_pDescriptorPool = nullptr;
+		DescriptorPool*								m_pDescriptorPool = nullptr;
 
 	public:
-													CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool);
-													~CSwapChain();
+													SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool);
+													~SwapChain();
 
-													CSwapChain(const CSwapChain&) = delete;
-		CSwapChain&									operator=(const CSwapChain&) = delete;
-													CSwapChain(CSwapChain&&) = delete;
-		CSwapChain&									operator=(CSwapChain&&) = delete;
+													SwapChain(const SwapChain&) = delete;
+		SwapChain&									operator=(const SwapChain&) = delete;
+													SwapChain(SwapChain&&) = delete;
+		SwapChain&									operator=(SwapChain&&) = delete;
 
 	private:
 		void										CreateSwapChain();
@@ -82,14 +82,14 @@ namespace BetterThanNothing
 		VkFormat									FindDepthFormat();
 		bool										HasStencilComponent(VkFormat format);
 
-		void										CreateUniformBuffers(CScene* pScene);
+		void										CreateUniformBuffers(Scene* pScene);
 		void										CreateCommandBuffers();
 
-		void										BindDescriptorPool(CDescriptorPool* pDescriptorPool);
-		bool										BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene);
-		void										BindModel(CModel* pModel);
-		void										UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex);
-		void										DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex);
+		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
+		bool										BeginRecordCommandBuffer(Pipeline* pPipeline, Scene* pScene);
+		void										BindModel(Model* pModel);
+		void										UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex);
+		void										DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex);
 		void										EndRecordCommandBuffer();
 
 	private:

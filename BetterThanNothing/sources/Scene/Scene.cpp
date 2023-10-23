@@ -1,17 +1,17 @@
-#include "Engine/CDevice.hpp"
-#include "Engine/CRenderer.hpp"
-#include "Engine/CModel.hpp"
-#include "Scene/CScene.hpp"
-#include "Scene/CCamera.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/Renderer.hpp"
+#include "Engine/Model.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Camera.hpp"
 
 namespace BetterThanNothing
 {
-	CScene::CScene(std::string_view name)
+	Scene::Scene(std::string_view name)
 	{
 		m_Name = name;
 	}
 
-	CScene::~CScene()
+	Scene::~Scene()
 	{
 		for (uint32_t i = 0; i < m_pModels.size(); i++) {
 			delete m_pModels[i];
@@ -20,21 +20,21 @@ namespace BetterThanNothing
 		delete m_pCamera;
 	}
 
-	CCamera* CScene::InitCamera(double x, double y, double z, double yaw, double pitch)
+	Camera* Scene::InitCamera(double x, double y, double z, double yaw, double pitch)
 	{
-		m_pCamera = new CCamera(x, y, z, yaw, pitch);
+		m_pCamera = new Camera(x, y, z, yaw, pitch);
 		return m_pCamera;
 	}
 
-	void CScene::LoadModel(CRenderer* pRenderer, const std::string& modelPath, const std::string& texturePath)
+	void Scene::LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath)
 	{
-		auto model = new CModel(pRenderer->GetDevice(), pRenderer);
+		auto model = new Model(pRenderer->GetDevice(), pRenderer);
 		model->LoadFromFiles(modelPath, texturePath);
 
 		m_pModels.push_back(model);
 	}
 
-	void CScene::Update(float deltatime)
+	void Scene::Update(float deltatime)
 	{
 		m_pCamera->Update(deltatime);
 

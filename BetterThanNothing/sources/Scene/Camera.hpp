@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	class CCamera
+	class Camera
 	{
 	private:
 		glm::vec3				m_Position;
@@ -22,13 +22,13 @@ namespace BetterThanNothing
 		glm::mat4				m_ViewMatrix;
 		glm::mat4				m_ProjectionMatrix;
 	public:
-								CCamera(float x, float y, float z, double yaw, double pitch);
-								~CCamera();
+								Camera(float x, float y, float z, double yaw, double pitch);
+								~Camera();
 
-								CCamera(const CCamera&) = delete;
-		CCamera&				operator=(const CCamera&) = delete;
-								CCamera(CCamera&&) = delete;
-		CCamera&				operator=(CCamera&&) = delete;
+								Camera(const Camera&) = delete;
+		Camera&				operator=(const Camera&) = delete;
+								Camera(Camera&&) = delete;
+		Camera&				operator=(Camera&&) = delete;
 
 	public:
 		void					SetPerspectiveProjection(float fov, float zNear, float zFar);

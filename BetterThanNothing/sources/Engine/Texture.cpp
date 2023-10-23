@@ -1,16 +1,16 @@
-#include "CDevice.hpp"
-#include "CCommandPool.hpp"
-#include "CSwapChain.hpp"
-#include "CTexture.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/CommandPool.hpp"
+#include "Engine/SwapChain.hpp"
+#include "Engine/Texture.hpp"
 
 #include "stb_image.h"
 
 namespace BetterThanNothing
 {
-	CTexture::CTexture(CDevice* pDevice, CCommandPool* pCommandPool, CSwapChain* pSwapChain)
+	Texture::Texture(Device* pDevice, CommandPool* pCommandPool, SwapChain* pSwapChain)
 		: m_pDevice(pDevice), m_pCommandPool(pCommandPool), m_pSwapChain(pSwapChain) {}
 
-	CTexture::~CTexture() {
+	Texture::~Texture() {
 		auto device = m_pDevice->GetVkDevice();
 
 		vkDestroyImage(device, m_Image, nullptr);
@@ -19,7 +19,7 @@ namespace BetterThanNothing
 		vkDestroySampler(device, m_Sampler, nullptr);
 	}
 
-	void CTexture::LoadFromFile(const std::string& filePath) {
+	void Texture::LoadFromFile(const std::string& filePath) {
 		m_FilePath = filePath;
 
 		CreateTextureImage(filePath);
@@ -27,7 +27,7 @@ namespace BetterThanNothing
 		CreateTextureSampler();
 	}
 
-	void CTexture::CreateImage(CDevice* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+	void Texture::CreateImage(Device* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -64,11 +64,11 @@ namespace BetterThanNothing
 		vkBindImageMemory(device, image, imageMemory, 0);
 	}
 
-	void CTexture::CreateTextureImageView() {
+	void Texture::CreateTextureImageView() {
 		m_ImageView = m_pSwapChain->CreateImageView(m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
 	}
 
-	void CTexture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
+	void Texture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
 		VkFormatProperties formatProperties;
 		vkGetPhysicalDeviceFormatProperties(m_pDevice->GetVkPhysicalDevice(), imageFormat, &formatProperties);
 
@@ -154,7 +154,7 @@ namespace BetterThanNothing
 		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CTexture::CreateTextureImage(const std::string& filePath) {
+	void Texture::CreateTextureImage(const std::string& filePath) {
 		int texWidth, texHeight, texChannels;
 		stbi_uc* pixels = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
@@ -179,7 +179,7 @@ namespace BetterThanNothing
 
 		stbi_image_free(pixels);
 
-		CTexture::CreateImage(
+		Texture::CreateImage(
 			m_pDevice,
 			texWidth, texHeight,
 			m_MipLevels,
@@ -197,7 +197,7 @@ namespace BetterThanNothing
 		vkFreeMemory(device, m_StagingBufferMemory, nullptr);
 	}
 
-	void CTexture::TransitionImageLayout(CSwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
+	void Texture::TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
 		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			(void) format;
@@ -262,7 +262,7 @@ namespace BetterThanNothing
 		pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CTexture::CopyBufferToImage(CSwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+	void Texture::CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
 		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			VkBufferImageCopy region{};
@@ -290,7 +290,7 @@ namespace BetterThanNothing
 		pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CTexture::CreateTextureSampler() {
+	void Texture::CreateTextureSampler() {
 		auto device = m_pDevice->GetVkDevice();
 
 		VkSamplerCreateInfo samplerInfo{};

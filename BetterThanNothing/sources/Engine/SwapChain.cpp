@@ -1,21 +1,21 @@
-#include "CWindow.hpp"
-#include "CDevice.hpp"
-#include "CSwapChain.hpp"
-#include "CTexture.hpp"
-#include "CPipeline.hpp"
-#include "CVertex.hpp"
-#include "CUniformBufferObject.hpp"
-#include "CCommandPool.hpp"
-#include "CDescriptorPool.hpp"
-#include "CModel.hpp"
-#include "Scene/CScene.hpp"
-#include "Scene/CCamera.hpp"
+#include "Engine/Window.hpp"
+#include "Engine/Device.hpp"
+#include "Engine/SwapChain.hpp"
+#include "Engine/Texture.hpp"
+#include "Engine/Pipeline.hpp"
+#include "Engine/Vertex.hpp"
+#include "Engine/UniformBufferObject.hpp"
+#include "Engine/CommandPool.hpp"
+#include "Engine/DescriptorPool.hpp"
+#include "Engine/Model.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Camera.hpp"
 
 #include <unordered_map>
 
 namespace BetterThanNothing
 {
-	CSwapChain::CSwapChain(CWindow* pWindow, CDevice* pDevice, CCommandPool* pCommandPool)
+	SwapChain::SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool)
 		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool)
 	{
 		CreateSwapChain();
@@ -29,7 +29,7 @@ namespace BetterThanNothing
 		CreateSyncObjects();
 	}
 
-	CSwapChain::~CSwapChain()
+	SwapChain::~SwapChain()
 	{
 		auto device = m_pDevice->GetVkDevice();
 
@@ -62,7 +62,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateSwapChain()
+	void SwapChain::CreateSwapChain()
 	{
 		SwapChainSupportDetails swapChainSupport = m_pDevice->QuerySwapChainSupport(m_pDevice->GetVkPhysicalDevice());
 
@@ -117,7 +117,7 @@ namespace BetterThanNothing
 		vkGetSwapchainImagesKHR(m_pDevice->GetVkDevice(), m_SwapChain, &imageCount, m_Images.data());
 	}
 
-	void CSwapChain::CreateImageViews()
+	void SwapChain::CreateImageViews()
 	{
 		m_ImageViews.resize(m_Images.size());
 
@@ -126,11 +126,11 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateDepthResources()
+	void SwapChain::CreateDepthResources()
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		CTexture::CreateImage(
+		Texture::CreateImage(
 			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(),
@@ -142,14 +142,14 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		CTexture::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		Texture::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
-	void CSwapChain::CreateColorResources()
+	void SwapChain::CreateColorResources()
 	{
 		VkFormat colorFormat = m_Format;
 
-		CTexture::CreateImage(
+		Texture::CreateImage(
 			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(), colorFormat,
@@ -161,7 +161,7 @@ namespace BetterThanNothing
 		m_ColorImageView = CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
-	void CSwapChain::CreateRenderPass()
+	void SwapChain::CreateRenderPass()
 	{
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_Format;
@@ -238,7 +238,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkImageView CSwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+	VkImageView SwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
 	{
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -264,7 +264,7 @@ namespace BetterThanNothing
 		return imageView;
 	}
 
-	void CSwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+	void SwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -292,7 +292,7 @@ namespace BetterThanNothing
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	VkCommandBuffer CSwapChain::BeginSingleTimeCommands()
+	VkCommandBuffer SwapChain::BeginSingleTimeCommands()
 	{
 		auto device = m_pDevice->GetVkDevice();
 		auto commandPool = m_pCommandPool->GetVkCommandPool();
@@ -314,7 +314,7 @@ namespace BetterThanNothing
 		return commandBuffer;
 	}
 
-	void CSwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer)
+	void SwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer)
 	{
 		auto device = m_pDevice->GetVkDevice();
 		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
@@ -333,7 +333,7 @@ namespace BetterThanNothing
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
 
-	void CSwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+	void SwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	{
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 		{
@@ -344,9 +344,9 @@ namespace BetterThanNothing
 		EndSingleTimeCommands(commandBuffer);
 	}
 
-	void CSwapChain::CreateUniformBuffers(CScene* pScene)
+	void SwapChain::CreateUniformBuffers(Scene* pScene)
 	{
-		VkDeviceSize bufferSize = sizeof(CUniformBufferObject);
+		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
 		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
@@ -373,7 +373,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateCommandBuffers()
+	void SwapChain::CreateCommandBuffers()
 	{
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
@@ -388,7 +388,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateSyncObjects()
+	void SwapChain::CreateSyncObjects()
 	{
 		m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		m_RenderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -412,7 +412,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CreateFramebuffers()
+	void SwapChain::CreateFramebuffers()
 	{
 		m_Framebuffers.resize(m_ImageViews.size());
 
@@ -438,7 +438,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void CSwapChain::CleanupSwapChain()
+	void SwapChain::CleanupSwapChain()
 	{
 		auto device = m_pDevice->GetVkDevice();
 
@@ -461,7 +461,7 @@ namespace BetterThanNothing
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
 
-	void CSwapChain::RecreateSwapChain()
+	void SwapChain::RecreateSwapChain()
 	{
 		auto window = m_pWindow->GetPointer();
 		int width = 0, height = 0;
@@ -483,7 +483,7 @@ namespace BetterThanNothing
 		CreateFramebuffers();
 	}
 
-	VkFormat CSwapChain::FindDepthFormat()
+	VkFormat SwapChain::FindDepthFormat()
 	{
 		return m_pDevice->FindSupportedFormat(
 			{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
@@ -491,17 +491,17 @@ namespace BetterThanNothing
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	bool CSwapChain::HasStencilComponent(VkFormat format)
+	bool SwapChain::HasStencilComponent(VkFormat format)
 	{
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void CSwapChain::BindDescriptorPool(CDescriptorPool* pDescriptorPool)
+	void SwapChain::BindDescriptorPool(DescriptorPool* pDescriptorPool)
 	{
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	bool CSwapChain::BeginRecordCommandBuffer(CPipeline* pPipeline, CScene* pScene)
+	bool SwapChain::BeginRecordCommandBuffer(Pipeline* pPipeline, Scene* pScene)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -565,9 +565,9 @@ namespace BetterThanNothing
 		return true;
 	}
 
-	void CSwapChain::UpdateUniformBuffer(CScene* pScene, CModel* pModel, int modelIndex)
+	void SwapChain::UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex)
 	{
-		CUniformBufferObject ubo{};
+		UniformBufferObject ubo{};
 
 		// move all those calculus to shader
 		ubo.m_Model = glm::mat4(1.0f);
@@ -583,7 +583,7 @@ namespace BetterThanNothing
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
 	}
 
-	void CSwapChain::BindModel(CModel* pModel)
+	void SwapChain::BindModel(Model* pModel)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -593,7 +593,7 @@ namespace BetterThanNothing
 		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void CSwapChain::DrawModel(CPipeline* pPipeline, CModel* pModel, int modelIndex)
+	void SwapChain::DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -605,7 +605,7 @@ namespace BetterThanNothing
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
 	}
 
-	void CSwapChain::EndRecordCommandBuffer()
+	void SwapChain::EndRecordCommandBuffer()
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -658,7 +658,7 @@ namespace BetterThanNothing
 		NextFrame();
 	}
 
-	VkResult CSwapChain::AcquireNextImage()
+	VkResult SwapChain::AcquireNextImage()
 	{
 		return vkAcquireNextImageKHR(
 			m_pDevice->GetVkDevice(),
@@ -669,22 +669,22 @@ namespace BetterThanNothing
 			&m_CurrentImageIndex);
 	}
 
-	void CSwapChain::WaitForFences()
+	void SwapChain::WaitForFences()
 	{
 		vkWaitForFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 	}
 
-	void CSwapChain::ResetFences()
+	void SwapChain::ResetFences()
 	{
 		vkResetFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
 	}
 
-	void CSwapChain::NextFrame()
+	void SwapChain::NextFrame()
 	{
 		m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 
-	VkSurfaceFormatKHR CSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+	VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats) {
 			if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
@@ -694,7 +694,7 @@ namespace BetterThanNothing
 		return availableFormats[0];
 	}
 
-	VkPresentModeKHR CSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+	VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 	{
 		for (const auto& availablePresentMode : availablePresentModes) {
 			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -704,7 +704,7 @@ namespace BetterThanNothing
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	VkExtent2D CSwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+	VkExtent2D SwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 	{
 		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 			return capabilities.currentExtent;
