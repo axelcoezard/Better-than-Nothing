@@ -50,11 +50,10 @@ namespace BetterThanNothing
 			m_CommandBuffers.data());
 
 		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (uint32_t j = 0; j < m_UniformBuffers.size(); j++) {
-				vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
-			}
-
-			for (uint32_t j = 0; j < m_UniformBuffersMemory.size(); j++) {
+			for (uint32_t j = 0; j < m_UniformBuffers[i].size(); j++) {
+				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
+					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
+				}
 				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
 			}
 		}
@@ -355,13 +354,18 @@ namespace BetterThanNothing
 			m_UniformBuffers[i].resize(modelCount);
 			m_UniformBuffersMemory[i].resize(modelCount);
 			m_UniformBuffersMapped[i].resize(modelCount);
+
 			for (size_t j = 0; j < modelCount; j++) {
 				CreateBuffer(bufferSize,
 					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 					m_UniformBuffers[i][j],
 					m_UniformBuffersMemory[i][j]);
-				vkMapMemory(m_pDevice->GetVkDevice(), m_UniformBuffersMemory[i][j], 0, bufferSize, 0, &m_UniformBuffersMapped[i][j]);
+
+				vkMapMemory(m_pDevice->GetVkDevice(),
+					m_UniformBuffersMemory[i][j], 0,
+					bufferSize, 0,
+					&m_UniformBuffersMapped[i][j]);
 			}
 		}
 	}
