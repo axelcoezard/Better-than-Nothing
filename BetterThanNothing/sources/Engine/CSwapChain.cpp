@@ -54,6 +54,9 @@ namespace BetterThanNothing
 				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
 					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
 				}
+			}
+
+			for (uint32_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
 				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
 			}
 		}
