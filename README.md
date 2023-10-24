@@ -3,7 +3,8 @@ Everything is in the title, it is a better-than-nothing Game Engine
 
 ## Functionalities
  - Graphics pipeline
- - Texture loading
- - .obj models loading
+ - Multiple textures loading
+ - Multiple .obj models loading and rendering
  - Mipmapping
  - Msaa multisampling
+ - Working 3D camera

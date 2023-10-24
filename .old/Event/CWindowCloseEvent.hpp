@@ -3,8 +3,8 @@
 #include "Event/CEvent.hpp"
 
 namespace BetterThanNothing {
-	class CWindowCloseEvent: public CEvent {
+	class WindowCloseEvent: public CEvent {
 	public:
-		DECLARE_EVENT_NAME(CWindowCloseEvent)
+		DECLARE_EVENT_NAME(WindowCloseEvent)
 	};
 };

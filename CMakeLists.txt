@@ -22,6 +22,10 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )
@@ -35,7 +39,7 @@ add_executable(${PROJECT_NAME} ${ALL_SRCS})
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/pch.hpp)
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -O2)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(${PROJECT_NAME} glfw vulkan stb) #openal sndfile)
 
