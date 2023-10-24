@@ -21,6 +21,10 @@ namespace BetterThanNothing
 
 	Renderer::~Renderer()
 	{
+		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
 		for (auto & entry : m_pPipeLines) {
 			delete entry.second;
 		}
@@ -49,6 +53,30 @@ namespace BetterThanNothing
 		m_pDescriptorPool->CreateDescriptorSets(models);
 
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
+
+		ImGui::CreateContext();
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetPointer(), true);
+
+		ImGui_ImplVulkan_InitInfo info = {};
+		info.Instance = m_pDevice->GetVkInstance();
+		info.PhysicalDevice = m_pDevice->GetVkPhysicalDevice();
+		info.Device = m_pDevice->GetVkDevice();
+		info.DescriptorPool = m_pDescriptorPool->GetVkDescriptorPool();
+		info.ImageCount = MAX_FRAMES_IN_FLIGHT;
+		info.MinImageCount = 2;
+		info.MSAASamples = m_pDevice->GetMsaaSamples();
+		info.Queue = m_pDevice->GetVkGraphicsQueue();
+
+		ImGui_ImplVulkan_Init(&info, m_pSwapChain->GetVkRenderPass());
+
+		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
+		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
+
+		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
 	void Renderer::Render(Scene* pScene)
@@ -67,10 +95,32 @@ namespace BetterThanNothing
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			ImGui::ShowDemoWindow();
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Edit"))
+				{
+					if (ImGui::MenuItem("Undo", "CTRL+Z")) {
+						std::cout << "undo" << std::endl;
+					}
+					if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+					ImGui::Separator();
+					if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+					if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+					if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
 
 			ImGui::Render();
-			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_pSwapChain->GetCurrentCommandBuffer());
+
+			ImGui_ImplVulkan_RenderDrawData(
+				ImGui::GetDrawData(),
+				m_pSwapChain->GetCurrentCommandBuffer());
 
 			m_pSwapChain->EndRecordCommandBuffer();
 		}

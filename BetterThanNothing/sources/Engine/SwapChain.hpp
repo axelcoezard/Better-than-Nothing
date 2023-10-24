@@ -116,6 +116,6 @@ namespace BetterThanNothing
 		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
 		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
-		VkCommandBuffer&							GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentImageIndex]; }
+		VkCommandBuffer&							GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
 	};
 };
