@@ -5,6 +5,7 @@
 #include "Handlers/Input.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Scene/ECS/ECSManager.hpp"
 
 using namespace BetterThanNothing;
 
@@ -38,6 +39,12 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
+	std::cout << "\033[2J\033[1;1H";
+	auto pECSManager = pScene->InitECSManager();
+	auto entity = pECSManager->CreateEntity();
+	std::cout << "Entity id: " << entity.id << std::endl;
+	std::cout << "Has entity: " << pECSManager->HasEntity(entity.id) << std::endl;
+
 	float deltatime = 0.0f;
 	float lastFrame = 0.0f;
 	float frameTime = 1.0f / 240.0f;
@@ -55,13 +62,13 @@ int main(void) {
 		pScene->Update(deltatime);
 		pRenderer->Render(pScene);
 
-		std::cout.precision(3);
-		std::cout << "\033[2J\033[1;1H";
-		std::cout << "Vendor: " << pDevice->GetVendorName() << std::endl;
-		std::cout << "Device: " << pDevice->GetDeviceName() << std::endl;
-		std::cout << "API version: " << pDevice->GetApiVersion() << std::endl;
-		std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-		std::cout << "Frame count: " << frameCount << std::endl;
+		//std::cout.precision(3);
+		//std::cout << "\033[2J\033[1;1H";
+		//std::cout << "Vendor: " << pDevice->GetVendorName() << std::endl;
+		//std::cout << "Device: " << pDevice->GetDeviceName() << std::endl;
+		//std::cout << "API version: " << pDevice->GetApiVersion() << std::endl;
+		//std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
+		//std::cout << "Frame count: " << frameCount << std::endl;
 
 		useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 		float elapsedTime = glfwGetTime() - currentFrame;

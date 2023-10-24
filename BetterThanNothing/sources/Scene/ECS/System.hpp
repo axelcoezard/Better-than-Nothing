@@ -2,5 +2,8 @@
 
 namespace BetterThanNothing
 {
-	using CEntity = uint32_t;
+	struct System
+	{
+
+	};
 };

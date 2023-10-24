@@ -3,6 +3,8 @@
 #include "Engine/Model.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Scene/ECS/ECSManager.hpp"
+#include "Scene/ECS/Components/TransformComponent.hpp"
 
 namespace BetterThanNothing
 {
@@ -24,6 +26,13 @@ namespace BetterThanNothing
 	{
 		m_pCamera = new Camera(x, y, z, yaw, pitch);
 		return m_pCamera;
+	}
+
+	ECSManager* Scene::InitECSManager()
+	{
+		m_pECSManager = new ECSManager();
+		m_pECSManager->RegisterComponent<TransformComponent>();
+		return m_pECSManager;
 	}
 
 	void Scene::LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath)
