@@ -12,8 +12,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 add_subdirectory("ThirdParty/glfw")
 add_subdirectory("ThirdParty/vulkan")
 add_subdirectory("ThirdParty/glm")
-add_subdirectory("ThirdParty/stb")
-#add_subdirectory("ThirdParty/tinyobjloader2")
 #add_subdirectory("ThirdParty/openal")
 #add_subdirectory("ThirdParty/libsndfile")
 
@@ -28,6 +26,13 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.hpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
+)
+
+add_library(stb SHARED
+	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image.cpp"
+	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image.h"
+	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image_resize.h"
+	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image_write.h"
 )
 
 include_directories(
@@ -47,7 +52,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Th
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glm/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader2)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/libsndfile/include)
 
