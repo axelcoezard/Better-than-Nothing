@@ -33,6 +33,7 @@ such rights in consideration of benefits the Licensor receives from
 making the Licensed Material available under these terms and
 conditions.
 
+
 ## Section 1 -- Definitions.
 
   a. Adapted Material means material subject to Copyright and Similar
@@ -102,6 +103,7 @@ conditions.
 
   l. You means the individual or entity exercising the Licensed Rights
      under this Public License. Your has a corresponding meaning.
+
 
 ## Section 2 -- Scope.
 
