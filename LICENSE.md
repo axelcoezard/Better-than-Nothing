@@ -1,7 +1,5 @@
 # Attribution-NonCommercial 4.0 International
 
-=======================================================================
-
 Creative Commons Corporation ("Creative Commons") is not a law firm and
 does not provide legal services or legal advice. Distribution of
 Creative Commons public licenses does not create a lawyer-client or
@@ -21,38 +19,9 @@ and certain other rights specified in the public license below. The
 following considerations are for informational purposes only, are not
 exhaustive, and do not form part of our licenses.
 
-     Considerations for licensors: Our public licenses are
-     intended for use by those authorized to give the public
-     permission to use material in ways otherwise restricted by
-     copyright and certain other rights. Our licenses are
-     irrevocable. Licensors should read and understand the terms
-     and conditions of the license they choose before applying it.
-     Licensors should also secure all rights necessary before
-     applying our licenses so that the public can reuse the
-     material as expected. Licensors should clearly mark any
-     material not subject to the license. This includes other CC-
-     licensed material, or material used under an exception or
-     limitation to copyright. More considerations for licensors:
-    wiki.creativecommons.org/Considerations_for_licensors
+Considerations for licensors: Our public licenses areintended for use by those authorized to give the publicpermission to use material in ways otherwise restricted bycopyright and certain other rights. Our licenses areirrevocable. Licensors should read and understand the termsand conditions of the license they choose before applying it.Licensors should also secure all rights necessary beforeapplying our licenses so that the public can reuse thematerial as expected. Licensors should clearly mark anymaterial not subject to the license. This includes other CC-licensed material, or material used under an exception orlimitation to copyright. More considerations for licensors:wiki.creativecommons.org/Considerations_for_licensors
 
-     Considerations for the public: By using one of our public
-     licenses, a licensor grants the public permission to use the
-     licensed material under specified terms and conditions. If
-     the licensor's permission is not necessary for any reason--for
-     example, because of any applicable exception or limitation to
-     copyright--then that use is not regulated by the license. Our
-     licenses grant only permissions under copyright and certain
-     other rights that a licensor has authority to grant. Use of
-     the licensed material may still be restricted for other
-     reasons, including because others have copyright or other
-     rights in the material. A licensor may make special requests,
-     such as asking that all changes be marked or described.
-     Although not required by our licenses, you are encouraged to
-     respect those requests where reasonable. More considerations
-     for the public:
-    wiki.creativecommons.org/Considerations_for_licensees
-
-=======================================================================
+Considerations for the public: By using one of our publiclicenses, a licensor grants the public permission to use thelicensed material under specified terms and conditions. Ifthe licensor's permission is not necessary for any reason--forexample, because of any applicable exception or limitation tocopyright--then that use is not regulated by the license. Ourlicenses grant only permissions under copyright and certainother rights that a licensor has authority to grant. Use ofthe licensed material may still be restricted for otherreasons, including because others have copyright or otherrights in the material. A licensor may make special requests,such as asking that all changes be marked or described.Although not required by our licenses, you are encouraged torespect those requests where reasonable. More considerationsfor the public:wiki.creativecommons.org/Considerations_for_licensees
 
 ## Creative Commons Attribution-NonCommercial 4.0 International Public License
 
@@ -216,7 +185,6 @@ conditions.
           reserves any right to collect such royalties, including when
           the Licensed Material is used other than for NonCommercial
           purposes.
-
 
 ## Section 3 -- License Conditions.
 
