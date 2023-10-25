@@ -27,7 +27,7 @@ namespace BetterThanNothing
 		bool			ShouldClose()				{ return glfwWindowShouldClose(m_pWindow) ==  GLFW_TRUE; }
 		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
 
-		void			SetEventCallback(std::function<void(Event*)>& eventcallback);
+		void			SetEventCallback(std::function<void(Event*)> eventcallback);
 
 		static void		ResizeCallback(GLFWwindow* window, int width, int height);
 		static void		KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

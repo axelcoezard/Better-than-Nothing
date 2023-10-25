@@ -34,7 +34,7 @@ namespace BetterThanNothing
 		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
 	}
 
-	void Window::SetEventCallback(std::function<void(Event*)>& eventcallback)
+	void Window::SetEventCallback(std::function<void(Event*)> eventcallback)
 	{
 		m_eventCallback = eventcallback;
 	}

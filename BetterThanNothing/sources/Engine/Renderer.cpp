@@ -79,11 +79,11 @@ namespace BetterThanNothing
 		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
-	bool Renderer::BeginRender(Scene* pScene)
+	bool Renderer::BeginRender()
 	{
 		auto pPipeline = m_pPipeLines.at("main");
 
-		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene);
+		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline, m_pScene);
 	}
 
 	void Renderer::DrawModel(Model* pModel, uint32_t modelIndex)

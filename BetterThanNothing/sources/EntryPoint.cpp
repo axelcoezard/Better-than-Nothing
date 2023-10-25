@@ -1,21 +1,18 @@
-#include "Engine/Window.hpp"
-#include "Engine/Device.hpp"
-#include "Engine/Renderer.hpp"
-#include "Engine/Model.hpp"
-#include "Engine/DescriptorPool.hpp"
-#include "Engine/SwapChain.hpp"
-#include "Handlers/Input.hpp"
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
-#include "Layers/LayerStack.hpp"
-#include "Layers/Layer.hpp"
-#include "Layers/ImGuiLayer.hpp"
-#include "Layers/SceneLayer.hpp"
+#include "Application.hpp"
 
 using namespace BetterThanNothing;
 
-int main(void) {
-	auto pWindow = new Window("better than nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
+extern Application* CreateApplication(void);
+
+int main() {
+	Application* pApplication = CreateApplication();
+	pApplication->Run();
+	delete pApplication;
+
+	return EXIT_SUCCESS;
+}
+
+/*auto pWindow = new Window("better than nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
 	auto pDevice = new Device(pWindow);
 	auto pRenderer = new Renderer(pWindow, pDevice);
 
@@ -96,9 +93,6 @@ int main(void) {
 
 	delete pRenderer;
 	delete pDevice;
-	delete pWindow;
-
-	return EXIT_SUCCESS;
-}
+	delete pWindow;*/
 
 
