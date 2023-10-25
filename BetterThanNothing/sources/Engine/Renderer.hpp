@@ -37,7 +37,9 @@ namespace BetterThanNothing
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
 		void								Prepare(Scene* pScene);
-		void								Render(Scene* pScene);
+		bool								BeginRender(Scene* pScene);
+		void								DrawModel(Model* pModel, uint32_t modelIndex);
+		void								EndRender();
 
 	public:
 		Window*								GetWindow()			{ return m_pWindow; }

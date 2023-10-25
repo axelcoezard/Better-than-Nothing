@@ -56,7 +56,29 @@ int main(void) {
 		frameCount += 1;
 
 		pScene->Update(deltatime);
-		pRenderer->Render(pScene);
+
+		if (pRenderer->BeginRender(pScene)) {
+
+			pScene->Render(pRenderer);
+
+			ImGui_ImplVulkan_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					ImGui::MenuItem("Hello world", "bip bip");
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
+			ImGui::Render();
+
+			pRenderer->EndRender();
+		}
 
 		std::cout.precision(3);
 		std::cout << "\033[2J\033[1;1H";

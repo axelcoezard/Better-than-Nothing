@@ -79,50 +79,27 @@ namespace BetterThanNothing
 		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
-	void Renderer::Render(Scene* pScene)
+	bool Renderer::BeginRender(Scene* pScene)
 	{
 		auto pPipeline = m_pPipeLines.at("main");
-		auto models = pScene->GetModels();
 
-		if (m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene)) {
+		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene);
+	}
 
-			for (uint32_t i = 0; i < models.size(); i++) {
-				m_pSwapChain->BindModel(models[i]);
-				m_pSwapChain->DrawModel(pPipeline, models[i], i);
-			}
+	void Renderer::DrawModel(Model* pModel, uint32_t modelIndex)
+	{
+		auto pPipeline = m_pPipeLines.at("main");
 
-			ImGui_ImplVulkan_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
+		m_pSwapChain->BindModel(pModel);
+		m_pSwapChain->DrawModel(pPipeline, pModel, modelIndex);
+	}
 
-			if (ImGui::BeginMainMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("Edit"))
-				{
-					if (ImGui::MenuItem("Undo", "CTRL+Z")) {
-						std::cout << "undo" << std::endl;
-					}
-					if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-					ImGui::Separator();
-					if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-					if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-					if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
+	void Renderer::EndRender()
+	{
+		ImGui_ImplVulkan_RenderDrawData(
+			ImGui::GetDrawData(),
+			m_pSwapChain->GetCurrentCommandBuffer());
 
-			ImGui::Render();
-
-			ImGui_ImplVulkan_RenderDrawData(
-				ImGui::GetDrawData(),
-				m_pSwapChain->GetCurrentCommandBuffer());
-
-			m_pSwapChain->EndRecordCommandBuffer();
-		}
+		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }
