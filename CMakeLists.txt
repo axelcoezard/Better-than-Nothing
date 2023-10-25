@@ -13,7 +13,6 @@ add_subdirectory("ThirdParty/glfw")
 add_subdirectory("ThirdParty/vulkan")
 add_subdirectory("ThirdParty/glm")
 add_subdirectory("ThirdParty/openal")
-#add_subdirectory("ThirdParty/libsndfile")
 
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
@@ -46,7 +45,7 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/BetterTha
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(${PROJECT_NAME} glfw vulkan stb openal) #openal sndfile)
+target_link_libraries(${PROJECT_NAME} glfw vulkan stb openal)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
@@ -54,7 +53,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Th
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/libsndfile/include)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/sources)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
