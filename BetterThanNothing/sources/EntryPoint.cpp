@@ -2,6 +2,8 @@
 #include "Engine/Device.hpp"
 #include "Engine/Renderer.hpp"
 #include "Engine/Model.hpp"
+#include "Engine/DescriptorPool.hpp"
+#include "Engine/SwapChain.hpp"
 #include "Handlers/Input.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
@@ -44,6 +46,7 @@ int main(void) {
 	uint32_t frameCount = 0;
 
 	pRenderer->Prepare(pScene);
+
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 

@@ -28,6 +28,21 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )
 
+add_library(imgui SHARED
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imconfig.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_internal.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_draw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_demo.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_tables.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/imgui_widgets.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_glfw.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_glfw.cpp
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_vulkan.h
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp
+)
+
 add_library(stb SHARED
 	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image.cpp"
 	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image.h"
@@ -38,15 +53,16 @@ add_library(stb SHARED
 include_directories(
 	${PROJECT_SOURCE_DIR}/BetterThanNothing/sources
 	${PROJECT_SOURCE_DIR}/Sandbox
+	${PROJECT_SOURCE_DIR}/ThirdParty/imgui
 )
 
-add_executable(${PROJECT_NAME} ${ALL_SRCS})
+add_executable(${PROJECT_NAME} ${ALL_SRCS} ${IMGUI_SOURCES})
 
-target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/pch.hpp)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/pch.hpp)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(${PROJECT_NAME} glfw vulkan stb openal)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb openal imgui)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/glfw/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vulkan)
@@ -55,6 +71,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Th
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tinyobjloader)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/openal/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/entt/single_include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/imgui)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/imgui/backends)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BetterThanNothing/sources)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Sandbox)
