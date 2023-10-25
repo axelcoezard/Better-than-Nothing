@@ -1,16 +1,23 @@
-#include "Layer.hpp"
+#pragma once
+
+#include "Layers/Layer.hpp"
 
 namespace BetterThanNothing
 {
+	class Layer;
+	class Scene;
+
 	class SceneLayer : public Layer
 	{
+		private:
+			Scene* m_pScene;
 		public:
-			SceneLayer(void);
-			~SceneLayer(void) = default;
+			SceneLayer(Scene* pScene);
+			~SceneLayer() = default;
 
-			void OnAttach(void) override;
-			void OnDetach(void) override;
+			void OnAttach() override;
+			void OnDetach() override;
 			void OnUpdate(float deltatime) override;
-			void OnRender(void) override;
+			void OnRender(Renderer* pRenderer) override;
 	};
 };

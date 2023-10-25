@@ -1,29 +1,31 @@
-#include "SceneLayer.hpp"
+#include "Engine/Renderer.hpp"
+#include "Layers/SceneLayer.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Camera.hpp"
 
 namespace BetterThanNothing
 {
-	SceneLayer::SceneLayer(void)
+	SceneLayer::SceneLayer(Scene* pScene)
+		: Layer("SceneLayer"), m_pScene(pScene) {}
+
+	void SceneLayer::OnAttach()
 	{
-
-	}
-
-	void SceneLayer::OnAttach(void)
-	{
-
+		auto pCamera = m_pScene->InitCamera(0.0, 0.0, 400.0, 0.0f, 0.0f);
+		pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
 	}
 
 	void SceneLayer::OnDetach(void)
 	{
-
+		delete m_pScene;
 	}
 
 	void SceneLayer::OnUpdate(float deltatime)
 	{
-		(void) deltatime;
+		m_pScene->Update(deltatime);
 	}
 
-	void SceneLayer::OnRender(void)
+	void SceneLayer::OnRender(Renderer* pRenderer)
 	{
-
+		m_pScene->Render(pRenderer);
 	}
 };

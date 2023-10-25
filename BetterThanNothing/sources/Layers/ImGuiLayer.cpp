@@ -1,8 +1,9 @@
-#include "ImGuiLayer.hpp"
+#include "Engine/Renderer.hpp"
+#include "Layers/ImGuiLayer.hpp"
 
 namespace BetterThanNothing
 {
-	ImGuiLayer::ImGuiLayer(void)
+	ImGuiLayer::ImGuiLayer(): Layer("ImGuiLayer")
 	{
 
 	}
@@ -22,8 +23,24 @@ namespace BetterThanNothing
 		(void) deltatime;
 	}
 
-	void ImGuiLayer::OnRender(void)
+	void ImGuiLayer::OnRender(Renderer* pRenderer)
 	{
+		(void) pRenderer;
 
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				ImGui::MenuItem("Hello world", "bip bip");
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		ImGui::Render();
 	}
 };

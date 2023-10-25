@@ -1,13 +1,23 @@
+#pragma once
+
 namespace BetterThanNothing
 {
+	class Renderer;
+
 	class Layer
 	{
+		private:
+			std::string m_Label;
 		public:
-			virtual ~Layer(void) = default;
+			Layer(const std::string& label);
+			virtual ~Layer();
 
-			virtual void OnAttach(void) = 0;
-			virtual void OnDetach(void) = 0;
+			virtual void OnAttach() = 0;
+			virtual void OnDetach() = 0;
 			virtual void OnUpdate(float deltatime) = 0;
-			virtual void OnRender(void) = 0;
+			virtual void OnRender(Renderer* pRenderer) = 0;
+			// TO-DO: add OnEvent method
+
+			inline const std::string& GetName() const { return m_Label; }
 	};
 };
