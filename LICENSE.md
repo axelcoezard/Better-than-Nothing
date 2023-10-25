@@ -21,8 +21,6 @@ exhaustive, and do not form part of our licenses.
 
 Considerations for licensors: Our public licenses areintended for use by those authorized to give the publicpermission to use material in ways otherwise restricted bycopyright and certain other rights. Our licenses areirrevocable. Licensors should read and understand the termsand conditions of the license they choose before applying it.Licensors should also secure all rights necessary beforeapplying our licenses so that the public can reuse thematerial as expected. Licensors should clearly mark anymaterial not subject to the license. This includes other CC-licensed material, or material used under an exception orlimitation to copyright. More considerations for licensors:wiki.creativecommons.org/Considerations_for_licensors
 
-Considerations for the public: By using one of our publiclicenses, a licensor grants the public permission to use thelicensed material under specified terms and conditions. Ifthe licensor's permission is not necessary for any reason--forexample, because of any applicable exception or limitation tocopyright--then that use is not regulated by the license. Ourlicenses grant only permissions under copyright and certainother rights that a licensor has authority to grant. Use ofthe licensed material may still be restricted for otherreasons, including because others have copyright or otherrights in the material. A licensor may make special requests,such as asking that all changes be marked or described.Although not required by our licenses, you are encouraged torespect those requests where reasonable. More considerationsfor the public:wiki.creativecommons.org/Considerations_for_licensees
-
 ## Creative Commons Attribution-NonCommercial 4.0 International Public License
 
 By exercising the Licensed Rights (defined below), You accept and agree
@@ -34,7 +32,6 @@ acceptance of these terms and conditions, and the Licensor grants You
 such rights in consideration of benefits the Licensor receives from
 making the Licensed Material available under these terms and
 conditions.
-
 
 ## Section 1 -- Definitions.
 
@@ -105,7 +102,6 @@ conditions.
 
   l. You means the individual or entity exercising the Licensed Rights
      under this Public License. Your has a corresponding meaning.
-
 
 ## Section 2 -- Scope.
 
@@ -185,6 +181,7 @@ conditions.
           reserves any right to collect such royalties, including when
           the Licensed Material is used other than for NonCommercial
           purposes.
+
 
 ## Section 3 -- License Conditions.
 
