@@ -1,14 +1,35 @@
 # Better Than Nothing
 Everything is in the title, it is a better-than-nothing Game Engine
 
-## Functionalities
+## Features
 
- - Graphics pipeline
- - Multiple textures loading
- - Multiple .obj models loading and rendering
- - Mipmapping
- - Msaa multisampling
- - Working 3D camera
+ - Support for Linux.
+ - Support for Vulkan.
+ - Rendering basic .obj 3D models with textures.
+	- Mipmapping.
+	- Msaa multisampling.
+ - Firt-person 3D camera.
+
+## Road map
+
+### Short term
+
+ - Debug gui using ImGui.
+ - Phong light model.
+ - 3D audio using OpenAL.
+ - Entity-Component-System (ECS) optimization.
+
+### Long term
+
+ - Scene graph and octree optimizations.
+ - Physically Based Rendering (PBR) support.
+ - 3D collision detection.
+ - Basic C# scripting support.
+ - Support for Windows and MacOS
+
+## Contributing
+
+ - Contributions are welcome. Both new features and bug fixes. Just open a pull request.
 
 ## Dependencies
 
