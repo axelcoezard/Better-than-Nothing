@@ -14,6 +14,7 @@ Everything is in the title, it is a better-than-nothing Game Engine
 
 ### Short term
 
+ - In-house event system.
  - Debug gui using ImGui.
  - Phong light model.
  - 3D audio using OpenAL.
@@ -26,6 +27,9 @@ Everything is in the title, it is a better-than-nothing Game Engine
  - 3D collision detection.
  - Basic C# scripting support.
  - Support for Windows and MacOS
+ - OpenUSD support.
+ - AMD FidelityFX Super Resolution 2 (FSR2) support.
+ - SteamWorks SDK support.
 
 ## Contributing
 
