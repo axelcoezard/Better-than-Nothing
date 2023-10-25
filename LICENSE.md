@@ -1,4 +1,4 @@
-# Attribution-NonCommercial 4.0 International (CC BY-NC)
+# Attribution-NonCommercial 4.0 International
 
 Creative Commons Corporation ("Creative Commons") is not a law firm and
 does not provide legal services or legal advice. Distribution of
@@ -370,6 +370,4 @@ to any of its public licenses or any other arrangements,
 understandings, or agreements concerning use of licensed material. For
 the avoidance of doubt, this paragraph does not form part of the
 public licenses.
-
-Creative Commons may be contacted at creativecommons.org.
 
