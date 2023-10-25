@@ -8,7 +8,7 @@ Everything is in the title, it is a better-than-nothing Game Engine
  - Rendering basic .obj 3D models with textures.
 	- Mipmapping.
 	- Msaa multisampling.
- - Firt-person 3D camera.
+ - First-person 3D camera.
 
 ## Road map
 
