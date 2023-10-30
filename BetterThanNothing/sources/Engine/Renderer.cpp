@@ -83,7 +83,7 @@ namespace BetterThanNothing
 	{
 		auto pPipeline = m_pPipeLines.at("main");
 
-		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline, m_pScene);
+		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
 	}
 
 	void Renderer::DrawModel(Model* pModel, uint32_t modelIndex)

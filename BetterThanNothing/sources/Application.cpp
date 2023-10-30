@@ -53,6 +53,7 @@ namespace BetterThanNothing
 
 			if (m_pRenderer->BeginRender()) {
 				for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
+
 					(*it)->OnRender(m_pRenderer);
 				}
 
