@@ -18,6 +18,7 @@ add_subdirectory("ThirdParty/entt")
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.h"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.cpp"
