@@ -29,7 +29,9 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.hpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/Layers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/Layers/*.hpp"
 )
 
 add_library(imgui SHARED

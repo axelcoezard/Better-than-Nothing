@@ -10,6 +10,7 @@ namespace BetterThanNothing
 	{
 	private:
 		bool	m_bHandled = false;
+		void*	m_pContext = nullptr;
 	public:
 		virtual ~Event() = default;
 
@@ -17,5 +18,9 @@ namespace BetterThanNothing
 
 		void SetHandled(bool handled) { m_bHandled = handled; }
 		bool IsHandled() { return m_bHandled; }
+
+		void SetContext(void* pContext) { m_pContext = pContext; }
+		void* GetContext() { return m_pContext; }
+		bool HasContext() { return m_pContext != nullptr; }
 	};
 };

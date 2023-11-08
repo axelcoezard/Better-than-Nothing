@@ -96,10 +96,6 @@ namespace BetterThanNothing
 
 	void Renderer::EndRender()
 	{
-		ImGui_ImplVulkan_RenderDrawData(
-			ImGui::GetDrawData(),
-			m_pSwapChain->GetCurrentCommandBuffer());
-
 		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }

@@ -1,8 +1,11 @@
 #include "Engine/Renderer.hpp"
 #include "Engine/SwapChain.hpp"
-#include "Layers/SceneLayer.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Events/EventDispatcher.hpp"
+#include "Events/KeyEvent.hpp"
+
+#include "SceneLayer.hpp"
 
 namespace BetterThanNothing
 {
@@ -33,5 +36,10 @@ namespace BetterThanNothing
 		}
 
 		m_pScene->Render(pRenderer);
+	}
+
+	void SceneLayer::OnEvent(Event* pEvent)
+	{
+		m_pScene->OnEvent(pEvent);
 	}
 };

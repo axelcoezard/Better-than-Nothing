@@ -1,5 +1,8 @@
 #include "Scene/Camera.hpp"
 #include "Handlers/Input.hpp"
+#include "Events/Event.hpp"
+#include "Events/EventDispatcher.hpp"
+#include "Events/KeyEvent.hpp"
 
 namespace BetterThanNothing
 {
@@ -39,24 +42,23 @@ namespace BetterThanNothing
 
 		// compute keyboard inputs
 		glm::vec3 movement = glm::vec3(0.0f);
-
 		if (Input::IsKeyPressed(GLFW_KEY_W)) {
-			movement += velocity * m_Front;
+			movement += m_Front * velocity;
 		}
 		if (Input::IsKeyPressed(GLFW_KEY_S)) {
-			movement -= velocity * m_Front;
+			movement -= m_Front * velocity;
 		}
 		if (Input::IsKeyPressed(GLFW_KEY_A)) {
-			movement -= velocity * m_Right;
+			movement -= m_Right * velocity;
 		}
 		if (Input::IsKeyPressed(GLFW_KEY_D)) {
-			movement += velocity * m_Right;
+			movement += m_Right * velocity;
 		}
 		if (Input::IsKeyPressed(GLFW_KEY_SPACE)) {
-			movement += velocity * m_Up;
+			movement += m_Up * velocity;
 		}
 		if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
-			movement -= velocity * m_Up;
+			movement -= m_Up * velocity;
 		}
 
 		m_Position += movement;
@@ -94,6 +96,11 @@ namespace BetterThanNothing
 
 		CalculateViewMatrix();
 		CalculateProjectionMatrix();
+	}
+
+	void Camera::OnEvent(Event* pEvent)
+	{
+		(void) pEvent;
 	}
 
 	void Camera::CalculateCameraVectors()

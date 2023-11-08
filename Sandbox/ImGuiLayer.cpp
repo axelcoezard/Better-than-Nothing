@@ -1,5 +1,6 @@
 #include "Engine/Renderer.hpp"
-#include "Layers/ImGuiLayer.hpp"
+#include "Engine/SwapChain.hpp"
+#include "ImGuiLayer.hpp"
 
 namespace BetterThanNothing
 {
@@ -42,5 +43,13 @@ namespace BetterThanNothing
 		}
 
 		ImGui::Render();
+		ImGui_ImplVulkan_RenderDrawData(
+			ImGui::GetDrawData(),
+			pRenderer->GetSwapChain()->GetCurrentCommandBuffer());
+	}
+
+	void ImGuiLayer::OnEvent(Event* pEvent)
+	{
+		(void) pEvent;
 	}
 };

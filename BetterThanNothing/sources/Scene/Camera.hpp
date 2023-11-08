@@ -2,9 +2,12 @@
 
 namespace BetterThanNothing
 {
+	class Event;
+	class KeyPressEvent;
+
 	class Camera
 	{
-	private:
+	protected:
 		glm::vec3				m_Position;
 
 		glm::vec3				m_Front;
@@ -26,14 +29,15 @@ namespace BetterThanNothing
 								~Camera();
 
 								Camera(const Camera&) = delete;
-		Camera&				operator=(const Camera&) = delete;
+		Camera&					operator=(const Camera&) = delete;
 								Camera(Camera&&) = delete;
-		Camera&				operator=(Camera&&) = delete;
+		Camera&					operator=(Camera&&) = delete;
 
 	public:
 		void					SetPerspectiveProjection(float fov, float zNear, float zFar);
 
 		void 					Update(float deltatime);
+		void					OnEvent(Event* pEvent);
 
 	private:
 		void					CalculateCameraVectors();

@@ -23,8 +23,8 @@ namespace BetterThanNothing
 
 		virtual void OnEnable() = 0;
 		virtual void OnDisable() = 0;
-		virtual void OnEvent(Event* event) = 0;
 		virtual void OnUpdate(float deltatime) = 0;
 		virtual void OnRender(Renderer* renderer) = 0;
+		virtual void OnEvent(Event* event) = 0;
 	};
 };
