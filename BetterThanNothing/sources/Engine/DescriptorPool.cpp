@@ -52,17 +52,24 @@ namespace BetterThanNothing
 
 	void DescriptorPool::CreateDescriptorPool(std::vector<Model*> pModels)
 	{
+		// In `MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1)`
+		// `MAX_FRAMES_IN_FLIGHT` are the max frame you can have in flight (usually 60)
+		// `pModels.size()` is the number of models you have
+		// `+ 1` is for the ImGui texture
+		uint32_t descriptorCount = MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1);
+
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * pModels.size());
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(descriptorCount);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * pModels.size());
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(descriptorCount);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * pModels.size());
+		poolInfo.maxSets = static_cast<uint32_t>(descriptorCount);
 
 		if (vkCreateDescriptorPool(m_pDevice->GetVkDevice(), &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor pool!");

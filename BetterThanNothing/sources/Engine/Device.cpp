@@ -108,6 +108,12 @@ namespace BetterThanNothing
 		if (m_PhysicalDevice == VK_NULL_HANDLE) {
 			throw std::runtime_error("failed to find a suitable GPU!");
 		}
+
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(m_PhysicalDevice, &deviceProperties);
+		m_VendorName = GetVendorById(deviceProperties.vendorID);
+		m_DeviceName = deviceProperties.deviceName;
+		m_ApiVersion = std::to_string(deviceProperties.apiVersion);
 	}
 
 	void Device::CreateLogicalDevice() {
@@ -237,6 +243,17 @@ namespace BetterThanNothing
 		if (counts & VK_SAMPLE_COUNT_4_BIT)		{ return VK_SAMPLE_COUNT_4_BIT; }
 		if (counts & VK_SAMPLE_COUNT_2_BIT)		{ return VK_SAMPLE_COUNT_2_BIT; }
 		return VK_SAMPLE_COUNT_1_BIT;
+	}
+
+	std::string Device::GetVendorById(uint32_t vendorId) const
+	{
+		if (vendorId == 0x1002) return "AMD";
+		if (vendorId == 0x1010) return "ImgTec";
+		if (vendorId == 0x10DE) return "NVIDIA";
+		if (vendorId == 0x13B5) return "ARM";
+		if (vendorId == 0x5143) return "Qualcomm";
+		if (vendorId == 0x8086) return "INTEL";
+		return "Unknown";
 	}
 
 	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device) {

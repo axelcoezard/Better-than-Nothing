@@ -86,7 +86,7 @@ namespace BetterThanNothing
 		void										CreateCommandBuffers();
 
 		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
-		bool										BeginRecordCommandBuffer(Pipeline* pPipeline, Scene* pScene);
+		bool										BeginRecordCommandBuffer(Pipeline* pPipeline);
 		void										BindModel(Model* pModel);
 		void										UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex);
 		void										DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex);
@@ -116,6 +116,6 @@ namespace BetterThanNothing
 		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
 		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
-
+		VkCommandBuffer&							GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
 	};
 };

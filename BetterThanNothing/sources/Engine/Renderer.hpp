@@ -21,6 +21,7 @@ namespace BetterThanNothing
 		CommandPool*						m_pCommandPool;
 		SwapChain*							m_pSwapChain;
 		DescriptorPool*						m_pDescriptorPool;
+		Scene*								m_pScene;
 
 		std::map<std::string, Pipeline*>	m_pPipeLines;
 
@@ -37,7 +38,9 @@ namespace BetterThanNothing
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
 		void								Prepare(Scene* pScene);
-		void								Render(Scene* pScene);
+		bool								BeginRender();
+		void								DrawModel(Model* pModel, uint32_t modelIndex);
+		void								EndRender();
 
 	public:
 		Window*								GetWindow()			{ return m_pWindow; }
@@ -46,5 +49,6 @@ namespace BetterThanNothing
 		SwapChain*							GetSwapChain()		{ return m_pSwapChain; }
 		DescriptorPool*						GetDescriptorPool()	{ return m_pDescriptorPool; }
 		std::map<std::string, Pipeline*>	GetPipeLines()		{ return m_pPipeLines; }
+		Scene*								GetScene()			{ return m_pScene; }
 	};
 };

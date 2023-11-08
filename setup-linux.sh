@@ -12,3 +12,8 @@ wget https://storage.googleapis.com/shaderc/artifacts/prod/graphics_shader_compi
 tar -xvzf install.tgz
 sudo cp ./install/bin/glslc /usr/local/bin/
 sudo rm -rf install.tgz ./install/
+
+# Install all required tools for libsndfile
+sudo apt install -y autoconf autogen automake build-essential libasound2-dev \
+	libflac-dev libogg-dev libtool libvorbis-dev libopus-dev libmp3lame-dev \
+	libmpg123-dev pkg-config python3

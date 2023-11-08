@@ -21,6 +21,10 @@ namespace BetterThanNothing
 
 	Renderer::~Renderer()
 	{
+		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
 		for (auto & entry : m_pPipeLines) {
 			delete entry.second;
 		}
@@ -49,19 +53,49 @@ namespace BetterThanNothing
 		m_pDescriptorPool->CreateDescriptorSets(models);
 
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
+
+		ImGui::CreateContext();
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetPointer(), true);
+
+		ImGui_ImplVulkan_InitInfo info = {};
+		info.Instance = m_pDevice->GetVkInstance();
+		info.PhysicalDevice = m_pDevice->GetVkPhysicalDevice();
+		info.Device = m_pDevice->GetVkDevice();
+		info.DescriptorPool = m_pDescriptorPool->GetVkDescriptorPool();
+		info.ImageCount = MAX_FRAMES_IN_FLIGHT;
+		info.MinImageCount = 2;
+		info.MSAASamples = m_pDevice->GetMsaaSamples();
+		info.Queue = m_pDevice->GetVkGraphicsQueue();
+
+		ImGui_ImplVulkan_Init(&info, m_pSwapChain->GetVkRenderPass());
+
+		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
+		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
+
+		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
-	void Renderer::Render(Scene* pScene)
+	bool Renderer::BeginRender()
 	{
 		auto pPipeline = m_pPipeLines.at("main");
-		auto models = pScene->GetModels();
 
-		if (m_pSwapChain->BeginRecordCommandBuffer(pPipeline, pScene)) {
-			for (uint32_t i = 0; i < models.size(); i++) {
-				m_pSwapChain->BindModel(models[i]);
-				m_pSwapChain->DrawModel(pPipeline, models[i], i);
-			}
-			m_pSwapChain->EndRecordCommandBuffer();
-		}
+		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
+	}
+
+	void Renderer::DrawModel(Model* pModel, uint32_t modelIndex)
+	{
+		auto pPipeline = m_pPipeLines.at("main");
+
+		m_pSwapChain->BindModel(pModel);
+		m_pSwapChain->DrawModel(pPipeline, pModel, modelIndex);
+	}
+
+	void Renderer::EndRender()
+	{
+		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }
