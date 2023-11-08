@@ -9,13 +9,13 @@ Everything is in the title, it is a better-than-nothing Game Engine
 	- Mipmapping.
 	- Msaa multisampling.
  - First-person 3D camera.
+ - In-house event system.
+ - Debug gui using ImGui.
 
 ## Road map
 
 ### Short term
 
- - In-house event system.
- - Debug gui using ImGui.
  - Phong light model.
  - 3D audio using OpenAL.
  - Entity-Component-System (ECS) optimization.
