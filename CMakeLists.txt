@@ -24,6 +24,8 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )

@@ -7,6 +7,10 @@
 #include "Handlers/Input.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Layers/LayerStack.hpp"
+#include "Layers/Layer.hpp"
+#include "Layers/ImGuiLayer.hpp"
+#include "Layers/SceneLayer.hpp"
 
 using namespace BetterThanNothing;
 
@@ -21,9 +25,6 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
 
 	Scene* pScene = new Scene("world");
-
-	auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, 0.0f, 0.0f);
-	pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
 
 	pScene->LoadModel(
 		pRenderer,
@@ -40,13 +41,19 @@ int main(void) {
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.obj",
 		"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
+
+	pRenderer->Prepare(pScene);
+
+	auto layerStack = LayerStack();
+	layerStack.PushLayer(new ImGuiLayer());
+	layerStack.PushLayer(new SceneLayer(pScene));
+
 	float deltatime = 0.0f;
 	float lastFrame = 0.0f;
 	float frameTime = 1.0f / 240.0f;
 	uint32_t frameCount = 0;
 
-	pRenderer->Prepare(pScene);
-
+	layerStack.ForEach([](Layer* layer) { layer->OnAttach(); });
 	while (!pWindow->ShouldClose()) {
 		pWindow->Poll();
 
@@ -55,8 +62,18 @@ int main(void) {
 		lastFrame = currentFrame;
 		frameCount += 1;
 
-		pScene->Update(deltatime);
-		pRenderer->Render(pScene);
+		layerStack.ForEach([deltatime](Layer* layer) {
+			layer->OnUpdate(deltatime);
+		});
+
+		if (pRenderer->BeginRender(pScene)) {
+
+			layerStack.ForEach([pRenderer](Layer* layer) {
+				layer->OnRender(pRenderer);
+			});
+
+			pRenderer->EndRender();
+		}
 
 		std::cout.precision(3);
 		std::cout << "\033[2J\033[1;1H";
@@ -75,7 +92,8 @@ int main(void) {
 
 	pDevice->Idle();
 
-	delete pScene;
+	layerStack.ForEach([](Layer* layer) { layer->OnDetach(); });
+
 	delete pRenderer;
 	delete pDevice;
 	delete pWindow;

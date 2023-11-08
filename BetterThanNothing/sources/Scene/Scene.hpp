@@ -27,6 +27,7 @@ namespace BetterThanNothing
 		void					LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
 
 		void					Update(float deltatime);
+		void					Render(Renderer* pRenderer);
 
 	public:
 		std::string&			GetName()	{ return m_Name; }

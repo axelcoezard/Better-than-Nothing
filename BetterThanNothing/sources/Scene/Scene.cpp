@@ -45,4 +45,11 @@ namespace BetterThanNothing
 
 		m_pModels[1]->SetRotation(glm::vec3((float) rotation, 0.0f, 0.0f));
 	}
+
+	void Scene::Render(Renderer* pRenderer)
+	{
+		for (uint32_t i = 0; i < m_pModels.size(); i++) {
+			pRenderer->DrawModel(m_pModels[i], i);
+		}
+	}
 };
