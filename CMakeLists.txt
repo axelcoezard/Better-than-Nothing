@@ -18,6 +18,7 @@ add_subdirectory("ThirdParty/entt")
 file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.h"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.cpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.cpp"
@@ -26,8 +27,12 @@ file(GLOB ALL_SRCS
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.hpp"
 	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.cpp"
 	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
-	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.hpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/Layers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/Layers/*.hpp"
 )
 
 add_library(imgui SHARED
@@ -50,6 +55,23 @@ add_library(stb SHARED
 	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image.h"
 	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image_resize.h"
 	"${PROJECT_SOURCE_DIR}/ThirdParty/stb/stb_image_write.h"
+)
+
+file(GLOB ALL_SRCS
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Engine/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Handlers/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Scene/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Layers/*.cpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.hpp"
+	"${PROJECT_SOURCE_DIR}/BetterThanNothing/sources/Events/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.cpp"
+	"${PROJECT_SOURCE_DIR}/Sandbox/*.h"
 )
 
 include_directories(

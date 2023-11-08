@@ -23,3 +23,7 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+
+#define BIND_EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) {\
+									return this->fn(std::forward<decltype(args)>(args)...);\
+								}

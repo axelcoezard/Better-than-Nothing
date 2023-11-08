@@ -3,6 +3,7 @@
 #include "Engine/Model.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Events/Event.hpp"
 
 namespace BetterThanNothing
 {
@@ -51,5 +52,10 @@ namespace BetterThanNothing
 		for (uint32_t i = 0; i < m_pModels.size(); i++) {
 			pRenderer->DrawModel(m_pModels[i], i);
 		}
+	}
+
+	void Scene::OnEvent(Event* pEvent)
+	{
+		m_pCamera->OnEvent(pEvent);
 	}
 };

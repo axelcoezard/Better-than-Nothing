@@ -1,16 +1,20 @@
 #pragma once
 
+#include "Events/Event.hpp"
+
 namespace BetterThanNothing
 {
 	class Window
 	{
 	private:
-		GLFWwindow*		m_pWindow;
+		GLFWwindow*					m_pWindow;
 
-		std::string		m_Title;
-		uint32_t		m_Width, m_Height;
+		std::string					m_Title;
+		uint32_t					m_Width, m_Height;
 
-		bool			m_bResized = false;
+		bool						m_bResized = false;
+
+		std::function<void(Event*)>	m_eventCallback;
 	public:
 						Window(std::string_view title, uint32_t width, uint32_t height);
 						~Window();
@@ -22,6 +26,8 @@ namespace BetterThanNothing
 		void			Poll()						{ glfwPollEvents(); }
 		bool			ShouldClose()				{ return glfwWindowShouldClose(m_pWindow) ==  GLFW_TRUE; }
 		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
+
+		void			SetEventCallback(std::function<void(Event*)> eventcallback);
 
 		static void		ResizeCallback(GLFWwindow* window, int width, int height);
 		static void		KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

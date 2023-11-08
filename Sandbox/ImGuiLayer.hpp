@@ -4,20 +4,19 @@
 
 namespace BetterThanNothing
 {
-	class Layer;
-	class Scene;
+	class Renderer;
+	class Event;
 
-	class SceneLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
-		private:
-			Scene* m_pScene;
 		public:
-			SceneLayer(Scene* pScene);
-			~SceneLayer() = default;
+			ImGuiLayer();
+			~ImGuiLayer() = default;
 
 			void OnAttach() override;
 			void OnDetach() override;
 			void OnUpdate(float deltatime) override;
 			void OnRender(Renderer* pRenderer) override;
+			void OnEvent(Event* pEvent) override;
 	};
 };

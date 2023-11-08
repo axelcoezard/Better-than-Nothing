@@ -501,7 +501,7 @@ namespace BetterThanNothing
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	bool SwapChain::BeginRecordCommandBuffer(Pipeline* pPipeline, Scene* pScene)
+	bool SwapChain::BeginRecordCommandBuffer(Pipeline* pPipeline)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -515,11 +515,6 @@ namespace BetterThanNothing
 
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error("failed to acquire swap chain image!");
-		}
-
-		auto models = pScene->GetModels();
-		for (size_t i = 0; i < models.size(); i++) {
-			UpdateUniformBuffer(pScene, models[i], i);
 		}
 
 		VkCommandBufferBeginInfo beginInfo{};

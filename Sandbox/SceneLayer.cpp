@@ -1,7 +1,11 @@
 #include "Engine/Renderer.hpp"
-#include "Layers/SceneLayer.hpp"
+#include "Engine/SwapChain.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Events/EventDispatcher.hpp"
+#include "Events/KeyEvent.hpp"
+
+#include "SceneLayer.hpp"
 
 namespace BetterThanNothing
 {
@@ -26,6 +30,16 @@ namespace BetterThanNothing
 
 	void SceneLayer::OnRender(Renderer* pRenderer)
 	{
+		auto models = m_pScene->GetModels();
+		for (size_t i = 0; i < models.size(); i++) {
+			pRenderer->GetSwapChain()->UpdateUniformBuffer(m_pScene, models[i], i);
+		}
+
 		m_pScene->Render(pRenderer);
+	}
+
+	void SceneLayer::OnEvent(Event* pEvent)
+	{
+		m_pScene->OnEvent(pEvent);
 	}
 };

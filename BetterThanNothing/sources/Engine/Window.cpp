@@ -1,5 +1,6 @@
 #include "Engine/Window.hpp"
 #include "Handlers/Input.hpp"
+#include "Events/KeyEvent.hpp"
 
 namespace BetterThanNothing
 {
@@ -34,6 +35,11 @@ namespace BetterThanNothing
 		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
 	}
 
+	void Window::SetEventCallback(std::function<void(Event*)> eventcallback)
+	{
+		m_eventCallback = eventcallback;
+	}
+
 	void Window::ResizeCallback(GLFWwindow* pWindow, int width, int height)
 	{
 		(void) width;
@@ -48,10 +54,24 @@ namespace BetterThanNothing
 		(void) scancode;
 		(void) mods;
 
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
+
 		Input::UpdateKey(key, action);
+
+		auto pWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+		KeyEvent* event = nullptr;
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			event = new KeyPressEvent(key, scancode, mods);
+		} else {
+			event = new KeyReleaseEvent(key, scancode, mods);
+		}
+
+		if (event != nullptr) {
+			pWindow->m_eventCallback(event);
+		}
 	}
 
 	void Window::MouseCursorCallback(GLFWwindow* window, double xpos, double ypos)
