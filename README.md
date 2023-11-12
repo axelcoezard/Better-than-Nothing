@@ -21,7 +21,7 @@ You can find the board [here](https://trello.com/b/pKXNk3bb/road-map).
 
 ## Contributing
 
- - Contributions are welcome. Both new features and bug fixes. Just open a pull request.
+Contributions are welcome. Both new features and bug fixes. Just open a pull request.
 
 ## Dependencies
 
