@@ -3,7 +3,15 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/Engine/Modules/Core/src/**",
+                "${workspaceFolder}/Engine/Modules/Runtime/src/**",
+				"${workspaceFolder}/Engine/ThirdParty/glfw/include/**",
+				"${workspaceFolder}/Engine/ThirdParty/vulkan/include/**",
+				"${workspaceFolder}/Engine/ThirdParty/glm/include/**",
+				"${workspaceFolder}/Engine/ThirdParty/stb/include/**",
+				"${workspaceFolder}/Engine/ThirdParty/tinyobjloader/**",
+				"${workspaceFolder}/Engine/ThirdParty/entt/single_include/**",
+				"${workspaceFolder}/Engine/ThirdParty/imgui/include/**"
             ],
             "compilerPath": "/usr/bin/g++",
             "forcedInclude": [

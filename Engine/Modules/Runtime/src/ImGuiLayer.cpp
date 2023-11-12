@@ -1,7 +1,6 @@
 #include <Engine/Renderer.hpp>
 #include <Engine/SwapChain.hpp>
 
-
 #include "ImGuiLayer.hpp"
 
 namespace BetterThanNothing

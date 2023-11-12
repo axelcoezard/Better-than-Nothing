@@ -70,5 +70,5 @@ namespace BetterThanNothing
 
 BetterThanNothing::Application* CreateApplication()
 {
-	return new BetterThanNothing::Sandbox("better-than-nothing", 1280, 720);
+	return new BetterThanNothing::Sandbox("better-than-nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
 }
