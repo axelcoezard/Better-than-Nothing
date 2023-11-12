@@ -21,8 +21,8 @@
 
 #define MAX_FRAMES_IN_FLIGHT 60
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
 
 #define BIND_EVENT_LISTENER(fn) [this](auto&&... args) -> decltype(auto) {\
 									return this->fn(std::forward<decltype(args)>(args)...);\

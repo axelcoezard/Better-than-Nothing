@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Application.hpp"
+#include <Application.hpp>
 
 namespace BetterThanNothing
 {
 	class Event;
 	class Renderer;
+	class Scene;
 	class KeyPressEvent;
 
 	class Sandbox: public Application {

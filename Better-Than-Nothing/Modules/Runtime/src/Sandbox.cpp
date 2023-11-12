@@ -1,13 +1,14 @@
-#include "Sandbox.hpp"
-#include "Application.hpp"
-#include "Engine/Window.hpp"
-#include "Engine/Device.hpp"
-#include "Engine/Renderer.hpp"
-#include "Scene/Scene.hpp"
-#include "Layers/LayerStack.hpp"
-#include "Events/EventDispatcher.hpp"
-#include "Events/KeyEvent.hpp"
 
+#include <Application.hpp>
+#include <Engine/Window.hpp>
+#include <Engine/Device.hpp>
+#include <Engine/Renderer.hpp>
+#include <Scene/Scene.hpp>
+#include <Layers/LayerStack.hpp>
+#include <Events/EventDispatcher.hpp>
+#include <Events/KeyEvent.hpp>
+
+#include "Sandbox.hpp"
 #include "ImGuiLayer.hpp"
 #include "SceneLayer.hpp"
 
@@ -17,8 +18,8 @@ namespace BetterThanNothing
 	{
 		m_pRenderer->LoadPipeline(
 			"main",
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
+			"/home/acoezard/lab/better-than-nothing/Better-Than-Nothing/Shaders/vert.spv",
+			"/home/acoezard/lab/better-than-nothing/Better-Than-Nothing/Shaders/frag.spv");
 
 		Scene* pScene = new Scene("world");
 
@@ -69,5 +70,5 @@ namespace BetterThanNothing
 
 BetterThanNothing::Application* CreateApplication()
 {
-	return new BetterThanNothing::Sandbox("better-than-nothing", 1280, 720);
+	return new BetterThanNothing::Sandbox("better-than-nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
 }
