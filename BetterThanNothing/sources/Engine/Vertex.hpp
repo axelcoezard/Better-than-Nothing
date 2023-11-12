@@ -5,7 +5,7 @@ namespace BetterThanNothing
 	struct Vertex
 	{
 		glm::vec3	m_Position;
-		glm::vec3	m_Color;
+		glm::vec3	m_Normal;
 		glm::vec2	m_TextureCoordinates;
 
 		static VkVertexInputBindingDescription GetBindingDescription() {
@@ -26,7 +26,7 @@ namespace BetterThanNothing
 			attributeDescriptions[1].binding = 0;
 			attributeDescriptions[1].location = 1;
 			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[1].offset = offsetof(Vertex, m_Color);
+			attributeDescriptions[1].offset = offsetof(Vertex, m_Normal);
 
 			attributeDescriptions[2].binding = 0;
 			attributeDescriptions[2].location = 2;
@@ -36,7 +36,9 @@ namespace BetterThanNothing
 		}
 
 		bool operator==(const Vertex& other) const {
-			return m_Position == other.m_Position && m_Color == other.m_Color && m_TextureCoordinates == other.m_TextureCoordinates;
+			return m_Position == other.m_Position
+				&& m_Normal == other.m_Normal
+				&& m_TextureCoordinates == other.m_TextureCoordinates;
 		}
 	};
 
@@ -47,7 +49,7 @@ namespace std {
 	template<> struct hash<BetterThanNothing::Vertex> {
 		size_t operator()(BetterThanNothing::Vertex const& vertex) const {
 			return ((hash<glm::vec3>()(vertex.m_Position) ^
-					(hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1) ^
+					(hash<glm::vec3>()(vertex.m_Normal) << 1)) >> 1) ^
 					(hash<glm::vec2>()(vertex.m_TextureCoordinates) << 1);
 		}
 	};

@@ -2,17 +2,30 @@
 
 namespace BetterThanNothing
 {
-	class Light
+	struct Light
 	{
-	private:
-		glm::vec3	m_Position;
 		glm::vec3	m_Color;
+		float		m_AmbientIntensity;
+		float		m_DiffuseIntensity;
+	};
 
-	public:
-		Light(glm::vec3 position, glm::vec3 color);
-		~Light() = default;
+	struct DirectionalLight : public Light
+	{
+		glm::vec3	m_Direction;
+	};
 
-		glm::vec3 GetPosition() const;
-		glm::vec3 GetColor() const;
+	struct PointLight : public Light
+	{
+		glm::vec3	m_Position;
+		float		m_Constant;
+		float		m_Linear;
+		float		m_Quadratic;
+	};
+
+	struct SpotLight : public PointLight
+	{
+		glm::vec3	m_Direction;
+		float		m_CutOff;
+		float		m_OuterCutOff;
 	};
 };

@@ -13,8 +13,7 @@
 
 namespace BetterThanNothing
 {
-	Model::Model(Device* pDevice, Renderer* pRenderer)
-		: m_pDevice(pDevice), m_pRenderer(pRenderer)
+	Model::Model(Device* pDevice, Renderer* pRenderer) : m_pDevice(pDevice), m_pRenderer(pRenderer)
 	{
 		m_Position = {0.0f, 0.0f, 0.0f};
 		m_Rotation = {0.0f, 0.0f, 0.0f};
@@ -57,12 +56,16 @@ namespace BetterThanNothing
 					attrib.vertices[3 * index.vertex_index + 2]
 				};
 
+				vertex.m_Normal = {
+					attrib.normals[3 * index.normal_index + 0],
+					attrib.normals[3 * index.normal_index + 1],
+					attrib.normals[3 * index.normal_index + 2]
+				};
+
 				vertex.m_TextureCoordinates = {
 					attrib.texcoords[2 * index.texcoord_index + 0],
 					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
 				};
-
-				vertex.m_Color = {1.0f, 1.0f, 1.0f};
 
 				if (uniqueVertices.count(vertex) == 0) {
 					uniqueVertices[vertex] = static_cast<uint32_t>(m_Vertices.size());
