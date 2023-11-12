@@ -1,3 +1,6 @@
+# ==================================================================================================
+# Global configuration
+# ==================================================================================================
 cmake_minimum_required(VERSION 3.8)
 
 project("better-than-nothing")
@@ -9,6 +12,9 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
+# ==================================================================================================
+# Dependencies
+# ==================================================================================================
 add_subdirectory("Engine/ThirdParty/glfw")
 add_subdirectory("Engine/ThirdParty/vulkan")
 add_subdirectory("Engine/ThirdParty/glm")
@@ -16,6 +22,9 @@ add_subdirectory("Engine/ThirdParty/entt")
 add_subdirectory("Engine/ThirdParty/imgui")
 add_subdirectory("Engine/ThirdParty/stb")
 
+# ==================================================================================================
+# Modules
+# ==================================================================================================
 add_subdirectory("Engine/Modules/Core")
 add_subdirectory("Engine/Modules/Runtime")
 
