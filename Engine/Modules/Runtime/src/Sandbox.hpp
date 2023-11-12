@@ -6,6 +6,7 @@ namespace BetterThanNothing
 {
 	class Event;
 	class Renderer;
+	class Scene;
 	class KeyPressEvent;
 
 	class Sandbox: public Application {
