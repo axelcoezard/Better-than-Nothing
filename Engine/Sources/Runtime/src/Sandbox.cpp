@@ -17,8 +17,8 @@ namespace BetterThanNothing
 	{
 		m_pRenderer->LoadPipeline(
 			"main",
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/vert.spv",
-			"/home/acoezard/lab/better-than-nothing/Assets/Shaders/frag.spv");
+			"/home/acoezard/lab/better-than-nothing/Engine/Shaders/vert.spv",
+			"/home/acoezard/lab/better-than-nothing/Engine/Shaders/frag.spv");
 
 		Scene* pScene = new Scene("world");
 
