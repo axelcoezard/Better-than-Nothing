@@ -10,7 +10,6 @@ Everything is in the title, it is a better-than-nothing Game Engine
 	- Msaa multisampling.
  - First-person 3D camera.
  - In-house event system.
- - Debug gui using ImGui.
 
 ## Road map
 
