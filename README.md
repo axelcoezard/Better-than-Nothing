@@ -14,22 +14,11 @@ Everything is in the title, it is a better-than-nothing Game Engine
 
 ## Road map
 
-### Short term
+I've created a Trello board to provide some insight on what I have planned for the future of the game engine.
+On this board, you'll find upcoming features, target time frames, and any emergent known issues.
+Please note that at this time, the current Trello is in English only.
 
- - Phong light model.
- - 3D audio using OpenAL.
- - Entity-Component-System (ECS) optimization.
-
-### Long term
-
- - Scene graph and octree optimizations.
- - Physically Based Rendering (PBR) support.
- - 3D collision detection.
- - Basic C# scripting support.
- - Support for Windows and MacOS
- - OpenUSD support.
- - AMD FidelityFX Super Resolution 2 (FSR2) support.
- - SteamWorks SDK support.
+You can find the board [here](https://trello.com/b/pKXNk3bb/road-map).
 
 ## Contributing
 
