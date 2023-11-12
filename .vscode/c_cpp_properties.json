@@ -3,20 +3,20 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/Engine/Modules/Core/src/**",
-                "${workspaceFolder}/Engine/Modules/Runtime/src/**",
-				"${workspaceFolder}/Engine/ThirdParty/glfw/include/**",
-				"${workspaceFolder}/Engine/ThirdParty/vulkan/include/**",
-				"${workspaceFolder}/Engine/ThirdParty/glm/include/**",
-				"${workspaceFolder}/Engine/ThirdParty/stb/include/**",
-				"${workspaceFolder}/Engine/ThirdParty/tinyobjloader/**",
-				"${workspaceFolder}/Engine/ThirdParty/entt/single_include/**",
-				"${workspaceFolder}/Engine/ThirdParty/imgui/include/**"
+                "${workspaceFolder}/Better-Than-Nothing/Modules/Core/src/**",
+                "${workspaceFolder}/Better-Than-Nothing/Modules/Runtime/src/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/glfw/include/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/vulkan/include/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/glm/include/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/stb/include/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/tinyobjloader/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/entt/single_include/**",
+				"${workspaceFolder}/Better-Than-Nothing/ThirdParty/imgui/include/**"
             ],
             "compilerPath": "/usr/bin/g++",
             "forcedInclude": [
-                "${workspaceFolder}/build/Engine/Modules/Core/CMakeFiles/Core.dir/cmake_pch.hxx",
-                "${workspaceFolder}/build/Engine/Modules/Runtime/CMakeFiles/Runtime.dir/cmake_pch.hxx"
+                "${workspaceFolder}/build/Better-Than-Nothing/Modules/Core/CMakeFiles/Core.dir/cmake_pch.hxx",
+                "${workspaceFolder}/build/Better-Than-Nothing/Modules/Runtime/CMakeFiles/Runtime.dir/cmake_pch.hxx"
             ],
             "cStandard": "c17",
             "intelliSenseMode": "linux-gcc-x64",
