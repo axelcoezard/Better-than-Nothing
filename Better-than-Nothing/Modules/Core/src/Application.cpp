@@ -60,13 +60,18 @@ namespace BetterThanNothing
 				m_pRenderer->EndRender();
 			}
 
-			//std::cout.precision(3);
-			//std::cout << "\033[2J\033[1;1H";
-			//std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
-			//std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
-			//std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
-			//std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-			//std::cout << "Frame count: " << frameCount << std::endl;
+			std::cout.precision(3);
+			std::cout << "\033[2J\033[1;1H";
+			std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
+			std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
+			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
+			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
+			std::cout << "Frame count: " << frameCount << std::endl;
+
+			LOG_INFO("Hello, world!");
+			LOG_SUCCESS("Hello, world!");
+			LOG_WARNING("Hello, world!");
+			LOG_ERROR("Hello, world!");
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
