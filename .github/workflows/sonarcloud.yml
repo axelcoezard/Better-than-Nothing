@@ -24,7 +24,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-c-cpp@v1
       - name: Run build-wrapper
         run: |
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }}
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} bash build-linux.sh
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,4 +34,5 @@ jobs:
             --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
             --define sonar.projectKey=bad-devs_better-than-nothing
             --define sonar.organization=bad-devs
+            --define sonar.sources=./Better-than-Nothing/Modules
 
