@@ -1,10 +1,3 @@
-#include <Engine/Renderer.hpp>
-#include <Engine/SwapChain.hpp>
-#include <Scene/Scene.hpp>
-#include <Scene/Camera.hpp>
-#include <Events/EventDispatcher.hpp>
-#include <Events/KeyEvent.hpp>
-
 #include "SceneLayer.hpp"
 
 namespace BetterThanNothing

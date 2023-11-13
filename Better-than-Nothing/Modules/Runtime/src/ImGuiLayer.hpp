@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Layers/Layer.hpp>
+#include <BetterThanNothing.hpp>
 
 namespace BetterThanNothing
 {

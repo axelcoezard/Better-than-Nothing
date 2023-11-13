@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Application.hpp>
+#include <BetterThanNothing.hpp>
 
 namespace BetterThanNothing
 {

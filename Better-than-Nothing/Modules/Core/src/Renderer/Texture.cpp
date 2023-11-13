@@ -1,7 +1,7 @@
-#include "Engine/Device.hpp"
-#include "Engine/CommandPool.hpp"
-#include "Engine/SwapChain.hpp"
-#include "Engine/Texture.hpp"
+#include "Renderer/Device.hpp"
+#include "Renderer/CommandPool.hpp"
+#include "Renderer/SwapChain.hpp"
+#include "Renderer/Texture.hpp"
 
 #include "stb_image.h"
 

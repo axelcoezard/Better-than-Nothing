@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Device.hpp"
+#include "Renderer/Device.hpp"
 
 namespace BetterThanNothing
 {

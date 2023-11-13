@@ -1,9 +1,9 @@
-#include "Engine/Device.hpp"
-#include "Engine/SwapChain.hpp"
-#include "Engine/Texture.hpp"
-#include "Engine/DescriptorPool.hpp"
-#include "Engine/UniformBufferObject.hpp"
-#include "Engine/Model.hpp"
+#include "Renderer/Device.hpp"
+#include "Renderer/SwapChain.hpp"
+#include "Renderer/Texture.hpp"
+#include "Renderer/DescriptorPool.hpp"
+#include "Renderer/UniformBufferObject.hpp"
+#include "Renderer/Model.hpp"
 
 namespace BetterThanNothing
 {

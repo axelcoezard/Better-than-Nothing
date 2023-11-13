@@ -1,10 +1,10 @@
-#include "Engine/Window.hpp"
-#include "Engine/Device.hpp"
-#include "Engine/SwapChain.hpp"
-#include "Engine/Vertex.hpp"
-#include "Engine/Renderer.hpp"
-#include "Engine/Model.hpp"
-#include "Engine/Texture.hpp"
+#include "Renderer/Window.hpp"
+#include "Renderer/Device.hpp"
+#include "Renderer/SwapChain.hpp"
+#include "Renderer/Vertex.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Renderer/Model.hpp"
+#include "Renderer/Texture.hpp"
 
 #ifndef TINYOBJLOADER_IMPLEMENTATION
 #define TINYOBJLOADER_IMPLEMENTATION

@@ -1,8 +1,8 @@
-#include "Engine/Device.hpp"
-#include "Engine/SwapChain.hpp"
-#include "Engine/Pipeline.hpp"
-#include "Engine/Vertex.hpp"
-#include "Engine/DescriptorPool.hpp"
+#include "Renderer/Device.hpp"
+#include "Renderer/SwapChain.hpp"
+#include "Renderer/Pipeline.hpp"
+#include "Renderer/Vertex.hpp"
+#include "Renderer/DescriptorPool.hpp"
 
 namespace BetterThanNothing
 {
