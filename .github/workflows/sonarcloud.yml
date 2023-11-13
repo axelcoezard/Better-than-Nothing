@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   analysis:
-    name: Analyze
+    name: SonarCloud analysis
     runs-on: ubuntu-latest
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
@@ -31,8 +31,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner
-            --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-            --define sonar.projectKey=bad-devs_better-than-nothing
-            --define sonar.organization=bad-devs
-            --define sonar.sources=./Better-than-Nothing/Modules
+            -Dsonar.projectKey=bad-devs_better-than-nothing
+            -Dsonar.organization=bad-devs
+            -Dsonar.sources=./Better-than-Nothing/Modules
+            -Dsonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
 
