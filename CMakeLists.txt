@@ -15,18 +15,18 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # ==================================================================================================
 # Dependencies
 # ==================================================================================================
-add_subdirectory("Better-Than-Nothing/ThirdParty/glfw")
-add_subdirectory("Better-Than-Nothing/ThirdParty/vulkan")
-add_subdirectory("Better-Than-Nothing/ThirdParty/glm")
-add_subdirectory("Better-Than-Nothing/ThirdParty/entt")
-add_subdirectory("Better-Than-Nothing/ThirdParty/imgui")
-add_subdirectory("Better-Than-Nothing/ThirdParty/stb")
+add_subdirectory("Better-than-Nothing/ThirdParty/glfw")
+add_subdirectory("Better-than-Nothing/ThirdParty/vulkan")
+add_subdirectory("Better-than-Nothing/ThirdParty/glm")
+add_subdirectory("Better-than-Nothing/ThirdParty/entt")
+add_subdirectory("Better-than-Nothing/ThirdParty/imgui")
+add_subdirectory("Better-than-Nothing/ThirdParty/stb")
 
 # ==================================================================================================
 # Modules
 # ==================================================================================================
-add_subdirectory("Better-Than-Nothing/Modules/Core")
-add_subdirectory("Better-Than-Nothing/Modules/Runtime")
+add_subdirectory("Better-than-Nothing/Modules/Core")
+add_subdirectory("Better-than-Nothing/Modules/Runtime")
 
 
 
