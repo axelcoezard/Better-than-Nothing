@@ -16,7 +16,7 @@ namespace BetterThanNothing
 		VkBuffer			m_StagingBuffer;
 		VkDeviceMemory 		m_StagingBufferMemory;
 
-		uint32_t			m_MipLevels;
+		u32			m_MipLevels;
 
 		VkImage				m_Image;
 		VkDeviceMemory		m_ImageMemory;
@@ -35,7 +35,7 @@ namespace BetterThanNothing
 		Texture&			operator=(Texture&&) = delete;
 
 		void				LoadFromFile(const std::string& filePath);
-		void				GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
+		void				GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, u32 mipLevels);
 
 	private:
 		void				CreateTextureImage(const std::string& filePath);
@@ -43,9 +43,9 @@ namespace BetterThanNothing
 		void				CreateTextureSampler();
 
 	public:
-		static void			CreateImage(Device* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-		static void			TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
-		static void			CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		static void			CreateImage(Device* pDevice, u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		static void			TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels);
+		static void			CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, u32 width, u32 height);
 
 	public:
 		VkImage&			GetVkImage()				{ return m_Image; }

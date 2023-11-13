@@ -11,13 +11,13 @@ namespace BetterThanNothing
 
 	class Sandbox: public Application {
 	public:
-		Sandbox(std::string_view title, uint32_t width, uint32_t height)
+		Sandbox(std::string_view title, u32 width, u32 height)
 			: Application(title, width, height) { };
 
 		void OnEnable() override;
 		void OnDisable() override;
 		void OnEvent(Event* event) override;
-		void OnUpdate(float deltatime) override;
+		void OnUpdate(f32 deltatime) override;
 		void OnRender(Renderer* renderer) override;
 
 		static bool OnKeyPress(KeyPressEvent* event);

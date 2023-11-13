@@ -27,12 +27,12 @@ namespace BetterThanNothing
 		CreateTextureSampler();
 	}
 
-	void Texture::CreateImage(Device* pDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+	void Texture::CreateImage(Device* pDevice, u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.extent.width = static_cast<uint32_t>(width);
-		imageInfo.extent.height = static_cast<uint32_t>(height);
+		imageInfo.extent.width = static_cast<u32>(width);
+		imageInfo.extent.height = static_cast<u32>(height);
 		imageInfo.extent.depth = 1;
 		imageInfo.mipLevels = mipLevels;
 		imageInfo.arrayLayers = 1;
@@ -68,7 +68,7 @@ namespace BetterThanNothing
 		m_ImageView = m_pSwapChain->CreateImageView(m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
 	}
 
-	void Texture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
+	void Texture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, u32 mipLevels) {
 		VkFormatProperties formatProperties;
 		vkGetPhysicalDeviceFormatProperties(m_pDevice->GetVkPhysicalDevice(), imageFormat, &formatProperties);
 
@@ -91,7 +91,7 @@ namespace BetterThanNothing
 		int32_t mipWidth = texWidth;
 		int32_t mipHeight = texHeight;
 
-		for (uint32_t i = 1; i < mipLevels; i++) {
+		for (u32 i = 1; i < mipLevels; i++) {
 			barrier.subresourceRange.baseMipLevel = i - 1;
 			barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 			barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -159,7 +159,7 @@ namespace BetterThanNothing
 		stbi_uc* pixels = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
 
-		m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+		m_MipLevels = static_cast<u32>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
 		if (!pixels) {
 			throw std::runtime_error("failed to load texture image!");
@@ -190,14 +190,14 @@ namespace BetterThanNothing
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_Image, m_ImageMemory);
 		TransitionImageLayout(m_pSwapChain, m_Image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_MipLevels);
-		CopyBufferToImage(m_pSwapChain, m_StagingBuffer, m_Image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+		CopyBufferToImage(m_pSwapChain, m_StagingBuffer, m_Image, static_cast<u32>(texWidth), static_cast<u32>(texHeight));
 		GenerateMipmaps(m_Image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, m_MipLevels);
 
 		vkDestroyBuffer(device, m_StagingBuffer, nullptr);
 		vkFreeMemory(device, m_StagingBufferMemory, nullptr);
 	}
 
-	void Texture::TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
+	void Texture::TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels) {
 		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			(void) format;
@@ -262,7 +262,7 @@ namespace BetterThanNothing
 		pSwapChain->EndSingleTimeCommands(commandBuffer);
 	}
 
-	void Texture::CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+	void Texture::CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, u32 width, u32 height) {
 		VkCommandBuffer commandBuffer = pSwapChain->BeginSingleTimeCommands();
 		{
 			VkBufferImageCopy region{};
@@ -313,8 +313,8 @@ namespace BetterThanNothing
 
 		// Mipmap
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.minLod = 0; // static_cast<float>(m_MipLevels / 2);
-		samplerInfo.maxLod = static_cast<float>(m_MipLevels);
+		samplerInfo.minLod = 0; // static_cast<f32>(m_MipLevels / 2);
+		samplerInfo.maxLod = static_cast<f32>(m_MipLevels);
 		samplerInfo.mipLodBias = 0.0f;
 
 		if (vkCreateSampler(device, &samplerInfo, nullptr, &m_Sampler) != VK_SUCCESS) {

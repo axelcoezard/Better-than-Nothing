@@ -73,7 +73,7 @@ namespace BetterThanNothing
 		m_Format = surfaceFormat.format;
 		m_Extent = extent;
 
-		uint32_t imageCount = swapChainSupport.m_Capabilities.minImageCount + 1;
+		u32 imageCount = swapChainSupport.m_Capabilities.minImageCount + 1;
 		if (swapChainSupport.m_Capabilities.maxImageCount > 0 && imageCount > swapChainSupport.m_Capabilities.maxImageCount) {
 			imageCount = swapChainSupport.m_Capabilities.maxImageCount;
 		}
@@ -89,7 +89,7 @@ namespace BetterThanNothing
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 		QueueFamilyIndices indices = m_pDevice->FindQueueFamilies(m_pDevice->GetVkPhysicalDevice());
-		uint32_t queueFamilyIndices[] = { indices.m_GraphicsFamily.value(), indices.m_PresentationFamily.value() };
+		u32 queueFamilyIndices[] = { indices.m_GraphicsFamily.value(), indices.m_PresentationFamily.value() };
 
 		if (indices.m_GraphicsFamily != indices.m_PresentationFamily) {
 			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -226,7 +226,7 @@ namespace BetterThanNothing
 
 		VkRenderPassCreateInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		renderPassInfo.attachmentCount = static_cast<u32>(attachments.size());
 		renderPassInfo.pAttachments = attachments.data();
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
@@ -238,7 +238,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkImageView SwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+	VkImageView SwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels)
 	{
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -426,7 +426,7 @@ namespace BetterThanNothing
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = m_RenderPass;
-			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+			framebufferInfo.attachmentCount = static_cast<u32>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = m_Extent.width;
 			framebufferInfo.height = m_Extent.height;
@@ -536,7 +536,7 @@ namespace BetterThanNothing
 		clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
 		clearValues[1].depthStencil = {1.0f, 0};
 
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.clearValueCount = static_cast<u32>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -545,8 +545,8 @@ namespace BetterThanNothing
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(m_Extent.width);
-		viewport.height = static_cast<float>(m_Extent.height);
+		viewport.width = static_cast<f32>(m_Extent.width);
+		viewport.height = static_cast<f32>(m_Extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
@@ -595,7 +595,7 @@ namespace BetterThanNothing
 			pPipeline->GetVkPipelineLayout(), 0, 1,
 			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][modelIndex], 0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(pModel->GetIndicesCount()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<u32>(pModel->GetIndicesCount()), 1, 0, 0, 0);
 	}
 
 	void SwapChain::EndRecordCommandBuffer()
@@ -701,14 +701,14 @@ namespace BetterThanNothing
 
 	VkExtent2D SwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 	{
-		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+		if (capabilities.currentExtent.width != std::numeric_limits<u32>::max()) {
 			return capabilities.currentExtent;
 		}
 
 		int width, height;
 		glfwGetFramebufferSize(m_pWindow->GetPointer(), &width, &height);
 
-		VkExtent2D actualExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
+		VkExtent2D actualExtent = { static_cast<u32>(width), static_cast<u32>(height)};
 		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 		return actualExtent;

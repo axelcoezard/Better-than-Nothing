@@ -49,12 +49,12 @@ namespace BetterThanNothing
 		createInfo.pApplicationInfo = &appInfo;
 
 		auto extensions = GetRequiredExtensions();
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+		createInfo.enabledExtensionCount = static_cast<u32>(extensions.size());
 		createInfo.ppEnabledExtensionNames = extensions.data();
 
 		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 		if (m_EnableValidationLayers) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(m_ValidationLayers.size());
+			createInfo.enabledLayerCount = static_cast<u32>(m_ValidationLayers.size());
 			createInfo.ppEnabledLayerNames = m_ValidationLayers.data();
 
 			PopulateDebugMessengerCreateInfo(debugCreateInfo);
@@ -87,7 +87,7 @@ namespace BetterThanNothing
 	}
 
 	void Device::PickPhysicalDevice() {
-		uint32_t deviceCount = 0;
+		u32 deviceCount = 0;
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
 
 		if (deviceCount == 0) {
@@ -120,13 +120,13 @@ namespace BetterThanNothing
 		QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-		std::set<uint32_t> uniqueQueueFamilies = {
+		std::set<u32> uniqueQueueFamilies = {
 			indices.m_GraphicsFamily.value(),
 			indices.m_PresentationFamily.value()
 		};
 
-		float queuePriority = 1.0f;
-		for (uint32_t queueFamily : uniqueQueueFamilies) {
+		f32 queuePriority = 1.0f;
+		for (u32 queueFamily : uniqueQueueFamilies) {
 			VkDeviceQueueCreateInfo queueCreateInfo{};
 			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueCreateInfo.queueFamilyIndex = queueFamily;
@@ -141,14 +141,14 @@ namespace BetterThanNothing
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
+		createInfo.queueCreateInfoCount = static_cast<u32>(queueCreateInfos.size());;
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_DeviceExtensions.size());
+		createInfo.enabledExtensionCount = static_cast<u32>(m_DeviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = m_DeviceExtensions.data();
 
 		if (m_EnableValidationLayers) {
-			createInfo.enabledLayerCount = static_cast<uint32_t>(m_ValidationLayers.size());
+			createInfo.enabledLayerCount = static_cast<u32>(m_ValidationLayers.size());
 			createInfo.ppEnabledLayerNames = m_ValidationLayers.data();
 		} else {
 			createInfo.enabledLayerCount = 0;
@@ -163,7 +163,7 @@ namespace BetterThanNothing
 	}
 
 	bool Device::CheckValidationLayerSupport() {
-		uint32_t layerCount;
+		u32 layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
 		std::vector<VkLayerProperties> availableLayers(layerCount);
@@ -187,7 +187,7 @@ namespace BetterThanNothing
 	}
 
 	bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device) {
-		uint32_t extensionCount;
+		u32 extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
 		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
@@ -202,7 +202,7 @@ namespace BetterThanNothing
 	}
 
 	std::vector<const char*> Device::GetRequiredExtensions() {
-		uint32_t glfwExtensionCount = 0;
+		u32 glfwExtensionCount = 0;
 		const char** glfwExtensions;
 		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
@@ -245,7 +245,7 @@ namespace BetterThanNothing
 		return VK_SAMPLE_COUNT_1_BIT;
 	}
 
-	std::string Device::GetVendorById(uint32_t vendorId) const
+	std::string Device::GetVendorById(u32 vendorId) const
 	{
 		if (vendorId == 0x1002) return "AMD";
 		if (vendorId == 0x1010) return "ImgTec";
@@ -259,13 +259,13 @@ namespace BetterThanNothing
 	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device) {
 		QueueFamilyIndices indices;
 
-		uint32_t queueFamilyCount = 0;
+		u32 queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-		uint32_t index = 0;
+		u32 index = 0;
 		for (const auto& queueFamily : queueFamilies) {
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.m_GraphicsFamily = index;
@@ -289,7 +289,7 @@ namespace BetterThanNothing
 		SwapChainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.m_Capabilities);
 
-		uint32_t formatCount;
+		u32 formatCount;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, nullptr);
 
 		if (formatCount != 0) {
@@ -297,7 +297,7 @@ namespace BetterThanNothing
 			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, details.m_Formats.data());
 		}
 
-		uint32_t presentationModeCount;
+		u32 presentationModeCount;
 		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, nullptr);
 
 		if (presentationModeCount != 0) {
@@ -307,11 +307,11 @@ namespace BetterThanNothing
 		return details;
 	}
 
-	uint32_t Device::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+	u32 Device::FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties) {
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &memProperties);
 
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+		for (u32 i = 0; i < memProperties.memoryTypeCount; i++) {
 			if ((typeFilter & (1 << i))
 				&& (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
 				return i;

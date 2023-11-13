@@ -4,7 +4,7 @@
 
 namespace BetterThanNothing
 {
-	Window::Window(std::string_view title, uint32_t width, uint32_t height)
+	Window::Window(std::string_view title, u32 width, u32 height)
 		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height)
 	{
 		Open();
@@ -74,13 +74,13 @@ namespace BetterThanNothing
 		}
 	}
 
-	void Window::MouseCursorCallback(GLFWwindow* window, double xpos, double ypos)
+	void Window::MouseCursorCallback(GLFWwindow* window, f64 xpos, f64 ypos)
 	{
 		(void) window;
 		Input::UpdateMousePosition(xpos, ypos);
 	}
 
-	void Window::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	void Window::MouseScrollCallback(GLFWwindow* window, f64 xoffset, f64 yoffset)
 	{
 		(void) window;
 		(void) xoffset;

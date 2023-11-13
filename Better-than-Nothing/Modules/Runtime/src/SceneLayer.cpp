@@ -16,7 +16,7 @@ namespace BetterThanNothing
 		delete m_pScene;
 	}
 
-	void SceneLayer::OnUpdate(float deltatime)
+	void SceneLayer::OnUpdate(f32 deltatime)
 	{
 		m_pScene->Update(deltatime);
 	}

@@ -15,7 +15,7 @@ namespace BetterThanNothing
 
 			virtual void OnAttach() = 0;
 			virtual void OnDetach() = 0;
-			virtual void OnUpdate(float deltatime) = 0;
+			virtual void OnUpdate(f32 deltatime) = 0;
 			virtual void OnRender(Renderer* pRenderer) = 0;
 			virtual void OnEvent(Event* pEvent) = 0;
 			// TO-DO: add OnEvent method

@@ -6,8 +6,8 @@ namespace BetterThanNothing
 {
 	struct QueueFamilyIndices
 	{
-		std::optional<uint32_t>			m_GraphicsFamily;
-		std::optional<uint32_t>			m_PresentationFamily;
+		std::optional<u32>			m_GraphicsFamily;
+		std::optional<u32>			m_PresentationFamily;
 
 		bool IsComplete() {
 			return m_GraphicsFamily.has_value() && m_PresentationFamily.has_value();
@@ -66,13 +66,13 @@ namespace BetterThanNothing
 		std::vector<const char*>		GetRequiredExtensions();
 		bool							IsDeviceSuitable(VkPhysicalDevice device);
 		VkSampleCountFlagBits			GetMaxUsableSampleCount();
-		std::string						GetVendorById(uint32_t vendorId) const;
+		std::string						GetVendorById(u32 vendorId) const;
 
 	public:
 		void							Idle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
-		uint32_t						FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		u32						FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
 		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 	private:

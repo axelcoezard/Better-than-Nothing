@@ -56,7 +56,7 @@ namespace BetterThanNothing
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = code.size();
-		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+		createInfo.pCode = reinterpret_cast<const u32*>(code.data());
 
 		VkShaderModule shaderModule;
 		if (vkCreateShaderModule(m_pDevice->GetVkDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
@@ -86,7 +86,7 @@ namespace BetterThanNothing
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexBindingDescriptionCount = 1;
-		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<u32>(attributeDescriptions.size());
 		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
 		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
@@ -146,7 +146,7 @@ namespace BetterThanNothing
 
 		VkPipelineDynamicStateCreateInfo dynamicState{};
 		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+		dynamicState.dynamicStateCount = static_cast<u32>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};

@@ -15,7 +15,7 @@ namespace BetterThanNothing
 
 			void OnAttach() override;
 			void OnDetach() override;
-			void OnUpdate(float deltatime) override;
+			void OnUpdate(f32 deltatime) override;
 			void OnRender(Renderer* pRenderer) override;
 			void OnEvent(Event* pEvent) override;
 	};

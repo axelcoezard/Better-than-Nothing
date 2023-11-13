@@ -9,9 +9,9 @@ namespace BetterThanNothing
 	protected:
 		static int m_Keys[KEYBOARD_KEY_COUNT];
 
-		static double m_MouseX, m_MouseY;
-		static double m_LastMouseX, m_LastMouseY;
-		static double m_MouseScroll;
+		static f64 m_MouseX, m_MouseY;
+		static f64 m_LastMouseX, m_LastMouseY;
+		static f64 m_MouseScroll;
 		static int m_Buttons[MOUSE_BUTTON_COUNT];
 
 	public:
@@ -29,13 +29,13 @@ namespace BetterThanNothing
 		static void PressMouseButton(int button);
 		static void ReleaseMouseButton(int button);
 
-		static void UpdateMousePosition(double x, double y);
+		static void UpdateMousePosition(f64 x, f64 y);
 		static glm::vec2 GetMousePosition();
 		static glm::vec2 GetLastMousePosition();
 		static glm::vec2 GetMouseDelta();
 
-		static void UpdateMouseScroll(double y);
-		static double GetMouseScroll(void);
+		static void UpdateMouseScroll(f64 y);
+		static f64 GetMouseScroll(void);
 
 		static bool IsKeyPressed(int key);
 		static bool IsMouseButtonPressed(int button);

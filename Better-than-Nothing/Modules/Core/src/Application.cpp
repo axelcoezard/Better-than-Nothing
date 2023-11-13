@@ -8,7 +8,7 @@
 
 namespace BetterThanNothing
 {
-	Application::Application(std::string_view title, uint32_t width, uint32_t height)
+	Application::Application(std::string_view title, u32 width, u32 height)
 	{
 		m_pWindow = new Window(title, width, height);
 		m_pWindow->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
@@ -30,10 +30,10 @@ namespace BetterThanNothing
 	{
 		OnEnable();
 
-		float deltatime = 0.0f;
-		float lastFrame = 0.0f;
-		float frameTime = 1.0f / 240.0f;
-		uint32_t frameCount = 0;
+		f32 deltatime = 0.0f;
+		f32 lastFrame = 0.0f;
+		f32 frameTime = 1.0f / 240.0f;
+		u32 frameCount = 0;
 
 		for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
 			(*it)->OnAttach();
@@ -42,7 +42,7 @@ namespace BetterThanNothing
 		while (!m_pWindow->ShouldClose()) {
 			m_pWindow->Poll();
 
-			float currentFrame = glfwGetTime();
+			f32 currentFrame = glfwGetTime();
 			deltatime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 			frameCount += 1;
@@ -69,7 +69,7 @@ namespace BetterThanNothing
 			//std::cout << "Frame count: " << frameCount << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
-			float elapsedTime = glfwGetTime() - currentFrame;
+			f32 elapsedTime = glfwGetTime() - currentFrame;
 			if (elapsedTime < frameTime) {
 				usleep(frameTimeMicroseconds - static_cast<useconds_t>(elapsedTime * 1000000));
 			}

@@ -6,7 +6,7 @@
 
 namespace BetterThanNothing
 {
-	Camera::Camera(float x, float y, float z, double yaw, double pitch)
+	Camera::Camera(f32 x, f32 y, f32 z, f64 yaw, f64 pitch)
 	{
 		m_Position = glm::vec3(x, y, z);
 		m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -24,21 +24,21 @@ namespace BetterThanNothing
 
 	}
 
-	void Camera::SetPerspectiveProjection(float fov, float zNear, float zFar)
+	void Camera::SetPerspectiveProjection(f32 fov, f32 zNear, f32 zFar)
 	{
 		m_Fov = fov;
 		m_ZNear = zNear;
 		m_ZFar = zFar;
 	}
 
-	void Camera::Update(float deltatime)
+	void Camera::Update(f32 deltatime)
 	{
 		static bool firstMouse = true;
-		static float lastMouseX = 0;
-		static float lastMouseY = 0;
+		static f32 lastMouseX = 0;
+		static f32 lastMouseY = 0;
 
-		float velocity = 100.0f * deltatime;
-		float sensitivity = 10.0f * deltatime;
+		f32 velocity = 100.0f * deltatime;
+		f32 sensitivity = 10.0f * deltatime;
 
 		// compute keyboard inputs
 		glm::vec3 movement = glm::vec3(0.0f);
@@ -122,7 +122,7 @@ namespace BetterThanNothing
 
 	void Camera::CalculateProjectionMatrix()
 	{
-		float aspectRatio = (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT;
+		f32 aspectRatio = (f32) WINDOW_WIDTH / (f32) WINDOW_HEIGHT;
 
 		m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov), aspectRatio, m_ZNear, m_ZFar);
 		m_ProjectionMatrix[1][1] *= -1;
