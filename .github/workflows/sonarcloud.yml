@@ -29,5 +29,6 @@ jobs:
             -Dsonar.projectKey=bad-devs_better-than-nothing
             -Dsonar.organization=bad-devs
             -Dsonar.cfamily.build-wrapper-output=bw-output
+            #
             #-Dsonar.sources=./Better-than-Nothing/Modules/Core,./Better-than-Nothing/Modules/Core # optional, default is project base directory
 
