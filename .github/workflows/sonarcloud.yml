@@ -28,5 +28,5 @@ jobs:
           args:
             -Dsonar.projectKey=bad-devs_better-than-nothing
             -Dsonar.organization=bad-devs
-            -Dsonar.sources=${{github.workspace}}/Better-than-Nothing/Modules/Core,${{github.workspace}}/Better-than-Nothing/Modules/Core # optional, default is project base directory
+            #-Dsonar.sources=${{github.workspace}}/Better-than-Nothing/Modules/Core,${{github.workspace}}/Better-than-Nothing/Modules/Core # optional, default is project base directory
 
