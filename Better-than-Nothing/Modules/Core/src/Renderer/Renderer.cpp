@@ -80,8 +80,8 @@ namespace BetterThanNothing
 		}
 
 		DrawStream* drawStream = drawStreamBuilder.GetStream();
-
 		void* currentPipeline = nullptr;
+
 		for (u32 i = 0; i < drawStream->size; i++) {
 			DrawPacket drawPacket = drawStream->drawPackets[i];
 
