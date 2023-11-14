@@ -1,6 +1,6 @@
 #include "Sandbox.hpp"
-#include "ImGuiLayer.hpp"
-#include "SceneLayer.hpp"
+
+#include <BetterThanNothing.hpp>
 
 namespace BetterThanNothing
 {
@@ -11,7 +11,10 @@ namespace BetterThanNothing
 			"/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/vert.spv",
 			"/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/frag.spv");
 
-		Scene* pScene = new Scene("world");
+		Scene* pScene = CreateScene("world");
+
+		auto pCamera = pScene->InitCamera(0.0, 0.0, 400.0, 0.0f, 0.0f);
+		pCamera->SetPerspectiveProjection(glm::radians(45.0f), 0.1f, 1000000.0f);
 
 		pScene->LoadModel(
 			m_pRenderer,
@@ -29,32 +32,11 @@ namespace BetterThanNothing
 			"/home/acoezard/lab/better-than-nothing/Assets/Models/robot/robot.png");
 
 		m_pRenderer->Prepare(pScene);
-
-		//m_pLayerStack->PushLayer(new ImGuiLayer());
-		m_pLayerStack->PushLayer(new SceneLayer(pScene));
 	}
 
 	void Sandbox::OnDisable()
 	{
 
-	}
-
-	void Sandbox::OnEvent(Event* event)
-	{
-		// dispatch event to layers
-		for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
-			(*it)->OnEvent(event);
-		}
-	}
-
-	void Sandbox::OnUpdate(f32 deltatime)
-	{
-		(void) deltatime;
-	}
-
-	void Sandbox::OnRender(Renderer* renderer)
-	{
-		(void) renderer;
 	}
 };
 

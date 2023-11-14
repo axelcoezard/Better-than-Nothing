@@ -2,11 +2,17 @@
 
 namespace BetterThanNothing
 {
+	class Texture;
 	struct DrawPacket
 	{
-		void*					m_Texture;
+		void*					m_pPipeline;
+		void*					m_pTexture;
+
 		VkBuffer				m_VertexBuffer;
 		VkBuffer				m_IndexBuffer;
+		u32						m_IndicesCount;
+
+		glm::mat4				m_Model;
 	};
 
 	struct DrawStream

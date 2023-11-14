@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	class Renderer;
+	class DrawStreamBuilder;
 	class Model;
 	class Camera;
 	class Event;
@@ -10,12 +10,13 @@ namespace BetterThanNothing
 	class Scene
 	{
 	private:
+		u32						m_Id;
 		std::string				m_Name;
 
 		Camera*					m_pCamera;
 		std::vector<Model*>		m_pModels;
 	public:
-								Scene(std::string_view name);
+								Scene(u32 id, std::string_view name);
 								~Scene();
 
 								Scene(const Scene&) = delete;
@@ -27,11 +28,11 @@ namespace BetterThanNothing
 		Camera*					InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch);
 		void					LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
 
-		void					Update(f32 deltatime);
-		void					Render(Renderer* pRenderer);
+		void					OnUpdate(f32 deltatime);
 		void					OnEvent(Event* pEvent);
 
 	public:
+		u32						GetId()		{ return m_Id; }
 		std::string&			GetName()	{ return m_Name; }
 		Camera*					GetCamera()	{ return m_pCamera; }
 		std::vector<Model*>&	GetModels()	{ return m_pModels; }

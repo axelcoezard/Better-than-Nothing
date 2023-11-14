@@ -11,6 +11,7 @@ namespace BetterThanNothing
 	class Vertex;
 	class Model;
 	class Scene;
+	class DrawPacket;
 
 	class SwapChain
 	{
@@ -45,8 +46,8 @@ namespace BetterThanNothing
 		std::vector<VkSemaphore>					m_RenderFinishedSemaphores;
 		std::vector<VkFence>						m_InFlightFences;
 
-		u32									m_CurrentFrame = 0;
-		u32									m_CurrentImageIndex = 0;
+		u32											m_CurrentFrame = 0;
+		u32											m_CurrentImageIndex = 0;
 		DescriptorPool*								m_pDescriptorPool = nullptr;
 
 	public:
@@ -87,8 +88,8 @@ namespace BetterThanNothing
 
 		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
 		bool										BeginRecordCommandBuffer();
-		void										UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex);
-		void										DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex);
+		void										UpdateUniformBuffer(Scene* pScene, DrawPacket* pDrawPacket, u32 modelIndex);
+		void										Draw(DrawPacket* pDrawPacket, u32 index);
 		void										EndRecordCommandBuffer();
 
 	private:

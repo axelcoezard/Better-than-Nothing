@@ -1,4 +1,5 @@
 #include "Renderer/DrawStream.hpp"
+#include "Renderer/Pipeline.hpp"
 
 namespace BetterThanNothing
 {
@@ -29,8 +30,10 @@ namespace BetterThanNothing
 	{
 		// Sort the draw packets by pipeline
 		std::sort(m_DrawPackets.begin(), m_DrawPackets.end(), [](const DrawPacket& a, const DrawPacket& b){
-			// TODO: use pipeline ID to sort draw packets
-			return true;
+			auto pPipelineA = static_cast<Pipeline*>(a.m_pPipeline);
+			auto pPipelineB = static_cast<Pipeline*>(b.m_pPipeline);
+
+			return pPipelineA->GetId() < pPipelineB->GetId();
 		});
 
 		// Copy the draw packets sorted by pipeline into allocated memory

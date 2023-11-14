@@ -14,7 +14,7 @@ namespace BetterThanNothing
 		Renderer*						m_pRenderer;
 
 		std::vector<Vertex>				m_Vertices;
-		std::vector<u32>			m_Indices;
+		std::vector<u32>				m_Indices;
 
 		VkBuffer						m_VertexBuffer;
 		VkDeviceMemory					m_VertexBufferMemory;
@@ -25,7 +25,7 @@ namespace BetterThanNothing
 
 		glm::vec3						m_Position;
 		glm::vec3						m_Rotation;
-		f32							m_Scale;
+		f32								m_Scale;
 
 	public:
 										Model(Device* pDevice, Renderer* pRenderer);
@@ -48,12 +48,13 @@ namespace BetterThanNothing
 	public:
 		VkBuffer&						GetVertexBuffer() { return m_VertexBuffer; }
 		VkBuffer&						GetIndexBuffer() { return m_IndexBuffer; }
-		u32						GetIndicesCount() { return static_cast<u32>(m_Indices.size()); }
+		u32								GetIndicesCount() { return static_cast<u32>(m_Indices.size()); }
 		Texture*						GetTexture() { return m_pTexture; }
 
 		glm::vec3&						GetPosition() { return m_Position; }
 		glm::vec3&						GetRotation() { return m_Rotation; }
 		f32&							GetScale() { return m_Scale; }
+		glm::mat4						GetModelMatrix();
 
 		void							SetPosition(const glm::vec3& position) { m_Position = position; }
 		void							SetPosition(f32 x, f32 y, f32 z) { m_Position = {x, y, z}; }

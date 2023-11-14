@@ -55,8 +55,8 @@ namespace BetterThanNothing
 		// In `MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1)`
 		// `MAX_FRAMES_IN_FLIGHT` are the max frame you can have in flight (usually 60)
 		// `pModels.size()` is the number of models you have
-		// `+ 1` is for the ImGui texture
-		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1);
+		// `+ 1` if needs a ImGui texture
+		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * pModels.size();
 
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;

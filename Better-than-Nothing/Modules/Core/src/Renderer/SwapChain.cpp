@@ -8,6 +8,7 @@
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/DescriptorPool.hpp"
 #include "Renderer/Model.hpp"
+#include "Renderer/DrawStream.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 
@@ -557,41 +558,36 @@ namespace BetterThanNothing
 		return true;
 	}
 
-	void SwapChain::UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex)
+	void SwapChain::UpdateUniformBuffer(Scene* pScene, DrawPacket* pDrawPacket, u32 index)
 	{
 		UniformBufferObject ubo{};
 
 		// move all those calculus to shader
-		ubo.m_Model = glm::mat4(1.0f);
-		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
-		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
-
+		ubo.m_Model = pDrawPacket->m_Model;
 		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
 		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
 
-		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
+		memcpy(m_UniformBuffersMapped[m_CurrentFrame][index], &ubo, sizeof(ubo));
 	}
 
-	void SwapChain::DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex)
+	void SwapChain::Draw(DrawPacket* pDrawPacket, u32 index)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		auto pPipeline = static_cast<Pipeline*>(pDrawPacket->m_pPipeline);
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
 
-		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
+		VkBuffer vertexBuffers[] = {pDrawPacket->m_VertexBuffer};
 		VkDeviceSize offsets[] = {0};
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, pDrawPacket->m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			pPipeline->GetVkPipelineLayout(), 0, 1,
-			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][modelIndex], 0, nullptr);
+			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index], 0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<u32>(pModel->GetIndicesCount()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<u32>(pDrawPacket->m_IndicesCount), 1, 0, 0, 0);
 	}
 
 	void SwapChain::EndRecordCommandBuffer()

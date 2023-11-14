@@ -23,11 +23,8 @@
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/UniformBufferObject.hpp"
 #include "Renderer/Vertex.hpp"
+#include "Renderer/DrawStream.hpp"
 
-// Layers
-
-#include "Layers/Layer.hpp"
-#include "Layers/LayerStack.hpp"
 
 // Scene
 

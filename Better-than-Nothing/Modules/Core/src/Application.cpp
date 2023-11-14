@@ -3,8 +3,10 @@
 #include "Renderer/Window.hpp"
 #include "Renderer/Device.hpp"
 #include "Renderer/Renderer.hpp"
-#include "Layers/LayerStack.hpp"
+#include "Renderer/Model.hpp"
+#include "Renderer/DrawStream.hpp"
 #include "Events/Event.hpp"
+#include "Scene/Scene.hpp"
 
 namespace BetterThanNothing
 {
@@ -15,12 +17,14 @@ namespace BetterThanNothing
 
 		m_pDevice = new Device(m_pWindow);
 		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
-		m_pLayerStack = new LayerStack();
 	}
 
 	Application::~Application(void)
 	{
-		delete m_pLayerStack;
+		for (auto & scene : m_Scenes) {
+			delete scene;
+		}
+
 		delete m_pRenderer;
 		delete m_pDevice;
 		delete m_pWindow;
@@ -35,10 +39,6 @@ namespace BetterThanNothing
 		f32 frameTime = 1.0f / 240.0f;
 		u32 frameCount = 0;
 
-		for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
-			(*it)->OnAttach();
-		}
-
 		while (!m_pWindow->ShouldClose()) {
 			m_pWindow->Poll();
 
@@ -47,30 +47,19 @@ namespace BetterThanNothing
 			lastFrame = currentFrame;
 			frameCount += 1;
 
-			for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
-				(*it)->OnUpdate(deltatime);
-			}
+			auto currentScene = m_Scenes[m_CurrentSceneId];
 
-			if (m_pRenderer->BeginRender()) {
-				for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
-					(*it)->OnRender(m_pRenderer);
-				}
+			currentScene->OnUpdate(deltatime);
 
-				m_pRenderer->EndRender();
-			}
+			m_pRenderer->Render(currentScene);
 
-			std::cout.precision(3);
-			std::cout << "\033[2J\033[1;1H";
-			std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
-			std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
-			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
-			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-			std::cout << "Frame count: " << frameCount << std::endl;
-
-			LOG_INFO("Hello, world!");
-			LOG_SUCCESS("Hello, world!");
-			LOG_WARNING("Hello, world!");
-			LOG_ERROR("Hello, world!");
+			//std::cout.precision(3);
+			//std::cout << "\033[2J\033[1;1H";
+			//std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
+			//std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
+			//std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
+			//std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
+			//std::cout << "Frame count: " << frameCount << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
@@ -81,10 +70,19 @@ namespace BetterThanNothing
 
 		m_pDevice->Idle();
 
-		for (auto it = m_pLayerStack->Begin(); it != m_pLayerStack->End(); ++it) {
-			(*it)->OnDetach();
-		}
-
 		OnDisable();
+	}
+
+	void Application::OnEvent(Event* event)
+	{
+		m_Scenes[m_CurrentSceneId]->OnEvent(event);
+	}
+
+	Scene* Application::CreateScene(std::string_view name)
+	{
+		auto scene = new Scene(m_Scenes.size(), name);
+		m_Scenes.push_back(scene);
+		m_CurrentSceneId = scene->GetId();
+		return scene;
 	}
 };

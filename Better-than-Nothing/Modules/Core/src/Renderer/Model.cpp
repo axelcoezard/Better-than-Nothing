@@ -143,4 +143,15 @@ namespace BetterThanNothing
 		m_pTexture = new Texture(m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
 		m_pTexture->LoadFromFile(texturePath);
 	}
+
+	glm::mat4 Model::GetModelMatrix()
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(m_Scale));
+		model = glm::translate(model, m_Position);
+		model = glm::rotate(model, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		return model;
+	}
 };

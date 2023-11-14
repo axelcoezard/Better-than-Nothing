@@ -12,6 +12,7 @@ namespace BetterThanNothing
 	class Pipeline;
 	class Model;
 	class Scene;
+	class DrawStreamBuilder;
 
 	class Renderer
 	{
@@ -38,9 +39,7 @@ namespace BetterThanNothing
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
 		void								Prepare(Scene* pScene);
-		bool								BeginRender();
-		void								DrawModel(Model* pModel, u32 modelIndex);
-		void								EndRender();
+		void								Render(Scene* pScene);
 
 	public:
 		Window*								GetWindow()			{ return m_pWindow; }

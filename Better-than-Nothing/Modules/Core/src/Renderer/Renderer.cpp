@@ -7,6 +7,7 @@
 #include "Renderer/Texture.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/Model.hpp"
+#include "Renderer/DrawStream.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 
@@ -21,10 +22,6 @@ namespace BetterThanNothing
 
 	Renderer::~Renderer()
 	{
-		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-
 		for (auto & entry : m_pPipeLines) {
 			delete entry.second;
 		}
@@ -34,10 +31,10 @@ namespace BetterThanNothing
 		delete m_pCommandPool;
 	}
 
-	void Renderer::LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
+	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 	{
-		auto pipeline = new Pipeline(m_pDevice, m_pSwapChain, m_pDescriptorPool, vertexShaderFilePath, fragmentShaderFilePath);
-		auto entry = std::pair<std::string, Pipeline*>(pipelineID, pipeline);
+		auto pipeline = new Pipeline(id, m_pDevice, m_pSwapChain, m_pDescriptorPool, vertexShaderFilePath, fragmentShaderFilePath);
+		auto entry = std::pair<std::string, Pipeline*>(id, pipeline);
 
 		m_pPipeLines.insert(entry);
 	}
@@ -53,48 +50,37 @@ namespace BetterThanNothing
 		m_pDescriptorPool->CreateDescriptorSets(models);
 
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
-
-		ImGui::CreateContext();
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetPointer(), true);
-
-		ImGui_ImplVulkan_InitInfo info = {};
-		info.Instance = m_pDevice->GetVkInstance();
-		info.PhysicalDevice = m_pDevice->GetVkPhysicalDevice();
-		info.Device = m_pDevice->GetVkDevice();
-		info.DescriptorPool = m_pDescriptorPool->GetVkDescriptorPool();
-		info.ImageCount = MAX_FRAMES_IN_FLIGHT;
-		info.MinImageCount = 2;
-		info.MSAASamples = m_pDevice->GetMsaaSamples();
-		info.Queue = m_pDevice->GetVkGraphicsQueue();
-
-		ImGui_ImplVulkan_Init(&info, m_pSwapChain->GetVkRenderPass());
-
-		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
-		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
-		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
-
-		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
-	bool Renderer::BeginRender()
+	void Renderer::Render(Scene* pScene)
 	{
-		return m_pSwapChain->BeginRecordCommandBuffer();
-	}
+		Pipeline* pPipeline = m_pPipeLines.at("main");
+		DrawStreamBuilder drawStreamBuilder(pScene->GetModels().size());
 
-	void Renderer::DrawModel(Model* pModel, u32 modelIndex)
-	{
-		auto pPipeline = m_pPipeLines.at("main");
+		for (auto & model : pScene->GetModels())
+		{
+			drawStreamBuilder.Draw({
+				.m_pPipeline = pPipeline,
+				.m_pTexture = model->GetTexture(),
+				.m_VertexBuffer = model->GetVertexBuffer(),
+				.m_IndexBuffer = model->GetIndexBuffer(),
+				.m_IndicesCount = model->GetIndicesCount(),
+				.m_Model = model->GetModelMatrix()
+			});
+		}
 
-		// TODO: Sort models by pipeline before drawing in order to change pipeline the least amount of times
+		if (m_pSwapChain->BeginRecordCommandBuffer()) {
+			DrawStream* drawStream = drawStreamBuilder.GetStream();
 
-		m_pSwapChain->DrawModel(pPipeline, pModel, modelIndex);
-	}
+			for (u32 i = 0; i < drawStream->m_Size; i++) {
 
-	void Renderer::EndRender()
-	{
-		m_pSwapChain->EndRecordCommandBuffer();
+				DrawPacket drawPacket = drawStream->m_DrawPackets[i];
+
+				m_pSwapChain->UpdateUniformBuffer(pScene, &drawPacket, i);
+				m_pSwapChain->Draw(&drawPacket, i);
+			}
+
+			m_pSwapChain->EndRecordCommandBuffer();
+		}
 	}
 }
