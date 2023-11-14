@@ -1,9 +1,12 @@
 #include "Renderer/Device.hpp"
 #include "Renderer/SwapChain.hpp"
-#include "Renderer/Texture.hpp"
 #include "Renderer/DescriptorPool.hpp"
 #include "Renderer/UniformBufferObject.hpp"
-#include "Renderer/Model.hpp"
+
+#include "Ressources/Model.hpp"
+#include "Ressources/Texture.hpp"
+
+#include "Scene/Entity.hpp"
 
 namespace BetterThanNothing
 {
@@ -49,13 +52,14 @@ namespace BetterThanNothing
 		}
 	}
 
-	void DescriptorPool::CreateDescriptorPool(std::vector<Model*> pModels)
+	void DescriptorPool::CreateDescriptorPool(std::vector<Entity*> entities)
 	{
 		// In `MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1)`
 		// `MAX_FRAMES_IN_FLIGHT` are the max frame you can have in flight (usually 60)
 		// `pModels.size()` is the number of models you have
 		// `+ 1` if needs a ImGui texture
-		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * pModels.size();
+		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * entities.size();
+		printf("Descriptor count: %d\n", descriptorCount);
 
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -75,16 +79,16 @@ namespace BetterThanNothing
 		}
 	}
 
-	void DescriptorPool::CreateDescriptorSets(std::vector<Model*> pModels)
+	void DescriptorPool::CreateDescriptorSets(std::vector<Entity*> entities)
 	{
 		auto device = m_pDevice->GetVkDevice();
-		auto modelCount = pModels.size();
+		auto entitiesCount = entities.size();
 
 		m_DescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
 		for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			m_DescriptorSets[i].resize(modelCount);
-			for (u32 j = 0; j < modelCount; j++)
+			m_DescriptorSets[i].resize(entitiesCount);
+			for (u32 j = 0; j < entitiesCount; j++)
 			{
 				VkDescriptorSetAllocateInfo allocInfo{};
 				allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -103,8 +107,8 @@ namespace BetterThanNothing
 
 				VkDescriptorImageInfo imageInfo{};
 				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-				imageInfo.imageView = pModels[j]->GetTexture()->GetVkTextureImageView();
-				imageInfo.sampler = pModels[j]->GetTexture()->GetVkTextureSampler();
+				imageInfo.imageView = entities[j]->GetTexture()->imageView;
+				imageInfo.sampler = entities[j]->GetTexture()->sampler;
 
 				std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
@@ -135,5 +139,6 @@ namespace BetterThanNothing
 		if (m_DescriptorPool != VK_NULL_HANDLE) {
 			vkDestroyDescriptorPool(m_pDevice->GetVkDevice(), m_DescriptorPool, nullptr);
 		}
+		m_DescriptorPool = VK_NULL_HANDLE;
 	}
 };

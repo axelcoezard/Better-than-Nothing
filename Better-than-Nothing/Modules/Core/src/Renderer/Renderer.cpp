@@ -4,13 +4,16 @@
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Texture.hpp"
 #include "Renderer/Pipeline.hpp"
-#include "Renderer/Model.hpp"
 #include "Renderer/DrawStream.hpp"
 #include "Renderer/GlobalUniforms.hpp"
+
+#include "Ressources/Model.hpp"
+#include "Ressources/Texture.hpp"
+
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Scene/Entity.hpp"
 
 namespace BetterThanNothing
 {
@@ -44,12 +47,9 @@ namespace BetterThanNothing
 	{
 		Pipeline* pPipeline = m_pPipeLines.at("main");
 
-		if (pScene->HasWaitingModels()) {
-			while (pScene->HasWaitingModels()) {
-				auto model = pScene->GetNextWaitingModel();
-				model->CreateVertexBuffer(m_pDevice, this);
-				model->CreateIndexBuffer(m_pDevice, this);
-				model->CreateTexture(m_pDevice, this);
+		if (pScene->HasPendingEntities()) {
+			while (pScene->HasPendingEntities()) {
+				pScene->NextPendingEntity();
 			}
 
 			m_pDescriptorPool->DestroyDescriptorPool();
@@ -58,9 +58,9 @@ namespace BetterThanNothing
 			m_pSwapChain->CreateUniformBuffers(pScene);
 			m_pSwapChain->CreateCommandBuffers();
 
-			auto models = pScene->GetModels();
-			m_pDescriptorPool->CreateDescriptorPool(models);
-			m_pDescriptorPool->CreateDescriptorSets(models);
+			auto entities = pScene->GetEntities();
+			m_pDescriptorPool->CreateDescriptorPool(entities);
+			m_pDescriptorPool->CreateDescriptorSets(entities);
 
 			m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 		}
@@ -75,15 +75,17 @@ namespace BetterThanNothing
 		globalUniforms.view = pScene->GetCamera()->GetViewMatrix();
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(pScene->GetModels().size());
-		for (auto & model : pScene->GetModels()) {
+		DrawStreamBuilder drawStreamBuilder(pScene->GetEntities().size());
+		for (auto & entity : pScene->GetEntities()) {
+			Model* model = entity->GetModel();
+
 			drawStreamBuilder.Draw({
 				.pipeline = pPipeline,
-				.texture = model->GetTexture(),
-				.vertexBuffer = model->GetVertexBuffer(),
-				.indexBuffer = model->GetIndexBuffer(),
-				.indicesCount = model->GetIndicesCount(),
-				.model = model->GetModelMatrix()
+				.texture = entity->GetTexture(),
+				.vertexBuffer = model->vertexBuffer,
+				.indexBuffer = model->indexBuffer,
+				.indicesCount = model->indexCount,
+				.model = entity->GetModelMatrix()
 			});
 		}
 

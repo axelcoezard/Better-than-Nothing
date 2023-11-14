@@ -24,6 +24,7 @@ namespace BetterThanNothing
 		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
 
 		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetSwapChain());
+		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
 	}
 
 	Application::~Application(void)
@@ -32,6 +33,7 @@ namespace BetterThanNothing
 			delete scene;
 		}
 
+		delete m_TexturePool;
 		delete m_ModelPool;
 
 		delete m_pRenderer;
@@ -66,6 +68,8 @@ namespace BetterThanNothing
 			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
 			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
 			std::cout << "Frame count: " << frameCount << std::endl;
+			std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;
+			std::cout << "Entities count" << m_Scenes[m_CurrentSceneId]->GetEntities().size() << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
@@ -84,9 +88,9 @@ namespace BetterThanNothing
 		m_Scenes[m_CurrentSceneId]->OnEvent(event);
 	}
 
-	Scene* Application::CreateScene(std::string_view name)
+	Scene* Application::CreateScene(const std::string& name)
 	{
-		auto scene = new Scene(m_Scenes.size(), name);
+		auto scene = new Scene(m_Scenes.size(), name, m_ModelPool, m_TexturePool);
 		m_Scenes.push_back(scene);
 		m_CurrentSceneId = scene->GetId();
 		return scene;

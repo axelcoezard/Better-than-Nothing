@@ -2,10 +2,12 @@
 
 namespace BetterThanNothing
 {
-	class DrawStreamBuilder;
-	class Model;
+	class Entity;
 	class Camera;
 	class Event;
+
+	class ModelPool;
+	class TexturePool;
 
 	class Scene
 	{
@@ -13,11 +15,15 @@ namespace BetterThanNothing
 		u32						m_Id;
 		std::string				m_Name;
 
-		Camera*					m_pCamera;
-		std::vector<Model*>		m_pModels;
-		std::queue<Model*>		m_pModelsWaiting;
+		ModelPool*				m_ModelPool;
+		TexturePool*			m_TexturePool;
+
+		Camera*					m_Camera;
+
+		std::vector<Entity*>	m_Entities;
+		std::queue<Entity*>		m_PendingEntities;
 	public:
-								Scene(u32 id, std::string_view name);
+								Scene(u32 id, std::string_view name, ModelPool* modelPool, TexturePool* texturePool);
 								~Scene();
 
 								Scene(const Scene&) = delete;
@@ -27,7 +33,7 @@ namespace BetterThanNothing
 
 	public:
 		Camera*					InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch);
-		Model*					LoadModel(const std::string& modelPath, const std::string& texturePath);
+		Entity*					CreateEntity(const std::string& modelPath, const std::string& texturePath);
 
 		void					OnUpdate(f32 deltatime);
 		void					OnEvent(Event* pEvent);
@@ -35,16 +41,16 @@ namespace BetterThanNothing
 	public:
 		u32						GetId()		{ return m_Id; }
 		std::string&			GetName()	{ return m_Name; }
-		Camera*					GetCamera()	{ return m_pCamera; }
-		std::vector<Model*>&	GetModels()	{ return m_pModels; }
-		bool					HasWaitingModels() { return m_pModelsWaiting.size() > 0; }
+		Camera*					GetCamera()	{ return m_Camera; }
+		std::vector<Entity*>&	GetEntities()	{ return m_Entities; }
 
-		Model*					GetNextWaitingModel()
+		bool					HasPendingEntities() { return m_PendingEntities.size() > 0; }
+		Entity*					NextPendingEntity()
 		{
-			auto model = m_pModelsWaiting.front();
-			m_pModelsWaiting.pop();
-			m_pModels.push_back(model);
-			return model;
+			auto entity = m_PendingEntities.front();
+			m_PendingEntities.pop();
+			m_Entities.push_back(entity);
+			return entity;
 		}
 	};
 };

@@ -9,7 +9,7 @@ namespace BetterThanNothing
 	class Pipeline;
 	class Texture;
 	class Vertex;
-	class Model;
+	class Entity;
 	class Scene;
 	struct DrawPacket;
 	struct GlobalUniforms;

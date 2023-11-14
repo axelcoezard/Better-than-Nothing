@@ -42,7 +42,7 @@ namespace BetterThanNothing
 
 		Model* model = new Model();
 
-		auto [vertices, indices] = LoadModelData(filePath);
+		auto [vertices, indices] = LoadModelData(m_BasePath + filePath);
 		auto [vertexBuffer, vertexBufferMemory] = CreateVertexBuffer(vertices);
 		auto [indexBuffer, indexBufferMemory] = CreateIndexBuffer(indices);
 
@@ -52,6 +52,8 @@ namespace BetterThanNothing
 		model->indexBuffer = indexBuffer;
 		model->indexBufferMemory = indexBufferMemory;
 		model->indexCount = static_cast<u32>(indices.size());
+
+		LOG_SUCCESS("ModelPool: " + filePath);
 
 		m_Ressources[filePath] = model;
 		return model;

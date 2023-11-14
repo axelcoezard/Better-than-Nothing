@@ -17,8 +17,6 @@
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/DescriptorPool.hpp"
 #include "Renderer/Device.hpp"
-#include "Renderer/Model.hpp"
-#include "Renderer/Texture.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/UniformBufferObject.hpp"
@@ -34,3 +32,4 @@
 
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+#include "Scene/Entity.hpp"

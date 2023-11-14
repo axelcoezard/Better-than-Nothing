@@ -6,11 +6,12 @@
 #include "Renderer/UniformBufferObject.hpp"
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Model.hpp"
 #include "Renderer/DrawStream.hpp"
 #include "Renderer/GlobalUniforms.hpp"
 
 #include "Ressources/RessourcePool.hpp"
+#include "Ressources/Model.hpp"
+#include "Ressources/Texture.hpp"
 
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
@@ -346,7 +347,7 @@ namespace BetterThanNothing
 		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
 		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
 
-		auto modelCount = pScene->GetModels().size();
+		auto modelCount = pScene->GetEntities().size();
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			m_UniformBuffers[i].resize(modelCount);
 			m_UniformBuffersMemory[i].resize(modelCount);

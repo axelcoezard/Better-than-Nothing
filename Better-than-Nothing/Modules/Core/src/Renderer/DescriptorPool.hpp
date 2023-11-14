@@ -4,7 +4,7 @@ namespace BetterThanNothing
 {
 	class Device;
 	class SwapChain;
-	class Model;
+	class Entity;
 
 	class DescriptorPool
 	{
@@ -13,7 +13,7 @@ namespace BetterThanNothing
 		SwapChain*									m_pSwapChain;
 
 		VkDescriptorSetLayout						m_DescriptorSetLayout;
-		VkDescriptorPool							m_DescriptorPool;
+		VkDescriptorPool							m_DescriptorPool = VK_NULL_HANDLE;
 		std::vector<std::vector<VkDescriptorSet>>	m_DescriptorSets;
 
 	public:
@@ -29,8 +29,8 @@ namespace BetterThanNothing
 		void 										CreateDescriptorSetLayout();
 
 	public:
-		void										CreateDescriptorPool(std::vector<Model*> pModels);
-		void										CreateDescriptorSets(std::vector<Model*> pModels);
+		void										CreateDescriptorPool(std::vector<Entity*> pModels);
+		void										CreateDescriptorSets(std::vector<Entity*> pModels);
 		void										DestroyDescriptorPool();
 	public:
 		VkDescriptorSetLayout&						GetVkDescriptorSetLayout()	{ return m_DescriptorSetLayout; }

@@ -18,7 +18,7 @@ namespace BetterThanNothing
 		std::map<std::string, T*>	m_Ressources;
 	public:
 									RessourcePool(const std::string& basePath): m_BasePath(basePath) {}
-									~RessourcePool() {}
+		virtual						~RessourcePool() {}
 
 		virtual T*					GetRessource(const std::string& filePath) = 0;
 	};

@@ -7,6 +7,7 @@ namespace BetterThanNothing
 	class Renderer;
 
 	class ModelPool;
+	class TexturePool;
 
 	class Scene;
 	class Event;
@@ -19,6 +20,7 @@ namespace BetterThanNothing
 		Renderer*			m_pRenderer;
 
 		ModelPool*			m_ModelPool;
+		TexturePool*		m_TexturePool;
 
 		std::vector<Scene*>	m_Scenes;
 		u32					m_CurrentSceneId;
@@ -33,7 +35,7 @@ namespace BetterThanNothing
 
 		void				OnEvent(Event* event);
 
-		Scene*				CreateScene(std::string_view name);
+		Scene*				CreateScene(const std::string& name);
 
 		Window*				GetWindow() { return m_pWindow; }
 		Device*				GetDevice() { return m_pDevice; }
