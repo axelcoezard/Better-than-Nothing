@@ -59,7 +59,6 @@ namespace BetterThanNothing
 		// `pModels.size()` is the number of models you have
 		// `+ 1` if needs a ImGui texture
 		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * entities.size();
-		printf("Descriptor count: %d\n", descriptorCount);
 
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
