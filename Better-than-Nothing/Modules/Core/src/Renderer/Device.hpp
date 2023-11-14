@@ -72,7 +72,7 @@ namespace BetterThanNothing
 		void							Idle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
-		u32								FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
+		u32						FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
 		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 	private:
