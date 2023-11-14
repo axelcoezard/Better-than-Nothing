@@ -45,7 +45,7 @@ namespace BetterThanNothing
 			throw std::runtime_error(warn + err);
 		}
 
-		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+		std::unordered_map<Vertex, u32> uniqueVertices{};
 
 		for (const auto& shape : shapes) {
 			for (const auto& index : shape.mesh.indices) {
@@ -65,7 +65,7 @@ namespace BetterThanNothing
 				vertex.m_Color = {1.0f, 1.0f, 1.0f};
 
 				if (uniqueVertices.count(vertex) == 0) {
-					uniqueVertices[vertex] = static_cast<uint32_t>(m_Vertices.size());
+					uniqueVertices[vertex] = static_cast<u32>(m_Vertices.size());
 					m_Vertices.push_back(vertex);
 				}
 

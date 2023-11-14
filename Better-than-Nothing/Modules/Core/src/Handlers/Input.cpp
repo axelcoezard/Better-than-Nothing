@@ -5,12 +5,12 @@ namespace BetterThanNothing
 
 	int Input::m_Keys[KEYBOARD_KEY_COUNT] = {};
 
-	double Input::m_MouseX = 0;
-	double Input::m_MouseY = 0;
-	double Input::m_LastMouseX = 0;
-	double Input::m_LastMouseY = 0;
+	f64 Input::m_MouseX = 0;
+	f64 Input::m_MouseY = 0;
+	f64 Input::m_LastMouseX = 0;
+	f64 Input::m_LastMouseY = 0;
 
-	double Input::m_MouseScroll = 0;
+	f64 Input::m_MouseScroll = 0;
 	int Input::m_Buttons[MOUSE_BUTTON_COUNT] = {};
 
 	Input::Input(void)
@@ -52,7 +52,7 @@ namespace BetterThanNothing
 		Input::m_Buttons[button] = GLFW_RELEASE;
 	}
 
-	void Input::UpdateMousePosition(double x, double y)
+	void Input::UpdateMousePosition(f64 x, f64 y)
 	{
 		Input::m_LastMouseX = Input::m_MouseX;
 		Input::m_LastMouseY = Input::m_MouseY;
@@ -75,12 +75,12 @@ namespace BetterThanNothing
 		return glm::vec2(Input::m_MouseX - Input::m_LastMouseX, Input::m_LastMouseY - Input::m_MouseY);
 	}
 
-	void Input::UpdateMouseScroll(double y)
+	void Input::UpdateMouseScroll(f64 y)
 	{
 		Input::m_MouseScroll = y;
 	}
 
-	double Input::GetMouseScroll(void)
+	f64 Input::GetMouseScroll(void)
 	{
 		return Input::m_MouseScroll;
 	}

@@ -24,10 +24,10 @@ namespace BetterThanNothing
 		Scene&					operator=(Scene&&) = delete;
 
 	public:
-		Camera*					InitCamera(double x, double y, double z, double yaw, double pitch);
+		Camera*					InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch);
 		void					LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
 
-		void					Update(float deltatime);
+		void					Update(f32 deltatime);
 		void					Render(Renderer* pRenderer);
 		void					OnEvent(Event* pEvent);
 

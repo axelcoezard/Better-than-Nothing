@@ -42,7 +42,7 @@ namespace BetterThanNothing
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+		layoutInfo.bindingCount = static_cast<u32>(bindings.size());
 		layoutInfo.pBindings = bindings.data();
 
 		if (vkCreateDescriptorSetLayout(m_pDevice->GetVkDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
@@ -56,20 +56,20 @@ namespace BetterThanNothing
 		// `MAX_FRAMES_IN_FLIGHT` are the max frame you can have in flight (usually 60)
 		// `pModels.size()` is the number of models you have
 		// `+ 1` is for the ImGui texture
-		uint32_t descriptorCount = MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1);
+		u32 descriptorCount = MAX_FRAMES_IN_FLIGHT * (pModels.size() + 1);
 
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(descriptorCount);
+		poolSizes[0].descriptorCount = static_cast<u32>(descriptorCount);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(descriptorCount);
+		poolSizes[1].descriptorCount = static_cast<u32>(descriptorCount);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+		poolInfo.poolSizeCount = static_cast<u32>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		poolInfo.maxSets = static_cast<uint32_t>(descriptorCount);
+		poolInfo.maxSets = static_cast<u32>(descriptorCount);
 
 		if (vkCreateDescriptorPool(m_pDevice->GetVkDevice(), &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor pool!");
@@ -82,10 +82,10 @@ namespace BetterThanNothing
 		auto modelCount = pModels.size();
 
 		m_DescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
 			m_DescriptorSets[i].resize(modelCount);
-			for (uint32_t j = 0; j < modelCount; j++)
+			for (u32 j = 0; j < modelCount; j++)
 			{
 				VkDescriptorSetAllocateInfo allocInfo{};
 				allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -125,7 +125,7 @@ namespace BetterThanNothing
 				descriptorWrites[1].descriptorCount = 1;
 				descriptorWrites[1].pImageInfo = &imageInfo;
 
-				vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+				vkUpdateDescriptorSets(device, static_cast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 			}
 		}
 	}

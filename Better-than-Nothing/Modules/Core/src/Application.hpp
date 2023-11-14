@@ -16,14 +16,14 @@ namespace BetterThanNothing
 		Renderer* m_pRenderer;
 		LayerStack* m_pLayerStack;
 	public:
-		Application(std::string_view title, uint32_t width, uint32_t height);
+		Application(std::string_view title, u32 width, u32 height);
 		virtual ~Application();
 
 		void Run();
 
 		virtual void OnEnable() = 0;
 		virtual void OnDisable() = 0;
-		virtual void OnUpdate(float deltatime) = 0;
+		virtual void OnUpdate(f32 deltatime) = 0;
 		virtual void OnRender(Renderer* renderer) = 0;
 		virtual void OnEvent(Event* event) = 0;
 	};

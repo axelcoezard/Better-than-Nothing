@@ -45,8 +45,8 @@ namespace BetterThanNothing
 		std::vector<VkSemaphore>					m_RenderFinishedSemaphores;
 		std::vector<VkFence>						m_InFlightFences;
 
-		uint32_t									m_CurrentFrame = 0;
-		uint32_t									m_CurrentImageIndex = 0;
+		u32									m_CurrentFrame = 0;
+		u32									m_CurrentImageIndex = 0;
 		DescriptorPool*								m_pDescriptorPool = nullptr;
 
 	public:
@@ -70,7 +70,7 @@ namespace BetterThanNothing
 		void										CreateFramebuffers();
 
 	public:
-		VkImageView									CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+		VkImageView									CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
 		void										CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		VkCommandBuffer								BeginSingleTimeCommands();
 		void										EndSingleTimeCommands(VkCommandBuffer& commandBuffer);

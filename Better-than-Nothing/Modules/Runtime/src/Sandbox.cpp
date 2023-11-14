@@ -47,7 +47,7 @@ namespace BetterThanNothing
 		}
 	}
 
-	void Sandbox::OnUpdate(float deltatime)
+	void Sandbox::OnUpdate(f32 deltatime)
 	{
 		(void) deltatime;
 	}

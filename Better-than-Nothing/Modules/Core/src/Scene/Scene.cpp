@@ -14,14 +14,14 @@ namespace BetterThanNothing
 
 	Scene::~Scene()
 	{
-		for (uint32_t i = 0; i < m_pModels.size(); i++) {
+		for (u32 i = 0; i < m_pModels.size(); i++) {
 			delete m_pModels[i];
 		}
 
 		delete m_pCamera;
 	}
 
-	Camera* Scene::InitCamera(double x, double y, double z, double yaw, double pitch)
+	Camera* Scene::InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch)
 	{
 		m_pCamera = new Camera(x, y, z, yaw, pitch);
 		return m_pCamera;
@@ -35,21 +35,21 @@ namespace BetterThanNothing
 		m_pModels.push_back(model);
 	}
 
-	void Scene::Update(float deltatime)
+	void Scene::Update(f32 deltatime)
 	{
 		m_pCamera->Update(deltatime);
 
-		float rotation = glm::mod(30.0f * (float) glfwGetTime(), 360.0f);
+		f32 rotation = glm::mod(30.0f * (f32) glfwGetTime(), 360.0f);
 
 		m_pModels[0]->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-		m_pModels[0]->SetRotation(glm::vec3(0.0f, (float) rotation, 0.0f));
+		m_pModels[0]->SetRotation(glm::vec3(0.0f, (f32) rotation, 0.0f));
 
-		m_pModels[1]->SetRotation(glm::vec3((float) rotation, 0.0f, 0.0f));
+		m_pModels[1]->SetRotation(glm::vec3((f32) rotation, 0.0f, 0.0f));
 	}
 
 	void Scene::Render(Renderer* pRenderer)
 	{
-		for (uint32_t i = 0; i < m_pModels.size(); i++) {
+		for (u32 i = 0; i < m_pModels.size(); i++) {
 			pRenderer->DrawModel(m_pModels[i], i);
 		}
 	}

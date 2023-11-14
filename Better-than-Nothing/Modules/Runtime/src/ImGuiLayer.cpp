@@ -17,7 +17,7 @@ namespace BetterThanNothing
 
 	}
 
-	void ImGuiLayer::OnUpdate(float deltatime)
+	void ImGuiLayer::OnUpdate(f32 deltatime)
 	{
 		(void) deltatime;
 	}

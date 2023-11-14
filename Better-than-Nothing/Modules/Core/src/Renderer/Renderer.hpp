@@ -39,7 +39,7 @@ namespace BetterThanNothing
 
 		void								Prepare(Scene* pScene);
 		bool								BeginRender();
-		void								DrawModel(Model* pModel, uint32_t modelIndex);
+		void								DrawModel(Model* pModel, u32 modelIndex);
 		void								EndRender();
 
 	public:
