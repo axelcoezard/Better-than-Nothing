@@ -11,9 +11,9 @@ namespace BetterThanNothing
 	class Event;
 	class KeyPressEvent;
 
-	class Sandbox: public Application {
+	class Runtime: public Application {
 	public:
-		Sandbox(std::string_view title, u32 width, u32 height)
+		Runtime(std::string_view title, u32 width, u32 height)
 			: Application(title, width, height) { };
 
 		void OnEnable() override;

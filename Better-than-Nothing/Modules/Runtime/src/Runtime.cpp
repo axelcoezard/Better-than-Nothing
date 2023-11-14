@@ -1,10 +1,10 @@
-#include "Sandbox.hpp"
+#include "Runtime.hpp"
 
 #include <BetterThanNothing.hpp>
 
 namespace BetterThanNothing
 {
-	void Sandbox::OnEnable()
+	void Runtime::OnEnable()
 	{
 		m_pRenderer->LoadPipeline(
 			"main",
@@ -34,7 +34,7 @@ namespace BetterThanNothing
 		m_pRenderer->Prepare(pScene);
 	}
 
-	void Sandbox::OnDisable()
+	void Runtime::OnDisable()
 	{
 
 	}
@@ -42,5 +42,5 @@ namespace BetterThanNothing
 
 BetterThanNothing::Application* CreateApplication()
 {
-	return new BetterThanNothing::Sandbox("better-than-nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
+	return new BetterThanNothing::Runtime("better-than-nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
 }
