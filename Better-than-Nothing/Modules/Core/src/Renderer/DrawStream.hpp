@@ -4,20 +4,20 @@ namespace BetterThanNothing
 {
 	struct DrawPacket
 	{
-		void*					m_pPipeline;
-		void*					m_pTexture;
+		void*					pipeline;
+		void*					texture;
 
-		VkBuffer				m_VertexBuffer;
-		VkBuffer				m_IndexBuffer;
-		u32						m_IndicesCount;
+		VkBuffer				vertexBuffer;
+		VkBuffer				indexBuffer;
+		u32						indicesCount;
 
-		glm::mat4				m_Model;
+		glm::mat4				model;
 	};
 
 	struct DrawStream
 	{
-		u32						m_Size;
-		DrawPacket*				m_DrawPackets;
+		u32						size;
+		DrawPacket*				drawPackets;
 	};
 
 	class DrawStreamBuilder

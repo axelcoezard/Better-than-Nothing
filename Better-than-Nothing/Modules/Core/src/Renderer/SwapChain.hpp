@@ -11,7 +11,8 @@ namespace BetterThanNothing
 	class Vertex;
 	class Model;
 	class Scene;
-	class DrawPacket;
+	struct DrawPacket;
+	struct GlobalUniforms;
 
 	class SwapChain
 	{
@@ -89,9 +90,8 @@ namespace BetterThanNothing
 		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
 		bool										BeginRecordCommandBuffer();
 
-		void										UpdateUniformBuffer(Scene* pScene, DrawPacket* pDrawPacket, u32 modelIndex);
 		void										BindPipeline(Pipeline* pPipeline);
-		void										Draw(DrawPacket* pDrawPacket, u32 index);
+		void										Draw(GlobalUniforms* globalUniforms, DrawPacket* pDrawPacket, u32 index);
 
 		void										EndRecordCommandBuffer();
 

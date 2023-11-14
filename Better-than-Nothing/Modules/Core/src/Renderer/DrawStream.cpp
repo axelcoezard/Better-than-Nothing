@@ -30,8 +30,8 @@ namespace BetterThanNothing
 	{
 		// Sort the draw packets by pipeline
 		std::sort(m_DrawPackets.begin(), m_DrawPackets.end(), [](const DrawPacket& a, const DrawPacket& b){
-			auto pPipelineA = static_cast<Pipeline*>(a.m_pPipeline);
-			auto pPipelineB = static_cast<Pipeline*>(b.m_pPipeline);
+			auto pPipelineA = static_cast<Pipeline*>(a.pipeline);
+			auto pPipelineB = static_cast<Pipeline*>(b.pipeline);
 
 			return pPipelineA->GetId() < pPipelineB->GetId();
 		});
@@ -42,8 +42,8 @@ namespace BetterThanNothing
 
 		// Create the draw stream using the sorted draw packets
 		DrawStream* drawStream = new DrawStream();
-		drawStream->m_Size = m_Size;
-		drawStream->m_DrawPackets = drawPackets;
+		drawStream->size = m_Size;
+		drawStream->drawPackets = drawPackets;
 		return drawStream;
 	}
 };
