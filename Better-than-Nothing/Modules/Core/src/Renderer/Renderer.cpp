@@ -57,8 +57,7 @@ namespace BetterThanNothing
 		Pipeline* pPipeline = m_pPipeLines.at("main");
 		DrawStreamBuilder drawStreamBuilder(pScene->GetModels().size());
 
-		for (auto & model : pScene->GetModels())
-		{
+		for (auto & model : pScene->GetModels()) {
 			drawStreamBuilder.Draw({
 				.m_pPipeline = pPipeline,
 				.m_pTexture = model->GetTexture(),
@@ -71,11 +70,17 @@ namespace BetterThanNothing
 
 		if (m_pSwapChain->BeginRecordCommandBuffer()) {
 			DrawStream* drawStream = drawStreamBuilder.GetStream();
+			void* currentPipeline = nullptr;
 
 			for (u32 i = 0; i < drawStream->m_Size; i++) {
-
 				DrawPacket drawPacket = drawStream->m_DrawPackets[i];
 
+				if (drawPacket.m_pPipeline != currentPipeline) {
+					currentPipeline = drawPacket.m_pPipeline;
+					m_pSwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
+				}
+
+				// TODO: remove scene in favor of a GlobalUniforms struct
 				m_pSwapChain->UpdateUniformBuffer(pScene, &drawPacket, i);
 				m_pSwapChain->Draw(&drawPacket, i);
 			}
