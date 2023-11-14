@@ -572,9 +572,9 @@ namespace BetterThanNothing
 
 		// Update the uniform buffer
 		UniformBufferObject ubo = {
-			.m_Model = pDrawPacket->model,
-			.m_View = globalUniforms->view,
-			.m_Projection = globalUniforms->projection
+			.model = pDrawPacket->model,
+			.view = globalUniforms->view,
+			.projection = globalUniforms->projection
 		};
 
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame][index], &ubo, sizeof(ubo));
