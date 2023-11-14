@@ -13,8 +13,7 @@
 
 namespace BetterThanNothing
 {
-	Model::Model(Device* pDevice, Renderer* pRenderer)
-		: m_pDevice(pDevice), m_pRenderer(pRenderer)
+	Model::Model()
 	{
 		m_Position = {0.0f, 0.0f, 0.0f};
 		m_Rotation = {0.0f, 0.0f, 0.0f};
@@ -23,15 +22,15 @@ namespace BetterThanNothing
 
 	Model::~Model()
 	{
-		auto device = m_pDevice->GetVkDevice();
+		//auto device = m_pDevice->GetVkDevice();
 
-		delete m_pTexture;
+		///delete m_pTexture;
 
-		vkDestroyBuffer(device, m_IndexBuffer, nullptr);
-		vkFreeMemory(device, m_IndexBufferMemory, nullptr);
+		//vkDestroyBuffer(device, m_IndexBuffer, nullptr);
+		//vkFreeMemory(device, m_IndexBufferMemory, nullptr);
 
-		vkDestroyBuffer(device, m_VertexBuffer, nullptr);
-		vkFreeMemory(device, m_VertexBufferMemory, nullptr);
+		//vkDestroyBuffer(device, m_VertexBuffer, nullptr);
+		//vkFreeMemory(device, m_VertexBufferMemory, nullptr);
 	}
 
 	void Model::LoadFromFiles(const std::string& filePath, const std::string& texturePath)
@@ -73,15 +72,13 @@ namespace BetterThanNothing
 			}
 		}
 
-		CreateVertexBuffer();
-		CreateIndexBuffer();
-		CreateTexture(texturePath);
+		m_TexturePath = texturePath;
 	}
 
-	void Model::CreateVertexBuffer()
+	void Model::CreateVertexBuffer(Device* pDevice, Renderer* pRenderer)
 	{
-		auto device = m_pDevice->GetVkDevice();
-		auto pSwapChain = m_pRenderer->GetSwapChain();
+		auto device = pDevice->GetVkDevice();
+		auto pSwapChain = pRenderer->GetSwapChain();
 
 		VkDeviceSize bufferSize = sizeof(m_Vertices[0]) * m_Vertices.size();
 
@@ -108,10 +105,10 @@ namespace BetterThanNothing
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
-	void Model::CreateIndexBuffer()
+	void Model::CreateIndexBuffer(Device* pDevice, Renderer* pRenderer)
 	{
-		auto device = m_pDevice->GetVkDevice();
-		auto pSwapChain = m_pRenderer->GetSwapChain();
+		auto device = pDevice->GetVkDevice();
+		auto pSwapChain = pRenderer->GetSwapChain();
 
 		VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
 
@@ -138,10 +135,10 @@ namespace BetterThanNothing
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
-	void Model::CreateTexture(const std::string& texturePath)
+	void Model::CreateTexture(Device* pDevice, Renderer* pRenderer)
 	{
-		m_pTexture = new Texture(m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
-		m_pTexture->LoadFromFile(texturePath);
+		m_pTexture = new Texture(pDevice, pRenderer->GetCommandPool(), pRenderer->GetSwapChain());
+		m_pTexture->LoadFromFile(m_TexturePath);
 	}
 
 	glm::mat4 Model::GetModelMatrix()

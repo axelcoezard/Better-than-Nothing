@@ -15,6 +15,7 @@ namespace BetterThanNothing
 
 		Camera*					m_pCamera;
 		std::vector<Model*>		m_pModels;
+		std::queue<Model*>		m_pModelsWaiting;
 	public:
 								Scene(u32 id, std::string_view name);
 								~Scene();
@@ -26,7 +27,7 @@ namespace BetterThanNothing
 
 	public:
 		Camera*					InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch);
-		void					LoadModel(Renderer* pRenderer, const std::string& modelPath, const std::string& texturePath);
+		Model*					LoadModel(const std::string& modelPath, const std::string& texturePath);
 
 		void					OnUpdate(f32 deltatime);
 		void					OnEvent(Event* pEvent);
@@ -36,5 +37,14 @@ namespace BetterThanNothing
 		std::string&			GetName()	{ return m_Name; }
 		Camera*					GetCamera()	{ return m_pCamera; }
 		std::vector<Model*>&	GetModels()	{ return m_pModels; }
+		bool					HasWaitingModels() { return m_pModelsWaiting.size() > 0; }
+
+		Model*					GetNextWaitingModel()
+		{
+			auto model = m_pModelsWaiting.front();
+			m_pModelsWaiting.pop();
+			m_pModels.push_back(model);
+			return model;
+		}
 	};
 };

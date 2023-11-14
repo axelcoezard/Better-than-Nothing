@@ -40,22 +40,30 @@ namespace BetterThanNothing
 		m_pPipeLines.insert(entry);
 	}
 
-	void Renderer::Prepare(Scene* pScene)
-	{
-		auto models = pScene->GetModels();
-
-		m_pSwapChain->CreateUniformBuffers(pScene);
-		m_pSwapChain->CreateCommandBuffers();
-
-		m_pDescriptorPool->CreateDescriptorPool(models);
-		m_pDescriptorPool->CreateDescriptorSets(models);
-
-		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
-	}
-
 	void Renderer::Render(Scene* pScene)
 	{
 		Pipeline* pPipeline = m_pPipeLines.at("main");
+
+		if (pScene->HasWaitingModels()) {
+			while (pScene->HasWaitingModels()) {
+				auto model = pScene->GetNextWaitingModel();
+				model->CreateVertexBuffer(m_pDevice, this);
+				model->CreateIndexBuffer(m_pDevice, this);
+				model->CreateTexture(m_pDevice, this);
+			}
+
+			m_pDescriptorPool->DestroyDescriptorPool();
+			m_pSwapChain->DestroyUniformBuffers();
+
+			m_pSwapChain->CreateUniformBuffers(pScene);
+			m_pSwapChain->CreateCommandBuffers();
+
+			auto models = pScene->GetModels();
+			m_pDescriptorPool->CreateDescriptorPool(models);
+			m_pDescriptorPool->CreateDescriptorSets(models);
+
+			m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
+		}
 
 		if (!m_pSwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");

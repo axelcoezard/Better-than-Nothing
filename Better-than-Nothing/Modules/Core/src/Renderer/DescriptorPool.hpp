@@ -31,7 +31,7 @@ namespace BetterThanNothing
 	public:
 		void										CreateDescriptorPool(std::vector<Model*> pModels);
 		void										CreateDescriptorSets(std::vector<Model*> pModels);
-
+		void										DestroyDescriptorPool();
 	public:
 		VkDescriptorSetLayout&						GetVkDescriptorSetLayout()	{ return m_DescriptorSetLayout; }
 		VkDescriptorPool&							GetVkDescriptorPool()		{ return m_DescriptorPool; }

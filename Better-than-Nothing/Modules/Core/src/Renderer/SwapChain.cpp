@@ -51,17 +51,7 @@ namespace BetterThanNothing
 			m_CommandBuffers.size(),
 			m_CommandBuffers.data());
 
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
-				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
-					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
-				}
-			}
-
-			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
-				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
-			}
-		}
+		DestroyUniformBuffers();
 	}
 
 	void SwapChain::CreateSwapChain()
@@ -371,6 +361,27 @@ namespace BetterThanNothing
 					m_UniformBuffersMemory[i][j], 0,
 					bufferSize, 0,
 					&m_UniformBuffersMapped[i][j]);
+			}
+		}
+	}
+
+	void SwapChain::DestroyUniformBuffers()
+	{
+		auto device = m_pDevice->GetVkDevice();
+
+		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT || m_UniformBuffersMemory.size() < MAX_FRAMES_IN_FLIGHT) {
+			return;
+		}
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
+				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
+					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
+				}
+			}
+
+			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
+				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
 			}
 		}
 	}

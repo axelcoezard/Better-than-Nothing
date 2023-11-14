@@ -85,6 +85,8 @@ namespace BetterThanNothing
 		bool										HasStencilComponent(VkFormat format);
 
 		void										CreateUniformBuffers(Scene* pScene);
+		void										DestroyUniformBuffers();
+
 		void										CreateCommandBuffers();
 
 		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);

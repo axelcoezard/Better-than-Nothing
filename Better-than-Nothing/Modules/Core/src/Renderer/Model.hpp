@@ -10,9 +10,6 @@ namespace BetterThanNothing
 	class Model
 	{
 	private:
-		Device*							m_pDevice;
-		Renderer*						m_pRenderer;
-
 		std::vector<Vertex>				m_Vertices;
 		std::vector<u32>				m_Indices;
 
@@ -21,6 +18,7 @@ namespace BetterThanNothing
 		VkBuffer						m_IndexBuffer;
 		VkDeviceMemory					m_IndexBufferMemory;
 
+		std::string						m_TexturePath;
 		Texture*						m_pTexture;
 
 		glm::vec3						m_Position;
@@ -28,7 +26,7 @@ namespace BetterThanNothing
 		f32								m_Scale;
 
 	public:
-										Model(Device* pDevice, Renderer* pRenderer);
+										Model();
 										~Model();
 
 										Model(const Model&) = delete;
@@ -37,17 +35,15 @@ namespace BetterThanNothing
 		Model&							operator=(Model&&) = delete;
 
 		void							LoadFromFiles(const std::string& filePath, const std::string& texturePath);
-		void							Bind(VkCommandBuffer commandBuffer);
-		void							Draw(VkCommandBuffer commandBuffer);
 
-	private:
-		void							CreateVertexBuffer();
-		void							CreateIndexBuffer();
-		void							CreateTexture(const std::string& texturePath);
+		void							CreateVertexBuffer(Device* pDevice, Renderer* pRenderer);
+		void							CreateIndexBuffer(Device* pDevice, Renderer* pRenderer);
+		void							CreateTexture(Device* pDevice, Renderer* pRenderer);
 
-	public:
 		VkBuffer&						GetVertexBuffer() { return m_VertexBuffer; }
+		VkDeviceMemory&					GetVertexBufferMemory() { return m_VertexBufferMemory; }
 		VkBuffer&						GetIndexBuffer() { return m_IndexBuffer; }
+		VkDeviceMemory&					GetIndexBufferMemory() { return m_IndexBufferMemory; }
 		u32								GetIndicesCount() { return static_cast<u32>(m_Indices.size()); }
 		Texture*						GetTexture() { return m_pTexture; }
 

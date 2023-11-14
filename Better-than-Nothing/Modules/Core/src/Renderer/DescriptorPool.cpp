@@ -15,8 +15,7 @@ namespace BetterThanNothing
 
 	DescriptorPool::~DescriptorPool()
 	{
-		auto device = m_pDevice->GetVkDevice();
-		vkDestroyDescriptorPool(device, m_DescriptorPool, nullptr);
+		DestroyDescriptorPool();
 		vkDestroyDescriptorSetLayout(m_pDevice->GetVkDevice(), m_DescriptorSetLayout, nullptr);
 	}
 
@@ -127,6 +126,14 @@ namespace BetterThanNothing
 
 				vkUpdateDescriptorSets(device, static_cast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 			}
+		}
+	}
+
+
+	void DescriptorPool::DestroyDescriptorPool()
+	{
+		if (m_DescriptorPool != VK_NULL_HANDLE) {
+			vkDestroyDescriptorPool(m_pDevice->GetVkDevice(), m_DescriptorPool, nullptr);
 		}
 	}
 };

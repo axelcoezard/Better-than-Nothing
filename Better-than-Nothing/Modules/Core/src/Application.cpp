@@ -7,6 +7,7 @@
 #include "Renderer/DrawStream.hpp"
 #include "Events/Event.hpp"
 #include "Scene/Scene.hpp"
+#include "Scene/Camera.hpp"
 
 namespace BetterThanNothing
 {
@@ -53,13 +54,17 @@ namespace BetterThanNothing
 
 			m_pRenderer->Render(currentScene);
 
-			//std::cout.precision(3);
-			//std::cout << "\033[2J\033[1;1H";
-			//std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
-			//std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
-			//std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
-			//std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-			//std::cout << "Frame count: " << frameCount << std::endl;
+			std::cout.precision(3);
+			std::cout << "\033[2J\033[1;1H";
+			std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
+			std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
+			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
+			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
+			std::cout << "Frame count: " << frameCount << std::endl;
+			std::cout << "Scene: " << currentScene->GetName() << std::endl;
+			std::cout << "Camera position: " << currentScene->GetCamera()->GetPosition().x << ", " << currentScene->GetCamera()->GetPosition().y << ", " << currentScene->GetCamera()->GetPosition().z << std::endl;
+			std::cout << "Camera rotation: " << currentScene->GetCamera()->GetYaw() << ", " << currentScene->GetCamera()->GetPitch() << std::endl;
+			std::cout << "Models count: " << currentScene->GetModels().size() << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
