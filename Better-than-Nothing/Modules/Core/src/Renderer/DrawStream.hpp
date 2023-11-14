@@ -2,7 +2,6 @@
 
 namespace BetterThanNothing
 {
-	class Texture;
 	struct DrawPacket
 	{
 		void*					m_pPipeline;
