@@ -5,7 +5,9 @@ namespace BetterThanNothing
 	class Window;
 	class Device;
 	class Renderer;
-	class DrawStreamBuilder;
+
+	class ModelPool;
+
 	class Scene;
 	class Event;
 
@@ -15,6 +17,8 @@ namespace BetterThanNothing
 		Window*				m_pWindow;
 		Device*				m_pDevice;
 		Renderer*			m_pRenderer;
+
+		ModelPool*			m_ModelPool;
 
 		std::vector<Scene*>	m_Scenes;
 		u32					m_CurrentSceneId;

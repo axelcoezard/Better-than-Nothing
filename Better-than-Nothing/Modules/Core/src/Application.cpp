@@ -3,9 +3,13 @@
 #include "Renderer/Window.hpp"
 #include "Renderer/Device.hpp"
 #include "Renderer/Renderer.hpp"
-#include "Renderer/Model.hpp"
 #include "Renderer/DrawStream.hpp"
+
+#include "Ressources/RessourcePool.hpp"
+#include "Ressources/Model.hpp"
+
 #include "Events/Event.hpp"
+
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 
@@ -18,6 +22,8 @@ namespace BetterThanNothing
 
 		m_pDevice = new Device(m_pWindow);
 		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
+
+		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetSwapChain());
 	}
 
 	Application::~Application(void)
@@ -25,6 +31,8 @@ namespace BetterThanNothing
 		for (auto & scene : m_Scenes) {
 			delete scene;
 		}
+
+		delete m_ModelPool;
 
 		delete m_pRenderer;
 		delete m_pDevice;
@@ -48,11 +56,8 @@ namespace BetterThanNothing
 			lastFrame = currentFrame;
 			frameCount += 1;
 
-			auto currentScene = m_Scenes[m_CurrentSceneId];
-
-			currentScene->OnUpdate(deltatime);
-
-			m_pRenderer->Render(currentScene);
+			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
+			m_pRenderer->Render(m_Scenes[m_CurrentSceneId]);
 
 			std::cout.precision(3);
 			std::cout << "\033[2J\033[1;1H";
@@ -61,10 +66,6 @@ namespace BetterThanNothing
 			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
 			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
 			std::cout << "Frame count: " << frameCount << std::endl;
-			std::cout << "Scene: " << currentScene->GetName() << std::endl;
-			std::cout << "Camera position: " << currentScene->GetCamera()->GetPosition().x << ", " << currentScene->GetCamera()->GetPosition().y << ", " << currentScene->GetCamera()->GetPosition().z << std::endl;
-			std::cout << "Camera rotation: " << currentScene->GetCamera()->GetYaw() << ", " << currentScene->GetCamera()->GetPitch() << std::endl;
-			std::cout << "Models count: " << currentScene->GetModels().size() << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;

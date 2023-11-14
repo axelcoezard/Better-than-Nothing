@@ -16,7 +16,7 @@ namespace BetterThanNothing
 		VkBuffer			m_StagingBuffer;
 		VkDeviceMemory 		m_StagingBufferMemory;
 
-		u32			m_MipLevels;
+		u32					m_MipLevels;
 
 		VkImage				m_Image;
 		VkDeviceMemory		m_ImageMemory;

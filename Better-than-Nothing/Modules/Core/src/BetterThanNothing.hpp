@@ -25,6 +25,10 @@
 #include "Renderer/Vertex.hpp"
 #include "Renderer/DrawStream.hpp"
 
+// Ressources
+#include "Ressources/RessourcePool.hpp"
+#include "Ressources/Model.hpp"
+#include "Ressources/Texture.hpp"
 
 // Scene
 
