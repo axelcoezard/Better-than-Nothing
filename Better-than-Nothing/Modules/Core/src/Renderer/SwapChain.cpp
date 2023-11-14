@@ -1,7 +1,6 @@
 #include "Renderer/Window.hpp"
 #include "Renderer/Device.hpp"
 #include "Renderer/SwapChain.hpp"
-#include "Renderer/Texture.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/Vertex.hpp"
 #include "Renderer/UniformBufferObject.hpp"
@@ -10,6 +9,9 @@
 #include "Renderer/Model.hpp"
 #include "Renderer/DrawStream.hpp"
 #include "Renderer/GlobalUniforms.hpp"
+
+#include "Ressources/RessourcePool.hpp"
+
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 
@@ -122,7 +124,7 @@ namespace BetterThanNothing
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		Texture::CreateImage(
+		TexturePool::CreateImage(
 			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(),
@@ -134,14 +136,14 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		Texture::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		TexturePool::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
 	void SwapChain::CreateColorResources()
 	{
 		VkFormat colorFormat = m_Format;
 
-		Texture::CreateImage(
+		TexturePool::CreateImage(
 			m_pDevice,
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(), colorFormat,

@@ -4,7 +4,6 @@ namespace BetterThanNothing
 {
 	struct Texture
 	{
-		std::string			mame;
 		std::string			filePath;
 
 		u32					mipLevels;
