@@ -81,16 +81,15 @@ namespace BetterThanNothing
 
 	bool Renderer::BeginRender()
 	{
-		auto pPipeline = m_pPipeLines.at("main");
-
-		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
+		return m_pSwapChain->BeginRecordCommandBuffer();
 	}
 
 	void Renderer::DrawModel(Model* pModel, u32 modelIndex)
 	{
 		auto pPipeline = m_pPipeLines.at("main");
 
-		m_pSwapChain->BindModel(pModel);
+		// TODO: Sort models by pipeline before drawing in order to change pipeline the least amount of times
+
 		m_pSwapChain->DrawModel(pPipeline, pModel, modelIndex);
 	}
 

@@ -501,7 +501,7 @@ namespace BetterThanNothing
 		m_pDescriptorPool = pDescriptorPool;
 	}
 
-	bool SwapChain::BeginRecordCommandBuffer(Pipeline* pPipeline)
+	bool SwapChain::BeginRecordCommandBuffer()
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
@@ -540,7 +540,6 @@ namespace BetterThanNothing
 		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -576,19 +575,16 @@ namespace BetterThanNothing
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
 	}
 
-	void SwapChain::BindModel(Model* pModel)
+	void SwapChain::DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
 
 		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
 		VkDeviceSize offsets[] = {0};
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-	}
-
-	void SwapChain::DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex)
-	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
