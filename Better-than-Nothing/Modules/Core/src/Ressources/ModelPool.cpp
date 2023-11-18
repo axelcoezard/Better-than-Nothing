@@ -109,7 +109,7 @@ namespace BetterThanNothing
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
-		m_SwapChain->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			stagingBuffer,
 			stagingBufferMemory);
@@ -122,12 +122,12 @@ namespace BetterThanNothing
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
 
-		m_SwapChain->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			vertexBuffer,
 			vertexBufferMemory);
 
-		m_SwapChain->CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+		m_Device->CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -142,7 +142,7 @@ namespace BetterThanNothing
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
-		m_SwapChain->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			stagingBuffer,
 			stagingBufferMemory);
@@ -155,12 +155,12 @@ namespace BetterThanNothing
 		VkBuffer indexBuffer;
 		VkDeviceMemory indexBufferMemory;
 
-		m_SwapChain->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			indexBuffer,
 			indexBufferMemory);
 
-		m_SwapChain->CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
+		m_Device->CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
 
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
 		vkFreeMemory(device, stagingBufferMemory, nullptr);

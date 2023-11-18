@@ -78,6 +78,9 @@ namespace BetterThanNothing
 		u32								FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
 		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
+		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void							CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \
 																	 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, \

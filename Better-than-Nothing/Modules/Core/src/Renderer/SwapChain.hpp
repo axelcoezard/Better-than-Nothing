@@ -74,10 +74,9 @@ namespace BetterThanNothing
 
 	public:
 		VkImageView									CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
-		void										CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+
 		VkCommandBuffer								BeginSingleTimeCommands();
 		void										EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
-		void										CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 		void										CleanupSwapChain();
 		void										RecreateSwapChain();
