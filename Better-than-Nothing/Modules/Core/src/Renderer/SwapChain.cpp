@@ -1,20 +1,4 @@
-#include "Renderer/Window.hpp"
-#include "Renderer/Device.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/Pipeline.hpp"
-#include "Renderer/Vertex.hpp"
-#include "Renderer/UniformBufferObject.hpp"
-#include "Renderer/CommandPool.hpp"
-#include "Renderer/DescriptorPool.hpp"
-#include "Renderer/DrawStream.hpp"
-#include "Renderer/GlobalUniforms.hpp"
-
-#include "Ressources/RessourcePool.hpp"
-#include "Ressources/Model.hpp"
-#include "Ressources/Texture.hpp"
-
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
+#include "BetterThanNothing.hpp"
 
 #include <unordered_map>
 
@@ -61,11 +45,9 @@ namespace BetterThanNothing
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
-		vkFreeCommandBuffers(
-			m_pDevice->GetVkDevice(),
-			m_pCommandPool->GetVkCommandPool(),
-			m_CommandBuffers.size(),
-			m_CommandBuffers.data());
+		for (auto commandBuffer : m_CommandBuffers) {
+			delete commandBuffer;
+		}
 
 		DestroyUniformBuffers();
 	}
@@ -407,14 +389,8 @@ namespace BetterThanNothing
 	{
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = m_CommandBuffers.size();
-
-		if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate command buffers!");
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			m_CommandBuffers[i] = new CommandBuffer(m_pDevice, m_pCommandPool);
 		}
 	}
 
@@ -533,7 +509,7 @@ namespace BetterThanNothing
 
 	bool SwapChain::BeginRecordCommandBuffer()
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		WaitForFences();
 		VkResult result = AcquireNextImage();
@@ -547,13 +523,7 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-		if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
+		commandBuffer->Begin();
 
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -569,7 +539,7 @@ namespace BetterThanNothing
 		renderPassInfo.clearValueCount = static_cast<u32>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
-		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		commandBuffer->BeginRenderPass(renderPassInfo);
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -578,19 +548,18 @@ namespace BetterThanNothing
 		viewport.height = static_cast<f32>(m_Extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+		commandBuffer->SetViewport(viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = {0, 0};
 		scissor.extent = m_Extent;
-		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		commandBuffer->SetScissor(scissor);
 		return true;
 	}
 
 	void SwapChain::BindPipeline(Pipeline* pPipeline)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
+		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pPipeline->GetVkGraphicsPipeline());
 	}
 
 	void SwapChain::Draw(GlobalUniforms* globalUniforms, DrawPacket* pDrawPacket, u32 index)
@@ -607,38 +576,29 @@ namespace BetterThanNothing
 
 		memcpy(m_UniformBuffersMapped[m_CurrentFrame][index], &ubo, sizeof(ubo));
 
-		// Bind the vertex buffer
-		VkBuffer vertexBuffers[] = {pDrawPacket->vertexBuffer};
-		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, pDrawPacket->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->BindVertexBuffer(pDrawPacket->vertexBuffer);
+		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);
 
-		// Bind the descriptor set
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pPipeline->GetVkPipelineLayout(), 0, 1,
-			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index], 0, nullptr);
+		commandBuffer->BindDescriptorSets(
+			m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
+			pPipeline->GetVkPipelineLayout());
 
-		// Draw the model using indices
-		vkCmdDrawIndexed(commandBuffer, static_cast<u32>(pDrawPacket->indicesCount), 1, 0, 0, 0);
+		commandBuffer->DrawIndexed(pDrawPacket->indicesCount);
 	}
 
 	void SwapChain::EndRecordCommandBuffer()
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
-		vkCmdEndRenderPass(commandBuffer);
-
-		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to record command buffer!");
-		}
+		commandBuffer->EndRenderPass();
+		commandBuffer->End();
 
 		ResetFences();
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
+		submitInfo.pCommandBuffers = &commandBuffer->GetVkCommandBuffer();
 
 		VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]};
 		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};

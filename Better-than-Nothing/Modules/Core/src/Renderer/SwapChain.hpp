@@ -6,6 +6,7 @@ namespace BetterThanNothing
 	class Device;
 	class DescriptorPool;
 	class CommandPool;
+	class CommandBuffer;
 	class Pipeline;
 	class Texture;
 	class Vertex;
@@ -29,7 +30,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>						m_Images;
 		std::vector<VkImageView>					m_ImageViews;
 		std::vector<VkFramebuffer>					m_Framebuffers;
-		std::vector<VkCommandBuffer>				m_CommandBuffers;
+		std::vector<CommandBuffer*>					m_CommandBuffers;
 
 		VkImage										m_DepthImage;
 		VkDeviceMemory								m_DepthImageMemory;
@@ -119,10 +120,9 @@ namespace BetterThanNothing
 		std::vector<VkImage>&						GetImages()						{ return m_Images; }
 		std::vector<VkImageView>&					GetImageViews()					{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&					GetFramebuffers()				{ return m_Framebuffers; }
-		std::vector<VkCommandBuffer>&				GetVkCommandBuffer()			{ return m_CommandBuffers; }
 		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
 		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
-		VkCommandBuffer&							GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
+		CommandBuffer*								GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
 	};
 };
