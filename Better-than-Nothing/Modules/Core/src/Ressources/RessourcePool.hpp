@@ -66,7 +66,7 @@ namespace BetterThanNothing
 
 	public:
 		static void		CreateImage(Device* pDevice, u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-		static void		TransitionImageLayout(SwapChain* pSwapChain, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels);
-		static void		CopyBufferToImage(SwapChain* pSwapChain, VkBuffer buffer, VkImage image, u32 width, u32 height);
+		static void		TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels, Device* device, CommandPool* commandPool);
+		static void		CopyBufferToImage(VkBuffer buffer, VkImage image, u32 width, u32 height, Device* device, CommandPool* commandPool);
 	};
 };

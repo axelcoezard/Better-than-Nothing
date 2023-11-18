@@ -132,7 +132,7 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		TexturePool::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		TexturePool::TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1, m_pDevice, m_pCommandPool);
 	}
 
 	void SwapChain::CreateColorResources()
@@ -282,56 +282,13 @@ namespace BetterThanNothing
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
-	VkCommandBuffer SwapChain::BeginSingleTimeCommands()
-	{
-		auto device = m_pDevice->GetVkDevice();
-		auto commandPool = m_pCommandPool->GetVkCommandPool();
-
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = commandPool;
-		allocInfo.commandBufferCount = 1;
-
-		VkCommandBuffer commandBuffer;
-		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-		vkBeginCommandBuffer(commandBuffer, &beginInfo);
-		return commandBuffer;
-	}
-
-	void SwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer)
-	{
-		auto device = m_pDevice->GetVkDevice();
-		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
-		auto commandPool = m_pCommandPool->GetVkCommandPool();
-
-		vkEndCommandBuffer(commandBuffer);
-
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
-		vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-		vkQueueWaitIdle(graphicsQueue);
-
-		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-	}
-
 	void SwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	{
-		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
-		{
+		CommandBuffer::SingleTimeCommands([&](CommandBuffer* commandBuffer) {
 			VkBufferCopy copyRegion{};
 			copyRegion.size = size;
-			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-		}
-		EndSingleTimeCommands(commandBuffer);
+			commandBuffer->CmdCopyBuffer(srcBuffer, dstBuffer, 1, copyRegion);
+		}, m_pDevice, m_pCommandPool);
 	}
 
 	void SwapChain::CreateNewUniformBuffer()
@@ -495,11 +452,6 @@ namespace BetterThanNothing
 			{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	}
-
-	bool SwapChain::HasStencilComponent(VkFormat format)
-	{
-		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
 	void SwapChain::BindDescriptorPool(DescriptorPool* pDescriptorPool)

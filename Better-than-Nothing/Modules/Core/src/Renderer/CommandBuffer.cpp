@@ -6,8 +6,8 @@ namespace BetterThanNothing
 	{
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_CommandPool->GetVkCommandPool();
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = m_CommandPool->GetVkCommandPool();
 		allocInfo.commandBufferCount = 1;
 
 		if (vkAllocateCommandBuffers(m_Device->GetVkDevice(), &allocInfo, &m_CommandBuffer) != VK_SUCCESS) {
@@ -85,7 +85,7 @@ namespace BetterThanNothing
 		vkCmdDrawIndexed(m_CommandBuffer, indexCount, 1, 0, 0, 0);
 	}
 
-	void CommandBuffer::CmdPipelineBarrier(VkPipelineStageFlags& srcStageMask, VkPipelineStageFlags& dstStageMask, VkImageMemoryBarrier& imageMemoryBarriers)
+	void CommandBuffer::CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkImageMemoryBarrier& imageMemoryBarriers)
 	{
 		vkCmdPipelineBarrier(m_CommandBuffer, srcStageMask, dstStageMask, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarriers);
 	}
@@ -95,7 +95,7 @@ namespace BetterThanNothing
 		vkCmdBlitImage(m_CommandBuffer, srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
 	}
 
-	void CommandBuffer::CmdCopyBufferToImage(VkBuffer& buffer, VkImage& dstImage, VkImageLayout& dstImageLayout, u32 regionCount, VkBufferImageCopy& regions)
+	void CommandBuffer::CmdCopyBufferToImage(VkBuffer& buffer, VkImage& dstImage, VkImageLayout dstImageLayout, u32 regionCount, VkBufferImageCopy& regions)
 	{
 		vkCmdCopyBufferToImage(m_CommandBuffer, buffer, dstImage, dstImageLayout, regionCount, &regions);
 	}
@@ -117,11 +117,12 @@ namespace BetterThanNothing
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &commandBuffer->GetVkCommandBuffer();
 
+		commandBuffer->End();
+
 		VkQueue graphicsQueue = device->GetVkGraphicsQueue();
 		vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 		vkQueueWaitIdle(graphicsQueue);
 
-		commandBuffer->End();
 		delete commandBuffer;
 	}
 };

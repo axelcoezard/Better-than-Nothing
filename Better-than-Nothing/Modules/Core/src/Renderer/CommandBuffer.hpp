@@ -36,9 +36,9 @@ namespace BetterThanNothing
 		void				BindDescriptorSets(VkDescriptorSet& descriptorSet, VkPipelineLayout& pipelineLayout);
 		void				DrawIndexed(u32 indexCount);
 
-		void				CmdPipelineBarrier(VkPipelineStageFlags& srcStageMask, VkPipelineStageFlags& dstStageMask, VkImageMemoryBarrier& imageMemoryBarriers);
+		void				CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkImageMemoryBarrier& imageMemoryBarriers);
 		void				CmdBlitImage(VkImage& srcImage, VkImage& dstImage, VkImageBlit& blit);
-		void				CmdCopyBufferToImage(VkBuffer& buffer, VkImage& dstImage, VkImageLayout& dstImageLayout, u32 regionCount, VkBufferImageCopy& regions);
+		void				CmdCopyBufferToImage(VkBuffer& buffer, VkImage& dstImage, VkImageLayout dstImageLayout, u32 regionCount, VkBufferImageCopy& regions);
 		void				CmdCopyBuffer(VkBuffer& srcBuffer, VkBuffer& dstBuffer, u32 regionCount, VkBufferCopy& regions);
 
 		static void			SingleTimeCommands(const std::function<void(CommandBuffer*)>& callback, Device* device, CommandPool* commandPool);
