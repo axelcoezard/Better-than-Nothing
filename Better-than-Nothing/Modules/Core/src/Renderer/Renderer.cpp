@@ -1,19 +1,4 @@
-#include "Renderer/Renderer.hpp"
-#include "Renderer/Window.hpp"
-#include "Renderer/Device.hpp"
-#include "Renderer/CommandPool.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Pipeline.hpp"
-#include "Renderer/DrawStream.hpp"
-#include "Renderer/GlobalUniforms.hpp"
-
-#include "Ressources/Model.hpp"
-#include "Ressources/Texture.hpp"
-
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
-#include "Scene/Entity.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
