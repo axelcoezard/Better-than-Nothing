@@ -42,6 +42,8 @@ namespace BetterThanNothing
 		std::vector<std::vector<VkBuffer>>			m_UniformBuffers;
 		std::vector<std::vector<VkDeviceMemory>>	m_UniformBuffersMemory;
 		std::vector<std::vector<void*>>				m_UniformBuffersMapped;
+		u32											m_UniformBuffersSize;
+		u32											m_UniformBuffersCapacity;
 
 		std::vector<VkSemaphore>					m_ImageAvailableSemaphores;
 		std::vector<VkSemaphore>					m_RenderFinishedSemaphores;
@@ -84,7 +86,7 @@ namespace BetterThanNothing
 		VkFormat									FindDepthFormat();
 		bool										HasStencilComponent(VkFormat format);
 
-		void										CreateUniformBuffers(Scene* pScene);
+		void										CreateNewUniformBuffer();
 		void										DestroyUniformBuffers();
 
 		void										CreateCommandBuffers();

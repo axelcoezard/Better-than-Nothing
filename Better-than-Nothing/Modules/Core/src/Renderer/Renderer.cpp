@@ -22,6 +22,7 @@ namespace BetterThanNothing
 		m_pCommandPool = new CommandPool(m_pDevice);
 		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice, m_pCommandPool);
 		m_pDescriptorPool = new DescriptorPool(m_pDevice, m_pSwapChain);
+		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 	}
 
 	Renderer::~Renderer()
@@ -47,22 +48,10 @@ namespace BetterThanNothing
 	{
 		Pipeline* pPipeline = m_pPipeLines.at("main");
 
-		if (pScene->HasPendingEntities()) {
-			while (pScene->HasPendingEntities()) {
-				pScene->NextPendingEntity();
-			}
-
-			m_pDescriptorPool->DestroyDescriptorPool();
-			m_pSwapChain->DestroyUniformBuffers();
-
-			m_pSwapChain->CreateUniformBuffers(pScene);
-			m_pSwapChain->CreateCommandBuffers();
-
-			auto entities = pScene->GetEntities();
-			m_pDescriptorPool->CreateDescriptorPool(entities);
-			m_pDescriptorPool->CreateDescriptorSets(entities);
-
-			m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
+		while (pScene->HasPendingEntities()) {
+			Entity* newEntity = pScene->NextPendingEntity();
+			m_pSwapChain->CreateNewUniformBuffer();
+			m_pDescriptorPool->CreateDescriptorSets(newEntity);
 		}
 
 		if (!m_pSwapChain->BeginRecordCommandBuffer()) {
