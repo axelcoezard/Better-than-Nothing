@@ -4,8 +4,7 @@ namespace BetterThanNothing
 {
 	Renderer::Renderer(Window* pWindow, Device* pDevice): m_pWindow(pWindow), m_pDevice(pDevice)
 	{
-		m_pCommandPool = new CommandPool(m_pDevice);
-		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice, m_pCommandPool);
+		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice);
 		m_pDescriptorPool = new DescriptorPool(m_pDevice, m_pSwapChain);
 		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
 	}
@@ -18,7 +17,6 @@ namespace BetterThanNothing
 
 		delete m_pDescriptorPool;
 		delete m_pSwapChain;
-		delete m_pCommandPool;
 	}
 
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)

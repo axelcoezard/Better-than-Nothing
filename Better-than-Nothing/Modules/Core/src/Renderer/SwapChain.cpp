@@ -4,8 +4,8 @@
 
 namespace BetterThanNothing
 {
-	SwapChain::SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool)
-		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool)
+	SwapChain::SwapChain(Window* pWindow, Device* pDevice)
+		: m_pWindow(pWindow), m_pDevice(pDevice)
 	{
 		CreateSwapChain();
 		CreateImageViews();
@@ -132,7 +132,7 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		TexturePool::TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1, m_pDevice, m_pCommandPool);
+		TexturePool::TransitionImageLayout(m_pDevice, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
 	void SwapChain::CreateColorResources()
@@ -288,7 +288,7 @@ namespace BetterThanNothing
 			VkBufferCopy copyRegion{};
 			copyRegion.size = size;
 			commandBuffer->CmdCopyBuffer(srcBuffer, dstBuffer, 1, copyRegion);
-		}, m_pDevice, m_pCommandPool);
+		}, m_pDevice);
 	}
 
 	void SwapChain::CreateNewUniformBuffer()
@@ -347,7 +347,7 @@ namespace BetterThanNothing
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_CommandBuffers[i] = new CommandBuffer(m_pDevice, m_pCommandPool);
+			m_CommandBuffers[i] = new CommandBuffer(m_pDevice);
 		}
 	}
 

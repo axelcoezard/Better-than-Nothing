@@ -5,7 +5,6 @@ namespace BetterThanNothing
 	class Window;
 	class Device;
 	class DescriptorPool;
-	class CommandPool;
 	class CommandBuffer;
 	class Pipeline;
 	class Texture;
@@ -20,7 +19,6 @@ namespace BetterThanNothing
 	private:
 		Window*										m_pWindow;
 		Device*										m_pDevice;
-		CommandPool*								m_pCommandPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;
@@ -55,7 +53,7 @@ namespace BetterThanNothing
 		DescriptorPool*								m_pDescriptorPool = nullptr;
 
 	public:
-													SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool);
+													SwapChain(Window* window, Device* device);
 													~SwapChain();
 
 													SwapChain(const SwapChain&) = delete;

@@ -1,6 +1,4 @@
-#include "Renderer/Device.hpp"
-
-#include <set>
+#include "BetterThanNothing.hpp"
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
 	(void) messageSeverity;
@@ -20,6 +18,8 @@ namespace BetterThanNothing
 		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
+
+		m_CommandPool = new CommandPool(this);
 	}
 
 	Device::~Device() {

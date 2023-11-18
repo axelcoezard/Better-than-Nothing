@@ -4,11 +4,9 @@
 
 namespace BetterThanNothing
 {
-	TexturePool::TexturePool(const std::string& basePath, Device* device, CommandPool* commandPool, SwapChain* swapChain)
-		: RessourcePool(basePath)
+	TexturePool::TexturePool(const std::string& basePath, Device* device, SwapChain* swapChain): RessourcePool(basePath)
 	{
 		m_Device = device;
-		m_CommandPool = commandPool;
 		m_SwapChain = swapChain;
 	}
 
@@ -94,8 +92,8 @@ namespace BetterThanNothing
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			image, imageMemory);
-		TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, *mipLevels, m_Device, m_CommandPool);
-		CopyBufferToImage(stagingBuffer, image, static_cast<u32>(texWidth), static_cast<u32>(texHeight), m_Device, m_CommandPool);
+		TransitionImageLayout(m_Device, image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, *mipLevels);
+		CopyBufferToImage(m_Device, stagingBuffer, image, static_cast<u32>(texWidth), static_cast<u32>(texHeight));
 		GenerateMipmaps(image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, *mipLevels);
 
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
@@ -209,7 +207,7 @@ namespace BetterThanNothing
 			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 			commandBuffer->CmdPipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, barrier);
-		}, m_Device, m_CommandPool);
+		}, m_Device);
 	}
 
 	void TexturePool::CreateImage(Device* pDevice, u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
@@ -249,7 +247,7 @@ namespace BetterThanNothing
 		vkBindImageMemory(device, image, imageMemory, 0);
 	}
 
-	void TexturePool::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels, Device* device, CommandPool* commandPool)
+	void TexturePool::TransitionImageLayout(Device* device, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels)
 	{
 		CommandBuffer::SingleTimeCommands([&](CommandBuffer* commandBuffer) {
 			VkPipelineStageFlags sourceStage;
@@ -302,10 +300,10 @@ namespace BetterThanNothing
 			}
 
 			commandBuffer->CmdPipelineBarrier(sourceStage, destinationStage, barrier);
-		}, device, commandPool);
+		}, device);
 	}
 
-	void TexturePool::CopyBufferToImage(VkBuffer buffer, VkImage image, u32 width, u32 height, Device* device, CommandPool* commandPool)
+	void TexturePool::CopyBufferToImage(Device* device, VkBuffer buffer, VkImage image, u32 width, u32 height)
 	{
 		CommandBuffer::SingleTimeCommands([&](CommandBuffer* commandBuffer) {
 			VkBufferImageCopy region{};
@@ -322,6 +320,6 @@ namespace BetterThanNothing
 			region.imageExtent = {width, height, 1};
 
 			commandBuffer->CmdCopyBufferToImage(buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, region);
-		}, device, commandPool);
+		}, device);
 	}
 };

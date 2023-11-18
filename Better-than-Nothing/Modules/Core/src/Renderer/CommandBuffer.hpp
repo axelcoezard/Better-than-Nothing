@@ -13,7 +13,7 @@ namespace BetterThanNothing
 
 		VkCommandBuffer		m_CommandBuffer { VK_NULL_HANDLE };
 	public:
-							CommandBuffer(Device* device, CommandPool* commandPool);
+							CommandBuffer(Device* device);
 							~CommandBuffer();
 
 							CommandBuffer(const CommandBuffer&) = delete;
@@ -41,7 +41,7 @@ namespace BetterThanNothing
 		void				CmdCopyBufferToImage(VkBuffer& buffer, VkImage& dstImage, VkImageLayout dstImageLayout, u32 regionCount, VkBufferImageCopy& regions);
 		void				CmdCopyBuffer(VkBuffer& srcBuffer, VkBuffer& dstBuffer, u32 regionCount, VkBufferCopy& regions);
 
-		static void			SingleTimeCommands(const std::function<void(CommandBuffer*)>& callback, Device* device, CommandPool* commandPool);
+		static void			SingleTimeCommands(const std::function<void(CommandBuffer*)>& callback, Device* device);
 
 	public:
 		VkCommandBuffer&	GetVkCommandBuffer()	{ return m_CommandBuffer; }

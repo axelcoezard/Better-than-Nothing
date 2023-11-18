@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Renderer/Window.hpp"
-
 namespace BetterThanNothing
 {
 	struct QueueFamilyIndices
@@ -21,10 +19,14 @@ namespace BetterThanNothing
 		std::vector<VkPresentModeKHR>	presentationModes;
 	};
 
+	class Window;
+	class CommandPool;
+
 	class Device
 	{
 	private:
 		Window*							m_Window;
+		CommandPool*					m_CommandPool;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -33,6 +35,7 @@ namespace BetterThanNothing
 		VkDevice						m_Device;
 		VkQueue							m_GraphicsQueue;
 		VkQueue							m_PresentationQueue;
+
 
 		const bool						m_EnableValidationLayers = true;
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
@@ -96,6 +99,8 @@ namespace BetterThanNothing
 		const std::vector<const char*>	GetValidationLayers()		{ return m_ValidationLayers; }
 		const std::vector<const char*>	GetDeviceExtensions()		{ return m_DeviceExtensions; }
 		VkSampleCountFlagBits&			GetMsaaSamples()			{ return m_MsaaSamples; }
+
+		CommandPool*					GetCommandPool()			{ return m_CommandPool; }
 
 		std::string&					GetVendorName() { return m_VendorName; }
 		std::string&					GetDeviceName() { return m_DeviceName; }

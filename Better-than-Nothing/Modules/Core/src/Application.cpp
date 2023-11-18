@@ -24,7 +24,7 @@ namespace BetterThanNothing
 		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
 
 		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetSwapChain());
-		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetCommandPool(), m_pRenderer->GetSwapChain());
+		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetSwapChain());
 	}
 
 	Application::~Application(void)

@@ -2,8 +2,11 @@
 
 namespace BetterThanNothing
 {
-	CommandBuffer::CommandBuffer(Device* device, CommandPool* commandPool): m_Device(device), m_CommandPool(commandPool)
+	CommandBuffer::CommandBuffer(Device* device)
 	{
+		m_Device = device;
+		m_CommandPool = device->GetCommandPool();
+
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -105,9 +108,9 @@ namespace BetterThanNothing
 		vkCmdCopyBuffer(m_CommandBuffer, srcBuffer, dstBuffer, regionCount, &regions);
 	}
 
-	void CommandBuffer::SingleTimeCommands(const std::function<void(CommandBuffer*)>& callback, Device* device, CommandPool* commandPool)
+	void CommandBuffer::SingleTimeCommands(const std::function<void(CommandBuffer*)>& callback, Device* device)
 	{
-		CommandBuffer* commandBuffer = new CommandBuffer(device, commandPool);
+		CommandBuffer* commandBuffer = new CommandBuffer(device);
 		commandBuffer->Begin();
 
 		callback(commandBuffer);
