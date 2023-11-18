@@ -6,25 +6,25 @@ namespace BetterThanNothing
 {
 	struct QueueFamilyIndices
 	{
-		std::optional<u32>			m_GraphicsFamily;
-		std::optional<u32>			m_PresentationFamily;
+		std::optional<u32>				graphicsFamily;
+		std::optional<u32>				presentationFamily;
 
 		bool IsComplete() {
-			return m_GraphicsFamily.has_value() && m_PresentationFamily.has_value();
+			return graphicsFamily.has_value() && presentationFamily.has_value();
 		}
 	};
 
 	struct SwapChainSupportDetails
 	{
-		VkSurfaceCapabilitiesKHR		m_Capabilities;
-		std::vector<VkSurfaceFormatKHR>	m_Formats;
-		std::vector<VkPresentModeKHR>	m_PresentationModes;
+		VkSurfaceCapabilitiesKHR		capabilities;
+		std::vector<VkSurfaceFormatKHR>	formats;
+		std::vector<VkPresentModeKHR>	presentationModes;
 	};
 
 	class Device
 	{
 	private:
-		Window*							m_pWindow;
+		Window*							m_Window;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -38,7 +38,7 @@ namespace BetterThanNothing
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*>	m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
+		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_8_BIT;
 
 		std::string						m_VendorName;
 		std::string						m_DeviceName;
@@ -72,7 +72,7 @@ namespace BetterThanNothing
 		void							Idle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
-		u32						FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
+		u32								FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
 		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 	private:

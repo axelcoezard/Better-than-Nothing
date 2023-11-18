@@ -14,7 +14,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
 namespace BetterThanNothing
 {
-	Device::Device(Window* pWindow): m_pWindow(pWindow) {
+	Device::Device(Window* pWindow): m_Window(pWindow) {
 		CreateInstance();
 		SetupDebugMessenger();
 		CreateSurface();
@@ -81,7 +81,7 @@ namespace BetterThanNothing
 	}
 
 	void Device::CreateSurface() {
-		if (glfwCreateWindowSurface(m_Instance, m_pWindow->GetPointer(), nullptr, &m_Surface) != VK_SUCCESS) {
+		if (glfwCreateWindowSurface(m_Instance, m_Window->GetPointer(), nullptr, &m_Surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
@@ -121,8 +121,8 @@ namespace BetterThanNothing
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		std::set<u32> uniqueQueueFamilies = {
-			indices.m_GraphicsFamily.value(),
-			indices.m_PresentationFamily.value()
+			indices.graphicsFamily.value(),
+			indices.presentationFamily.value()
 		};
 
 		f32 queuePriority = 1.0f;
@@ -158,8 +158,8 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to create logical device!");
 		}
 
-		vkGetDeviceQueue(m_Device, indices.m_GraphicsFamily.value(), 0, &m_GraphicsQueue);
-		vkGetDeviceQueue(m_Device, indices.m_PresentationFamily.value(), 0, &m_PresentationQueue);
+		vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &m_GraphicsQueue);
+		vkGetDeviceQueue(m_Device, indices.presentationFamily.value(), 0, &m_PresentationQueue);
 	}
 
 	bool Device::CheckValidationLayerSupport() {
@@ -222,7 +222,7 @@ namespace BetterThanNothing
 
 		if (bExtensionsSupported) {
 			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
-			bSwapChainAdequate = !swapChainSupport.m_Formats.empty() && !swapChainSupport.m_PresentationModes.empty();
+			bSwapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentationModes.empty();
 		}
 
 		VkPhysicalDeviceFeatures supportedFeatures;
@@ -268,13 +268,13 @@ namespace BetterThanNothing
 		u32 index = 0;
 		for (const auto& queueFamily : queueFamilies) {
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-				indices.m_GraphicsFamily = index;
+				indices.graphicsFamily = index;
 			}
 
 			VkBool32 presentationSupport = false;
 			vkGetPhysicalDeviceSurfaceSupportKHR(device, index, m_Surface, &presentationSupport);
 			if (presentationSupport) {
-				indices.m_PresentationFamily = index;
+				indices.presentationFamily = index;
 			}
 
 			if (indices.IsComplete()) {
@@ -287,22 +287,22 @@ namespace BetterThanNothing
 
 	SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device) {
 		SwapChainSupportDetails details;
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.m_Capabilities);
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.capabilities);
 
 		u32 formatCount;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, nullptr);
 
 		if (formatCount != 0) {
-			details.m_Formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, details.m_Formats.data());
+			details.formats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, details.formats.data());
 		}
 
 		u32 presentationModeCount;
 		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, nullptr);
 
 		if (presentationModeCount != 0) {
-			details.m_PresentationModes.resize(presentationModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, details.m_PresentationModes.data());
+			details.presentationModes.resize(presentationModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentationModeCount, details.presentationModes.data());
 		}
 		return details;
 	}

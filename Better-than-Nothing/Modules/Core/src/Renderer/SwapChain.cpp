@@ -56,16 +56,16 @@ namespace BetterThanNothing
 	{
 		SwapChainSupportDetails swapChainSupport = m_pDevice->QuerySwapChainSupport(m_pDevice->GetVkPhysicalDevice());
 
-		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.m_Formats);
-		VkPresentModeKHR presentationMode = ChooseSwapPresentMode(swapChainSupport.m_PresentationModes);
-		VkExtent2D extent = ChooseSwapExtent(swapChainSupport.m_Capabilities);
+		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+		VkPresentModeKHR presentationMode = ChooseSwapPresentMode(swapChainSupport.presentationModes);
+		VkExtent2D extent = ChooseSwapExtent(swapChainSupport.capabilities);
 
 		m_Format = surfaceFormat.format;
 		m_Extent = extent;
 
-		u32 imageCount = swapChainSupport.m_Capabilities.minImageCount + 1;
-		if (swapChainSupport.m_Capabilities.maxImageCount > 0 && imageCount > swapChainSupport.m_Capabilities.maxImageCount) {
-			imageCount = swapChainSupport.m_Capabilities.maxImageCount;
+		u32 imageCount = swapChainSupport.capabilities.minImageCount + 1;
+		if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+			imageCount = swapChainSupport.capabilities.maxImageCount;
 		}
 
 		VkSwapchainCreateInfoKHR createInfo{};
@@ -79,9 +79,9 @@ namespace BetterThanNothing
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 		QueueFamilyIndices indices = m_pDevice->FindQueueFamilies(m_pDevice->GetVkPhysicalDevice());
-		u32 queueFamilyIndices[] = { indices.m_GraphicsFamily.value(), indices.m_PresentationFamily.value() };
+		u32 queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentationFamily.value() };
 
-		if (indices.m_GraphicsFamily != indices.m_PresentationFamily) {
+		if (indices.graphicsFamily != indices.presentationFamily) {
 			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 			createInfo.queueFamilyIndexCount = 2;
 			createInfo.pQueueFamilyIndices = queueFamilyIndices;
@@ -91,7 +91,7 @@ namespace BetterThanNothing
 			createInfo.pQueueFamilyIndices = nullptr;
 		}
 
-		createInfo.preTransform = swapChainSupport.m_Capabilities.currentTransform;
+		createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
 		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 		createInfo.presentMode = presentationMode;
 		createInfo.clipped = VK_TRUE;
