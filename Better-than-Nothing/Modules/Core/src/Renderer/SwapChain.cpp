@@ -35,7 +35,7 @@ namespace BetterThanNothing
 		CreateSyncObjects();
 
 		m_UniformBuffersSize = 0;
-		m_UniformBuffersCapacity = 100;
+		m_UniformBuffersCapacity = 1000;
 
 		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);

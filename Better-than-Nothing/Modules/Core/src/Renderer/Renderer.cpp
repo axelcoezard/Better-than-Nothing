@@ -48,6 +48,7 @@ namespace BetterThanNothing
 	{
 		Pipeline* pPipeline = m_pPipeLines.at("main");
 
+		// Create a new uniform buffer and a new descriptor set for each new entity
 		while (pScene->HasPendingEntities()) {
 			Entity* newEntity = pScene->NextPendingEntity();
 			m_pSwapChain->CreateNewUniformBuffer();
@@ -81,6 +82,8 @@ namespace BetterThanNothing
 		DrawStream* drawStream = drawStreamBuilder.GetStream();
 		void* currentPipeline = nullptr;
 
+		// Draw all the DrawPacket in the DrawStream ordered by pipeline
+		// and bind the pipeline only when it changes
 		for (u32 i = 0; i < drawStream->size; i++) {
 			DrawPacket drawPacket = drawStream->drawPackets[i];
 
