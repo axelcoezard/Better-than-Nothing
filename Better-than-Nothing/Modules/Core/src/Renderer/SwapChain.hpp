@@ -73,8 +73,6 @@ namespace BetterThanNothing
 		void										CreateFramebuffers();
 
 	public:
-		VkImageView									CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
-
 		VkCommandBuffer								BeginSingleTimeCommands();
 		void										EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
 

@@ -12,7 +12,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
 namespace BetterThanNothing
 {
-	Device::Device(Window* pWindow): m_Window(pWindow) {
+	Device::Device(Window* pWindow): m_Window(pWindow)
+	{
 		CreateInstance();
 		SetupDebugMessenger();
 		CreateSurface();
@@ -22,7 +23,8 @@ namespace BetterThanNothing
 		m_CommandPool = new CommandPool(this);
 	}
 
-	Device::~Device() {
+	Device::~Device()
+	{
 		delete m_CommandPool;
 
 		vkDestroyDevice(m_Device, nullptr);
@@ -35,7 +37,8 @@ namespace BetterThanNothing
 		vkDestroyInstance(m_Instance, nullptr);
 	}
 
-	void Device::CreateInstance() {
+	void Device::CreateInstance()
+	{
 		if (m_EnableValidationLayers && !CheckValidationLayerSupport()) {
 			throw std::runtime_error("validation layers requested, but not available!");
 		}
@@ -71,7 +74,8 @@ namespace BetterThanNothing
 		}
 	}
 
-	void Device::SetupDebugMessenger() {
+	void Device::SetupDebugMessenger()
+	{
 		if (!m_EnableValidationLayers) return;
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo;
@@ -82,13 +86,15 @@ namespace BetterThanNothing
 		}
 	}
 
-	void Device::CreateSurface() {
+	void Device::CreateSurface()
+	{
 		if (glfwCreateWindowSurface(m_Instance, m_Window->GetPointer(), nullptr, &m_Surface) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
 
-	void Device::PickPhysicalDevice() {
+	void Device::PickPhysicalDevice()
+	{
 		u32 deviceCount = 0;
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
 
@@ -118,7 +124,8 @@ namespace BetterThanNothing
 		m_ApiVersion = std::to_string(deviceProperties.apiVersion);
 	}
 
-	void Device::CreateLogicalDevice() {
+	void Device::CreateLogicalDevice()
+	{
 		QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -164,7 +171,8 @@ namespace BetterThanNothing
 		vkGetDeviceQueue(m_Device, indices.presentationFamily.value(), 0, &m_PresentationQueue);
 	}
 
-	bool Device::CheckValidationLayerSupport() {
+	bool Device::CheckValidationLayerSupport()
+	{
 		u32 layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -188,7 +196,8 @@ namespace BetterThanNothing
 		return true;
 	}
 
-	bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device) {
+	bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device)
+	{
 		u32 extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
@@ -203,7 +212,8 @@ namespace BetterThanNothing
 		return requiredExtensions.empty();
 	}
 
-	std::vector<const char*> Device::GetRequiredExtensions() {
+	std::vector<const char*> Device::GetRequiredExtensions()
+	{
 		u32 glfwExtensionCount = 0;
 		const char** glfwExtensions;
 		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -217,7 +227,8 @@ namespace BetterThanNothing
 		return extensions;
 	}
 
-	bool Device::IsDeviceSuitable(VkPhysicalDevice device) {
+	bool Device::IsDeviceSuitable(VkPhysicalDevice device)
+	{
 		QueueFamilyIndices indices = FindQueueFamilies(device);
 		bool bExtensionsSupported = CheckDeviceExtensionSupport(device);
 		bool bSwapChainAdequate = false;
@@ -233,7 +244,8 @@ namespace BetterThanNothing
 		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate && supportedFeatures.samplerAnisotropy;
 	}
 
-	VkSampleCountFlagBits Device::GetMaxUsableSampleCount() {
+	VkSampleCountFlagBits Device::GetMaxUsableSampleCount()
+	{
 		VkPhysicalDeviceProperties physicalDeviceProperties;
 		vkGetPhysicalDeviceProperties(m_PhysicalDevice, &physicalDeviceProperties);
 
@@ -258,7 +270,8 @@ namespace BetterThanNothing
 		return "Unknown";
 	}
 
-	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device) {
+	QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
+	{
 		QueueFamilyIndices indices;
 
 		u32 queueFamilyCount = 0;
@@ -287,7 +300,8 @@ namespace BetterThanNothing
 		return indices;
 	}
 
-	SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device) {
+	SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device)
+	{
 		SwapChainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.capabilities);
 
@@ -309,7 +323,8 @@ namespace BetterThanNothing
 		return details;
 	}
 
-	u32 Device::FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties) {
+	u32 Device::FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties)
+	{
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &memProperties);
 
@@ -323,7 +338,8 @@ namespace BetterThanNothing
 		throw std::runtime_error("failed to find suitable memory type!");
 	}
 
-	VkFormat Device::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+	VkFormat Device::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+	{
 		for (VkFormat format : candidates) {
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &props);
@@ -376,7 +392,34 @@ namespace BetterThanNothing
 		}, this);
 	}
 
-	VkResult Device::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+	VkImageView Device::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels)
+	{
+		VkImageViewCreateInfo viewInfo{};
+		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfo.image = image;
+		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.format = format;
+		viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		viewInfo.subresourceRange.aspectMask = aspectFlags;
+		viewInfo.subresourceRange.baseMipLevel = 0;
+		viewInfo.subresourceRange.levelCount = 1;
+		viewInfo.subresourceRange.baseArrayLayer = 0;
+		viewInfo.subresourceRange.layerCount = 1;
+		viewInfo.subresourceRange.levelCount = mipLevels;
+
+		VkImageView imageView;
+		if (vkCreateImageView(m_Device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create texture image view!");
+		}
+
+		return imageView;
+	}
+
+	VkResult Device::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
+	{
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 		if (func != nullptr) {
 			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -385,14 +428,16 @@ namespace BetterThanNothing
 		}
 	}
 
-	void Device::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+	void Device::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
+	{
 		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 		if (func != nullptr) {
 			func(instance, debugMessenger, pAllocator);
 		}
 	}
 
-	void Device::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+	void Device::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+	{
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;

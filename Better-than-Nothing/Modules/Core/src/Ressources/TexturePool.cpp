@@ -103,7 +103,7 @@ namespace BetterThanNothing
 	}
 
 	VkImageView TexturePool::CreateTextureImageView(VkImage& image, u32 mipLevels) {
-		return m_SwapChain->CreateImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+		return m_Device->CreateImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
 	}
 
 	VkSampler TexturePool::CreateTextureSampler(u32 mipLevels)
