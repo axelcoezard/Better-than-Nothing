@@ -30,9 +30,9 @@ namespace BetterThanNothing
 	{
 	private:
 		Device*			m_Device;
-		SwapChain*		m_SwapChain;
+
 	public:
-						ModelPool(const std::string& basePath, Device* device, SwapChain* swapChain);
+						ModelPool(const std::string& basePath, Device* device);
 						~ModelPool();
 
 		Model*			GetRessource(const std::string& filePath) override;

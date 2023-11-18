@@ -23,6 +23,8 @@ namespace BetterThanNothing
 	}
 
 	Device::~Device() {
+		delete m_CommandPool;
+
 		vkDestroyDevice(m_Device, nullptr);
 
 		if (m_EnableValidationLayers) {

@@ -11,11 +11,9 @@
 
 namespace BetterThanNothing
 {
-	ModelPool::ModelPool(const std::string& basePath, Device* device, SwapChain* swapChain)
-		: RessourcePool(basePath)
+	ModelPool::ModelPool(const std::string& basePath, Device* device): RessourcePool(basePath)
 	{
 		m_Device = device;
-		m_SwapChain = swapChain;
 	}
 
 	ModelPool::~ModelPool()
