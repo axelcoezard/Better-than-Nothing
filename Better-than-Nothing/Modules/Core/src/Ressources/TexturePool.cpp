@@ -4,10 +4,9 @@
 
 namespace BetterThanNothing
 {
-	TexturePool::TexturePool(const std::string& basePath, Device* device, SwapChain* swapChain): RessourcePool(basePath)
+	TexturePool::TexturePool(const std::string& basePath, Device* device): RessourcePool(basePath)
 	{
 		m_Device = device;
-		m_SwapChain = swapChain;
 	}
 
 	TexturePool::~TexturePool()

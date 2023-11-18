@@ -50,9 +50,9 @@ namespace BetterThanNothing
 	{
 	private:
 		Device*			m_Device;
-		SwapChain*		m_SwapChain;
+
 	public:
-						TexturePool(const std::string& basePath, Device* device, SwapChain* swapChain);
+						TexturePool(const std::string& basePath, Device* device);
 						~TexturePool();
 
 		Texture*		GetRessource(const std::string& filePath) override;

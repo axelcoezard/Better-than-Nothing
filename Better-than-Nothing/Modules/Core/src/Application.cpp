@@ -21,10 +21,11 @@ namespace BetterThanNothing
 		m_pWindow->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
 
 		m_pDevice = new Device(m_pWindow);
-		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
 
 		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice);
-		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice, m_pRenderer->GetSwapChain());
+		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice);
+
+		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
 	}
 
 	Application::~Application(void)
