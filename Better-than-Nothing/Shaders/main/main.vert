@@ -1,9 +1,9 @@
 #version 450
 
-layout(binding = 0) uniform UniformBufferObject {
-	mat4 m_Model;
-	mat4 m_View;
-	mat4 m_Projection;
+layout(binding = 0) uniform GlobalUniforms {
+	mat4 model;
+	mat4 view;
+	mat4 projection;
 } ubo;
 
 layout(location = 0) in vec3 inPosition;
@@ -14,7 +14,7 @@ layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 
 void main() {
-	gl_Position = ubo.m_Projection * ubo.m_View * ubo.m_Model * vec4(inPosition, 1.0);
+	gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition, 1.0);
 	fragColor = inColor;
 	fragTexCoord = inTexCoord;
 }
