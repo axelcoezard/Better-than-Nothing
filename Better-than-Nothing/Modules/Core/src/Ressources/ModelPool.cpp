@@ -51,8 +51,6 @@ namespace BetterThanNothing
 		model->indexBufferMemory = indexBufferMemory;
 		model->indexCount = static_cast<u32>(indices.size());
 
-		LOG_SUCCESS("ModelPool: " + filePath);
-
 		m_Ressources[filePath] = model;
 		return model;
 	}
