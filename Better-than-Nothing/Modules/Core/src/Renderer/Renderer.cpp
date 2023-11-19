@@ -33,7 +33,7 @@ namespace BetterThanNothing
 
 	void Renderer::CreateNewUniformBuffer()
 	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+		VkDeviceSize bufferSize = sizeof(GlobalUniforms);
 
 		if (m_UniformBuffersSize >= m_UniformBuffersCapacity) {
 			m_UniformBuffersCapacity *= 2;
@@ -138,14 +138,10 @@ namespace BetterThanNothing
 				m_pSwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
 
-			UniformBufferObject ubo = {
-				.model = drawPacket.model,
-				.view = globalUniforms.view,
-				.projection = globalUniforms.projection
-			};
+			globalUniforms.model = drawPacket.model;
 
 			u32 currentFrame = m_pSwapChain->GetCurrentFrame();
-			memcpy(m_UniformBuffersMapped[currentFrame][i], &ubo, sizeof(ubo));
+			memcpy(m_UniformBuffersMapped[currentFrame][i], &globalUniforms, sizeof(globalUniforms));
 
 			m_pSwapChain->Draw(&drawPacket, i);
 		}

@@ -21,7 +21,6 @@
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/GlobalUniforms.hpp"
-#include "Renderer/UniformBufferObject.hpp"
 #include "Renderer/Vertex.hpp"
 #include "Renderer/DrawStream.hpp"
 

@@ -1,12 +1,4 @@
-#include "Renderer/Device.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/DescriptorPool.hpp"
-#include "Renderer/UniformBufferObject.hpp"
-
-#include "Ressources/Model.hpp"
-#include "Ressources/Texture.hpp"
-
-#include "Scene/Entity.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
@@ -137,7 +129,7 @@ namespace BetterThanNothing
 			VkDescriptorBufferInfo bufferInfo{};
 			bufferInfo.buffer = uniformBuffers[i][m_DescriptorPoolSize];
 			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
+			bufferInfo.range = sizeof(GlobalUniforms);
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
