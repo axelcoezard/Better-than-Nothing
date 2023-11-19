@@ -35,8 +35,6 @@ namespace BetterThanNothing
 
 			return pPipelineA->GetId() < pPipelineB->GetId();
 		});
-		// TO-FIX: this sort swaps the textures of models with the same pipeline
-
 
 		// Copy the draw packets sorted by pipeline into allocated memory
 		DrawPacket* drawPackets = new DrawPacket[m_Size];
