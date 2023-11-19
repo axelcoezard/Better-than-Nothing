@@ -50,13 +50,10 @@ namespace BetterThanNothing
 
 	void Scene::OnUpdate(f32 deltatime)
 	{
-		static u32 frames = 0;
-		if (frames / 60 > 1 && Input::IsKeyPressed(GLFW_KEY_0)) {
+		if (Input::IsKeyPressed(GLFW_KEY_0)) {
 			Entity* newModel = CreateEntity("42/42.obj", "42/42.jpg");
 			newModel->SetRotation(glm::vec3(30.0f * (f32) glfwGetTime()));
-			frames = 0;
 		}
-		frames++;
 
 		m_Camera->Update(deltatime);
 

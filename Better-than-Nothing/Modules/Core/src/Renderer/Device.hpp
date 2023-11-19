@@ -82,6 +82,10 @@ namespace BetterThanNothing
 		void							CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 		VkImageView						CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
 
+		void							CreateImage(u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void							TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels);
+		void							CopyBufferToImage(VkBuffer buffer, VkImage image, u32 width, u32 height);
+
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \
 																	 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, \

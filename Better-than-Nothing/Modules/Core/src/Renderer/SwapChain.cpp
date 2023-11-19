@@ -106,8 +106,7 @@ namespace BetterThanNothing
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		TexturePool::CreateImage(
-			m_pDevice,
+		m_pDevice->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(),
 			depthFormat,
@@ -118,15 +117,14 @@ namespace BetterThanNothing
 			m_DepthImageMemory);
 
 		m_DepthImageView = m_pDevice->CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		TexturePool::TransitionImageLayout(m_pDevice, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		m_pDevice->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
 	void SwapChain::CreateColorResources()
 	{
 		VkFormat colorFormat = m_Format;
 
-		TexturePool::CreateImage(
-			m_pDevice,
+		m_pDevice->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(), colorFormat,
 			VK_IMAGE_TILING_OPTIMAL,
