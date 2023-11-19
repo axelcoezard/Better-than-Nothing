@@ -147,7 +147,7 @@ namespace BetterThanNothing
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		 VkAttachmentDescription colorAttachmentResolve{};
+		VkAttachmentDescription colorAttachmentResolve{};
 		colorAttachmentResolve.format = m_Format;
 		colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
 		colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
