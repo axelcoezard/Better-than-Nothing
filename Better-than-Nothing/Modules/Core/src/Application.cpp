@@ -26,6 +26,7 @@ namespace BetterThanNothing
 		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice);
 
 		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
+		m_pRenderer->LoadPipeline("main", "main/main.vert.spv", "main/main.frag.spv");
 	}
 
 	Application::~Application(void)
