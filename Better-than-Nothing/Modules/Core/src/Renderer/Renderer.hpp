@@ -24,6 +24,12 @@ namespace BetterThanNothing
 
 		std::map<std::string, Pipeline*>	m_pPipeLines;
 
+		std::vector<std::vector<VkBuffer>>			m_UniformBuffers;
+		std::vector<std::vector<VkDeviceMemory>>	m_UniformBuffersMemory;
+		std::vector<std::vector<void*>>				m_UniformBuffersMapped;
+		u32											m_UniformBuffersSize;
+		u32											m_UniformBuffersCapacity;
+
 	public:
 											Renderer(Window* pWindow, Device* pDevice);
 											~Renderer();
@@ -32,6 +38,10 @@ namespace BetterThanNothing
 		Renderer&							operator=(const Renderer&) = delete;
 											Renderer(Renderer&&) = delete;
 		Renderer&							operator=(Renderer&&) = delete;
+
+	private:
+		void								CreateNewUniformBuffer();
+		void								DestroyUniformBuffers();
 
 	public:
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
@@ -44,5 +54,9 @@ namespace BetterThanNothing
 		DescriptorPool*						GetDescriptorPool()	{ return m_pDescriptorPool; }
 		std::map<std::string, Pipeline*>	GetPipeLines()		{ return m_pPipeLines; }
 		Scene*								GetScene()			{ return m_pScene; }
+
+		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
+		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
+		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
 	};
 };

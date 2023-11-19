@@ -4,8 +4,8 @@
 
 namespace BetterThanNothing
 {
-	SwapChain::SwapChain(Window* pWindow, Device* pDevice)
-		: m_pWindow(pWindow), m_pDevice(pDevice)
+	SwapChain::SwapChain(Window* pWindow, Device* pDevice, DescriptorPool* descriptorPool)
+		: m_pWindow(pWindow), m_pDevice(pDevice), m_pDescriptorPool(descriptorPool)
 	{
 		CreateSwapChain();
 		CreateImageViews();
@@ -17,18 +17,6 @@ namespace BetterThanNothing
 		CreateFramebuffers();
 		CreateCommandBuffers();
 		CreateSyncObjects();
-
-		m_UniformBuffersSize = 0;
-		m_UniformBuffersCapacity = 1000;
-
-		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-			m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
-			m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
-		}
 	}
 
 	SwapChain::~SwapChain()
@@ -48,8 +36,6 @@ namespace BetterThanNothing
 		for (auto commandBuffer : m_CommandBuffers) {
 			delete commandBuffer;
 		}
-
-		DestroyUniformBuffers();
 	}
 
 	void SwapChain::CreateSwapChain()
@@ -228,57 +214,6 @@ namespace BetterThanNothing
 		}
 	}
 
-	void SwapChain::CreateNewUniformBuffer()
-	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-
-		if (m_UniformBuffersSize >= m_UniformBuffersCapacity) {
-			m_UniformBuffersCapacity *= 2;
-
-			for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-				m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-				m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
-				m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
-			}
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_pDevice->CreateBuffer(bufferSize,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				m_UniformBuffers[i][m_UniformBuffersSize],
-				m_UniformBuffersMemory[i][m_UniformBuffersSize]);
-
-			vkMapMemory(m_pDevice->GetVkDevice(),
-				m_UniformBuffersMemory[i][m_UniformBuffersSize], 0,
-				bufferSize, 0,
-				&m_UniformBuffersMapped[i][m_UniformBuffersSize]);
-		}
-
-		m_UniformBuffersSize += 1;
-	}
-
-	void SwapChain::DestroyUniformBuffers()
-	{
-		auto device = m_pDevice->GetVkDevice();
-
-		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT || m_UniformBuffersMemory.size() < MAX_FRAMES_IN_FLIGHT) {
-			return;
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
-				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
-					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
-				}
-			}
-
-			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
-				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
-			}
-		}
-	}
-
 	void SwapChain::CreateCommandBuffers()
 	{
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
@@ -391,11 +326,6 @@ namespace BetterThanNothing
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	void SwapChain::BindDescriptorPool(DescriptorPool* pDescriptorPool)
-	{
-		m_pDescriptorPool = pDescriptorPool;
-	}
-
 	bool SwapChain::BeginRecordCommandBuffer()
 	{
 		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
@@ -451,19 +381,10 @@ namespace BetterThanNothing
 		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pPipeline->GetVkGraphicsPipeline());
 	}
 
-	void SwapChain::Draw(GlobalUniforms* globalUniforms, DrawPacket* pDrawPacket, u32 index)
+	void SwapChain::Draw(DrawPacket* pDrawPacket, u32 index)
 	{
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
 		auto pPipeline = static_cast<Pipeline*>(pDrawPacket->pipeline);
-
-		// Update the uniform buffer
-		UniformBufferObject ubo = {
-			.model = pDrawPacket->model,
-			.view = globalUniforms->view,
-			.projection = globalUniforms->projection
-		};
-
-		memcpy(m_UniformBuffersMapped[m_CurrentFrame][index], &ubo, sizeof(ubo));
 
 		commandBuffer->BindVertexBuffer(pDrawPacket->vertexBuffer);
 		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);

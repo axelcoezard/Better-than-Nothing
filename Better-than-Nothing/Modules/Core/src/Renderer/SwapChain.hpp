@@ -12,13 +12,13 @@ namespace BetterThanNothing
 	class Entity;
 	class Scene;
 	struct DrawPacket;
-	struct GlobalUniforms;
 
 	class SwapChain
 	{
 	private:
 		Window*										m_pWindow;
 		Device*										m_pDevice;
+		DescriptorPool*								m_pDescriptorPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;
@@ -38,22 +38,15 @@ namespace BetterThanNothing
 		VkDeviceMemory								m_ColorImageMemory;
 		VkImageView									m_ColorImageView;
 
-		std::vector<std::vector<VkBuffer>>			m_UniformBuffers;
-		std::vector<std::vector<VkDeviceMemory>>	m_UniformBuffersMemory;
-		std::vector<std::vector<void*>>				m_UniformBuffersMapped;
-		u32											m_UniformBuffersSize;
-		u32											m_UniformBuffersCapacity;
-
 		std::vector<VkSemaphore>					m_ImageAvailableSemaphores;
 		std::vector<VkSemaphore>					m_RenderFinishedSemaphores;
 		std::vector<VkFence>						m_InFlightFences;
 
 		u32											m_CurrentFrame = 0;
 		u32											m_CurrentImageIndex = 0;
-		DescriptorPool*								m_pDescriptorPool = nullptr;
 
 	public:
-													SwapChain(Window* window, Device* device);
+													SwapChain(Window* window, Device* device, DescriptorPool* descriptorPool);
 													~SwapChain();
 
 													SwapChain(const SwapChain&) = delete;
@@ -82,16 +75,12 @@ namespace BetterThanNothing
 		VkFormat									FindDepthFormat();
 		bool										HasStencilComponent(VkFormat format);
 
-		void										CreateNewUniformBuffer();
-		void										DestroyUniformBuffers();
-
 		void										CreateCommandBuffers();
 
-		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
 		bool										BeginRecordCommandBuffer();
 
 		void										BindPipeline(Pipeline* pPipeline);
-		void										Draw(GlobalUniforms* globalUniforms, DrawPacket* pDrawPacket, u32 index);
+		void										Draw(DrawPacket* pDrawPacket, u32 index);
 
 		void										EndRecordCommandBuffer();
 
@@ -115,9 +104,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>&						GetImages()						{ return m_Images; }
 		std::vector<VkImageView>&					GetImageViews()					{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&					GetFramebuffers()				{ return m_Framebuffers; }
-		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
-		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
-		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
+		u32&										GetCurrentFrame()				{ return m_CurrentFrame; }
 		CommandBuffer*								GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
 	};
 };

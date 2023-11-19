@@ -3,14 +3,12 @@
 namespace BetterThanNothing
 {
 	class Device;
-	class SwapChain;
 	class Entity;
 
 	class DescriptorPool
 	{
 	private:
 		Device*										m_pDevice;
-		SwapChain*									m_pSwapChain;
 
 		VkDescriptorSetLayout						m_DescriptorSetLayout;
 		VkDescriptorPool							m_DescriptorPool = VK_NULL_HANDLE;
@@ -20,7 +18,7 @@ namespace BetterThanNothing
 		u32											m_DescriptorPoolCapacity;
 
 	public:
-													DescriptorPool(Device* pDevice, SwapChain* pSwapChain);
+													DescriptorPool(Device* device);
 													~DescriptorPool();
 
 													DescriptorPool(const DescriptorPool&) = delete;
@@ -37,7 +35,7 @@ namespace BetterThanNothing
 		void										TransferDescriptorSets(VkDescriptorPool* newDescriptorPool);
 
 	public:
-		void										CreateDescriptorSets(Entity* entity);
+		void										CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers);
 
 		VkDescriptorSetLayout&						GetVkDescriptorSetLayout()	{ return m_DescriptorSetLayout; }
 		VkDescriptorPool&							GetVkDescriptorPool()		{ return m_DescriptorPool; }

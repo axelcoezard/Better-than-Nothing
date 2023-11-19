@@ -10,8 +10,8 @@
 
 namespace BetterThanNothing
 {
-	DescriptorPool::DescriptorPool(Device* pDevice, SwapChain* pSwapChain)
-		: m_pDevice(pDevice), m_pSwapChain(pSwapChain)
+	DescriptorPool::DescriptorPool(Device* pDevice)
+		: m_pDevice(pDevice)
 	{
 		m_DescriptorPoolSize = 0;
 
@@ -114,7 +114,7 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = 0;
 	}
 
-	void DescriptorPool::CreateDescriptorSets(Entity* entity)
+	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers)
 	{
 		VkDevice device = m_pDevice->GetVkDevice();
 
@@ -135,7 +135,7 @@ namespace BetterThanNothing
 			}
 
 			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = m_pSwapChain->GetUniformBuffers()[i][m_DescriptorPoolSize];
+			bufferInfo.buffer = uniformBuffers[i][m_DescriptorPoolSize];
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 
