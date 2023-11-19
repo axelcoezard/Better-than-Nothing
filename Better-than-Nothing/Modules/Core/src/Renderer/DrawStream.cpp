@@ -29,12 +29,14 @@ namespace BetterThanNothing
 	DrawStream* DrawStreamBuilder::GetStream()
 	{
 		// Sort the draw packets by pipeline
-		std::sort(m_DrawPackets.begin(), m_DrawPackets.end(), [](const DrawPacket& a, const DrawPacket& b){
-			auto pPipelineA = static_cast<Pipeline*>(a.pipeline);
-			auto pPipelineB = static_cast<Pipeline*>(b.pipeline);
+		//std::sort(m_DrawPackets.begin(), m_DrawPackets.end(), [](const DrawPacket& a, const DrawPacket& b){
+		//	auto pPipelineA = static_cast<Pipeline*>(a.pipeline);
+		//	auto pPipelineB = static_cast<Pipeline*>(b.pipeline);
+		//
+		//	return pPipelineA->GetId() < pPipelineB->GetId();
+		//});
+		// TO-FIX: this swap the textures of models with the same pipeline
 
-			return pPipelineA->GetId() < pPipelineB->GetId();
-		});
 
 		// Copy the draw packets sorted by pipeline into allocated memory
 		DrawPacket* drawPackets = new DrawPacket[m_Size];

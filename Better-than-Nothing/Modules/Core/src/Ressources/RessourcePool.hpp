@@ -14,8 +14,8 @@ namespace BetterThanNothing
 	class RessourcePool
 	{
 	protected:
-		std::string					m_BasePath;
-		std::map<std::string, T*>	m_Ressources;
+		std::string							m_BasePath;
+		std::unordered_map<std::string, T*>	m_Ressources;
 	public:
 									RessourcePool(const std::string& basePath): m_BasePath(basePath) {}
 		virtual						~RessourcePool() {}
