@@ -70,6 +70,13 @@ namespace BetterThanNothing
 		std::vector<Vertex> vertices;
 		std::vector<u32> indices;
 
+		f32 minX = std::numeric_limits<f32>::max();
+		f32 minY = std::numeric_limits<f32>::max();
+		f32 minZ = std::numeric_limits<f32>::max();
+		f32 maxX = std::numeric_limits<f32>::lowest();
+		f32 maxY = std::numeric_limits<f32>::lowest();
+		f32 maxZ = std::numeric_limits<f32>::lowest();
+
 		for (const auto& shape : shapes) {
 			for (const auto& index : shape.mesh.indices) {
 				Vertex vertex{};
@@ -79,6 +86,13 @@ namespace BetterThanNothing
 					attrib.vertices[3 * index.vertex_index + 1],
 					attrib.vertices[3 * index.vertex_index + 2]
 				};
+
+				if (vertex.m_Position.x < minX) minX = vertex.m_Position.x;
+				if (vertex.m_Position.x > maxX) maxX = vertex.m_Position.x;
+				if (vertex.m_Position.y < minY) minY = vertex.m_Position.y;
+				if (vertex.m_Position.y > maxY) maxY = vertex.m_Position.y;
+				if (vertex.m_Position.z < minZ) minZ = vertex.m_Position.z;
+				if (vertex.m_Position.z > maxZ) maxZ = vertex.m_Position.z;
 
 				vertex.m_TextureCoordinates = {
 					attrib.texcoords[2 * index.texcoord_index + 0],
@@ -95,6 +109,14 @@ namespace BetterThanNothing
 				indices.push_back(uniqueVertices[vertex]);
 			}
 		}
+
+		glm::vec3 boundingBox = {maxX - minX, maxY - minY, maxZ - minZ};
+		glm::vec3 boundingBoxCenter = {minX + boundingBox.x / 2.0f, minY + boundingBox.y / 2.0f, minZ + boundingBox.z / 2.0f};
+
+		for (auto& vertex : vertices) {
+			vertex.m_Position -= boundingBoxCenter;
+		}
+
 		return {vertices, indices};
 	}
 

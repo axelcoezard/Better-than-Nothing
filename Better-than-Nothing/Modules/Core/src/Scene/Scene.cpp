@@ -61,7 +61,8 @@ namespace BetterThanNothing
 
 		if (m_Entities.size() > 0) {
 			m_Entities[0]->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-			m_Entities[0]->SetRotation(glm::vec3(0.0f, (f32) rotation, 0.0f));
+			m_Entities[0]->SetRotation(0.0f, (f32) rotation, 0.0f);
+			m_Entities[1]->SetRotation(glm::vec3(0.0f, (f32) -rotation, 0.0f));
 		}
 	}
 
