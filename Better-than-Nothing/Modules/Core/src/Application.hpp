@@ -52,6 +52,7 @@ namespace BetterThanNothing
 		 * @brief The current Scene of the Application
 		*/
 		u32 m_CurrentSceneId;
+
 	public:
 		/**
 		 * @brief Construct a new Application object
