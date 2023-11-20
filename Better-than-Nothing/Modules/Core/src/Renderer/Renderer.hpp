@@ -16,13 +16,13 @@ namespace BetterThanNothing
 	class Renderer
 	{
 	private:
-		Window*								m_pWindow;
-		Device*								m_pDevice;
-		SwapChain*							m_pSwapChain;
-		DescriptorPool*						m_pDescriptorPool;
-		Scene*								m_pScene;
+		Window*								m_Window;
+		Device*								m_Device;
+		SwapChain*							m_SwapChain;
+		DescriptorPool*						m_DescriptorPool;
+		Scene*								m_Scene;
 
-		std::map<std::string, Pipeline*>	m_pPipeLines;
+		std::map<std::string, Pipeline*>	m_PipeLines;
 
 		std::vector<std::vector<VkBuffer>>			m_UniformBuffers;
 		std::vector<std::vector<VkDeviceMemory>>	m_UniformBuffersMemory;
@@ -48,12 +48,12 @@ namespace BetterThanNothing
 		void								Render(Scene* pScene);
 
 	public:
-		Window*								GetWindow()			{ return m_pWindow; }
-		Device*								GetDevice()			{ return m_pDevice; }
-		SwapChain*							GetSwapChain()		{ return m_pSwapChain; }
-		DescriptorPool*						GetDescriptorPool()	{ return m_pDescriptorPool; }
-		std::map<std::string, Pipeline*>	GetPipeLines()		{ return m_pPipeLines; }
-		Scene*								GetScene()			{ return m_pScene; }
+		Window*								GetWindow()			{ return m_Window; }
+		Device*								GetDevice()			{ return m_Device; }
+		SwapChain*							GetSwapChain()		{ return m_SwapChain; }
+		DescriptorPool*						GetDescriptorPool()	{ return m_DescriptorPool; }
+		std::map<std::string, Pipeline*>	GetPipeLines()		{ return m_PipeLines; }
+		Scene*								GetScene()			{ return m_Scene; }
 
 		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
 		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }

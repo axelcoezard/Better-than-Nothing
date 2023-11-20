@@ -13,13 +13,13 @@ namespace BetterThanNothing
 		DescriptorPool* pDescriptorPool,
 		const std::string& vertexShaderFilePath,
 		const std::string& fragmentShaderFilePath
-	) : m_Id(id), m_pDevice(pDevice), m_pSwapChain(pSwapChain), m_pDescriptorPool(pDescriptorPool) {
+	) : m_Id(id), m_Device(pDevice), m_SwapChain(pSwapChain), m_DescriptorPool(pDescriptorPool) {
 		LoadShader(vertexShaderFilePath, fragmentShaderFilePath);
 		CreateGraphicsPipeline();
 	}
 
 	Pipeline::~Pipeline() {
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
@@ -60,7 +60,7 @@ namespace BetterThanNothing
 		createInfo.pCode = reinterpret_cast<const u32*>(code.data());
 
 		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(m_pDevice->GetVkDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		if (vkCreateShaderModule(m_Device->GetVkDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
 		return shaderModule;
@@ -114,7 +114,7 @@ namespace BetterThanNothing
 		VkPipelineMultisampleStateCreateInfo multisampling{};
 		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		multisampling.sampleShadingEnable = VK_TRUE;
-		multisampling.rasterizationSamples = m_pDevice->GetMsaaSamples();
+		multisampling.rasterizationSamples = m_Device->GetMsaaSamples();
 		multisampling.minSampleShading = .2f;
 
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
@@ -153,9 +153,9 @@ namespace BetterThanNothing
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &m_pDescriptorPool->GetVkDescriptorSetLayout();
+		pipelineLayoutInfo.pSetLayouts = &m_DescriptorPool->GetVkDescriptorSetLayout();
 
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 		if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
@@ -173,7 +173,7 @@ namespace BetterThanNothing
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicState;
 		pipelineInfo.layout = m_PipelineLayout;
-		pipelineInfo.renderPass = m_pSwapChain->GetVkRenderPass();
+		pipelineInfo.renderPass = m_SwapChain->GetVkRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.basePipelineIndex = -1;

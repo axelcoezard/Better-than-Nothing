@@ -7,18 +7,18 @@ namespace BetterThanNothing
 	class EventDispatcher
 	{
 	private:
-		Event*	m_pEvent;
-		void*	m_pContext;
+		Event*	m_Event;
+		void*	m_Context;
 	public:
 		EventDispatcher(Event* event, void* context)
-			: m_pEvent(event), m_pContext(context) { };
+			: m_Event(event), m_Context(context) { };
 
 		template<typename T, typename F>
 		bool Dispatch(const F& listener) {
-			if (m_pEvent->GetName() == T::GetStaticName()) {
-				m_pEvent->SetContext(m_pContext);
-				bool handled = listener(static_cast<T*>(m_pEvent));
-				m_pEvent->SetHandled(handled);
+			if (m_Event->GetName() == T::GetStaticName()) {
+				m_Event->SetContext(m_Context);
+				bool handled = listener(static_cast<T*>(m_Event));
+				m_Event->SetHandled(handled);
 				return handled;
 			}
 			return false;

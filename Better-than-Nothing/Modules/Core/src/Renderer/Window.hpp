@@ -7,14 +7,14 @@ namespace BetterThanNothing
 	class Window
 	{
 	private:
-		GLFWwindow*					m_pWindow;
+		GLFWwindow*					m_Window;
 
 		std::string					m_Title;
-		u32					m_Width, m_Height;
+		u32							m_Width, m_Height;
 
-		bool						m_bResized = false;
+		bool						m_Resized = false;
 
-		std::function<void(Event*)>	m_eventCallback;
+		std::function<void(Event*)>	m_EventCallback;
 	public:
 						Window(std::string_view title, u32 width, u32 height);
 						~Window();
@@ -24,8 +24,8 @@ namespace BetterThanNothing
 
 		void			Open();
 		void			Poll()						{ glfwPollEvents(); }
-		bool			ShouldClose()				{ return glfwWindowShouldClose(m_pWindow) ==  GLFW_TRUE; }
-		void			Close()						{ glfwSetWindowShouldClose(m_pWindow, GLFW_TRUE); }
+		bool			ShouldClose()				{ return glfwWindowShouldClose(m_Window) ==  GLFW_TRUE; }
+		void			Close()						{ glfwSetWindowShouldClose(m_Window, GLFW_TRUE); }
 
 		void			SetEventCallback(std::function<void(Event*)> eventcallback);
 
@@ -35,12 +35,12 @@ namespace BetterThanNothing
 		static void		MouseScrollCallback(GLFWwindow* window, f64 xoffset, f64 yoffset);
 		static void		MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
-		GLFWwindow*		GetPointer()				{ return m_pWindow; }
+		GLFWwindow*		GetPointer()				{ return m_Window; }
 		std::string&	GetTitle()					{ return m_Title; }
 		u32		GetWidth()					{ return m_Width; }
 		u32		GetHeight()					{ return m_Height; }
 
-		bool			IsResized()					{ return m_bResized; }
-		void			SetResized(bool bResized)	{ m_bResized = bResized; }
+		bool			IsResized()					{ return m_Resized; }
+		void			SetResized(bool bResized)	{ m_Resized = bResized; }
 	};
 };

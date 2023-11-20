@@ -15,9 +15,9 @@ namespace BetterThanNothing
 	class Application
 	{
 	protected:
-		Window*				m_pWindow;
-		Device*				m_pDevice;
-		Renderer*			m_pRenderer;
+		Window*				m_Window;
+		Device*				m_Device;
+		Renderer*			m_Renderer;
 
 		ModelPool*			m_ModelPool;
 		TexturePool*		m_TexturePool;
@@ -37,8 +37,8 @@ namespace BetterThanNothing
 
 		Scene*				CreateScene(const std::string& name);
 
-		Window*				GetWindow() { return m_pWindow; }
-		Device*				GetDevice() { return m_pDevice; }
-		Renderer*			GetRenderer() { return m_pRenderer; }
+		Window*				GetWindow() { return m_Window; }
+		Device*				GetDevice() { return m_Device; }
+		Renderer*			GetRenderer() { return m_Renderer; }
 	};
 };

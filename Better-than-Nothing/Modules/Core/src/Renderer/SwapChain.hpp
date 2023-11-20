@@ -16,9 +16,9 @@ namespace BetterThanNothing
 	class SwapChain
 	{
 	private:
-		Window*										m_pWindow;
-		Device*										m_pDevice;
-		DescriptorPool*								m_pDescriptorPool;
+		Window*										m_Window;
+		Device*										m_Device;
+		DescriptorPool*								m_DescriptorPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;

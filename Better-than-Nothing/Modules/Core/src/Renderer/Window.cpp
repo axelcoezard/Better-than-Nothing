@@ -5,15 +5,15 @@
 namespace BetterThanNothing
 {
 	Window::Window(std::string_view title, u32 width, u32 height)
-		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height)
+		: m_Window(nullptr), m_Title(title), m_Width(width), m_Height(height)
 	{
 		Open();
 	}
 
 	Window::~Window()
 	{
-		if (m_pWindow != nullptr) {
-			glfwDestroyWindow(m_pWindow);
+		if (m_Window != nullptr) {
+			glfwDestroyWindow(m_Window);
 			glfwTerminate();
 		}
 	}
@@ -25,19 +25,19 @@ namespace BetterThanNothing
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		m_pWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
 
-		glfwSetWindowUserPointer(m_pWindow, this);
-		glfwSetFramebufferSizeCallback(m_pWindow, ResizeCallback);
-		glfwSetKeyCallback(m_pWindow, KeyCallback);
-		glfwSetCursorPosCallback(m_pWindow, MouseCursorCallback);
-		glfwSetScrollCallback(m_pWindow, MouseScrollCallback);
-		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
+		glfwSetWindowUserPointer(m_Window, this);
+		glfwSetFramebufferSizeCallback(m_Window, ResizeCallback);
+		glfwSetKeyCallback(m_Window, KeyCallback);
+		glfwSetCursorPosCallback(m_Window, MouseCursorCallback);
+		glfwSetScrollCallback(m_Window, MouseScrollCallback);
+		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);
 	}
 
 	void Window::SetEventCallback(std::function<void(Event*)> eventcallback)
 	{
-		m_eventCallback = eventcallback;
+		m_EventCallback = eventcallback;
 	}
 
 	void Window::ResizeCallback(GLFWwindow* pWindow, int width, int height)
@@ -70,7 +70,7 @@ namespace BetterThanNothing
 		}
 
 		if (event != nullptr) {
-			pWindow->m_eventCallback(event);
+			pWindow->m_EventCallback(event);
 		}
 	}
 

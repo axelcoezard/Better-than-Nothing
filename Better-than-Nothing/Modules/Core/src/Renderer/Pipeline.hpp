@@ -10,9 +10,9 @@ namespace BetterThanNothing
 	{
 	private:
 		std::string			m_Id;
-		Device*				m_pDevice;
-		SwapChain*			m_pSwapChain;
-		DescriptorPool*		m_pDescriptorPool;
+		Device*				m_Device;
+		SwapChain*			m_SwapChain;
+		DescriptorPool*		m_DescriptorPool;
 
 
 

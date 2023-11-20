@@ -5,7 +5,7 @@
 namespace BetterThanNothing
 {
 	SwapChain::SwapChain(Window* pWindow, Device* pDevice, DescriptorPool* descriptorPool)
-		: m_pWindow(pWindow), m_pDevice(pDevice), m_pDescriptorPool(descriptorPool)
+		: m_Window(pWindow), m_Device(pDevice), m_DescriptorPool(descriptorPool)
 	{
 		CreateSwapChain();
 		CreateImageViews();
@@ -21,7 +21,7 @@ namespace BetterThanNothing
 
 	SwapChain::~SwapChain()
 	{
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 
 		CleanupSwapChain();
 
@@ -40,7 +40,7 @@ namespace BetterThanNothing
 
 	void SwapChain::CreateSwapChain()
 	{
-		SwapChainSupportDetails swapChainSupport = m_pDevice->QuerySwapChainSupport(m_pDevice->GetVkPhysicalDevice());
+		SwapChainSupportDetails swapChainSupport = m_Device->QuerySwapChainSupport(m_Device->GetVkPhysicalDevice());
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentationMode = ChooseSwapPresentMode(swapChainSupport.presentationModes);
@@ -56,7 +56,7 @@ namespace BetterThanNothing
 
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = m_pDevice->GetVkSurface();
+		createInfo.surface = m_Device->GetVkSurface();
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
 		createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -64,7 +64,7 @@ namespace BetterThanNothing
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = m_pDevice->FindQueueFamilies(m_pDevice->GetVkPhysicalDevice());
+		QueueFamilyIndices indices = m_Device->FindQueueFamilies(m_Device->GetVkPhysicalDevice());
 		u32 queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentationFamily.value() };
 
 		if (indices.graphicsFamily != indices.presentationFamily) {
@@ -83,14 +83,14 @@ namespace BetterThanNothing
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-		if (vkCreateSwapchainKHR(m_pDevice->GetVkDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
+		if (vkCreateSwapchainKHR(m_Device->GetVkDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create swap chain!");
 		}
 
-		vkGetSwapchainImagesKHR(m_pDevice->GetVkDevice(), m_SwapChain, &imageCount, nullptr);
+		vkGetSwapchainImagesKHR(m_Device->GetVkDevice(), m_SwapChain, &imageCount, nullptr);
 		m_Images.resize(imageCount);
 
-		vkGetSwapchainImagesKHR(m_pDevice->GetVkDevice(), m_SwapChain, &imageCount, m_Images.data());
+		vkGetSwapchainImagesKHR(m_Device->GetVkDevice(), m_SwapChain, &imageCount, m_Images.data());
 	}
 
 	void SwapChain::CreateImageViews()
@@ -98,7 +98,7 @@ namespace BetterThanNothing
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
-			m_ImageViews[i] = m_pDevice->CreateImageView(m_Images[i], m_Format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+			m_ImageViews[i] = m_Device->CreateImageView(m_Images[i], m_Format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 		}
 	}
 
@@ -106,9 +106,9 @@ namespace BetterThanNothing
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		m_pDevice->CreateImage(
+		m_Device->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
-			m_pDevice->GetMsaaSamples(),
+			m_Device->GetMsaaSamples(),
 			depthFormat,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -116,30 +116,30 @@ namespace BetterThanNothing
 			m_DepthImage,
 			m_DepthImageMemory);
 
-		m_DepthImageView = m_pDevice->CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		m_pDevice->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		m_DepthImageView = m_Device->CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+		m_Device->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
 	void SwapChain::CreateColorResources()
 	{
 		VkFormat colorFormat = m_Format;
 
-		m_pDevice->CreateImage(
+		m_Device->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
-			m_pDevice->GetMsaaSamples(), colorFormat,
+			m_Device->GetMsaaSamples(), colorFormat,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_ColorImage, m_ColorImageMemory);
 
-		m_ColorImageView = m_pDevice->CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+		m_ColorImageView = m_Device->CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
 	void SwapChain::CreateRenderPass()
 	{
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_Format;
-		colorAttachment.samples = m_pDevice->GetMsaaSamples();
+		colorAttachment.samples = m_Device->GetMsaaSamples();
 		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -167,7 +167,7 @@ namespace BetterThanNothing
 
 		VkAttachmentDescription depthAttachment{};
 		depthAttachment.format = FindDepthFormat();
-		depthAttachment.samples = m_pDevice->GetMsaaSamples();
+		depthAttachment.samples = m_Device->GetMsaaSamples();
 		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -207,7 +207,7 @@ namespace BetterThanNothing
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(m_pDevice->GetVkDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(m_Device->GetVkDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create render pass!");
 		}
 	}
@@ -217,7 +217,7 @@ namespace BetterThanNothing
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_CommandBuffers[i] = new CommandBuffer(m_pDevice);
+			m_CommandBuffers[i] = new CommandBuffer(m_Device);
 		}
 	}
 
@@ -234,7 +234,7 @@ namespace BetterThanNothing
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS ||
 				vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS ||
@@ -265,7 +265,7 @@ namespace BetterThanNothing
 			framebufferInfo.height = m_Extent.height;
 			framebufferInfo.layers = 1;
 
-			if (vkCreateFramebuffer(m_pDevice->GetVkDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
+			if (vkCreateFramebuffer(m_Device->GetVkDevice(), &framebufferInfo, nullptr, &m_Framebuffers[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create framebuffer!");
 			}
 		}
@@ -273,7 +273,7 @@ namespace BetterThanNothing
 
 	void SwapChain::CleanupSwapChain()
 	{
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 
 		vkDestroyImageView(device, m_DepthImageView, nullptr);
 		vkDestroyImage(device, m_DepthImage, nullptr);
@@ -296,7 +296,7 @@ namespace BetterThanNothing
 
 	void SwapChain::RecreateSwapChain()
 	{
-		auto window = m_pWindow->GetPointer();
+		auto window = m_Window->GetPointer();
 		int width = 0, height = 0;
 
 		glfwGetFramebufferSize(window, &width, &height);
@@ -305,7 +305,7 @@ namespace BetterThanNothing
 			glfwWaitEvents();
 		}
 
-		m_pDevice->WaitIdle();
+		m_Device->WaitIdle();
 
 		CleanupSwapChain();
 
@@ -318,7 +318,7 @@ namespace BetterThanNothing
 
 	VkFormat SwapChain::FindDepthFormat()
 	{
-		return m_pDevice->FindSupportedFormat(
+		return m_Device->FindSupportedFormat(
 			{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
@@ -388,7 +388,7 @@ namespace BetterThanNothing
 		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);
 
 		commandBuffer->BindDescriptorSets(
-			m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
+			m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
 			pipeline->GetVkPipelineLayout());
 
 		commandBuffer->DrawIndexed(pDrawPacket->indicesCount);
@@ -418,7 +418,7 @@ namespace BetterThanNothing
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		if (vkQueueSubmit(m_pDevice->GetVkGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS) {
+		if (vkQueueSubmit(m_Device->GetVkGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS) {
 			throw std::runtime_error("failed to submit draw command buffer!");
 		}
 
@@ -434,10 +434,10 @@ namespace BetterThanNothing
 		presentInfo.pImageIndices = &m_CurrentImageIndex;
 		presentInfo.pResults = nullptr;
 
-		VkResult result = vkQueuePresentKHR(m_pDevice->GetVkPresentationQueue(), &presentInfo);
+		VkResult result = vkQueuePresentKHR(m_Device->GetVkPresentationQueue(), &presentInfo);
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_pWindow->IsResized()) {
-			m_pWindow->SetResized(false);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window->IsResized()) {
+			m_Window->SetResized(false);
 			RecreateSwapChain();
 		} else if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swap chain image!");
@@ -449,7 +449,7 @@ namespace BetterThanNothing
 	VkResult SwapChain::AcquireNextImage()
 	{
 		return vkAcquireNextImageKHR(
-			m_pDevice->GetVkDevice(),
+			m_Device->GetVkDevice(),
 			m_SwapChain,
 			UINT64_MAX,
 			m_ImageAvailableSemaphores[m_CurrentFrame],
@@ -459,12 +459,12 @@ namespace BetterThanNothing
 
 	void SwapChain::WaitForFences()
 	{
-		vkWaitForFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+		vkWaitForFences(m_Device->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 	}
 
 	void SwapChain::ResetFences()
 	{
-		vkResetFences(m_pDevice->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
+		vkResetFences(m_Device->GetVkDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
 	}
 
 	void SwapChain::NextFrame()
@@ -499,7 +499,7 @@ namespace BetterThanNothing
 		}
 
 		int width, height;
-		glfwGetFramebufferSize(m_pWindow->GetPointer(), &width, &height);
+		glfwGetFramebufferSize(m_Window->GetPointer(), &width, &height);
 
 		VkExtent2D actualExtent = { static_cast<u32>(width), static_cast<u32>(height)};
 		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);

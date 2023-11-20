@@ -2,10 +2,10 @@
 
 namespace BetterThanNothing
 {
-	Renderer::Renderer(Window* pWindow, Device* pDevice): m_pWindow(pWindow), m_pDevice(pDevice)
+	Renderer::Renderer(Window* pWindow, Device* pDevice): m_Window(pWindow), m_Device(pDevice)
 	{
-		m_pDescriptorPool = new DescriptorPool(m_pDevice);
-		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice, m_pDescriptorPool);
+		m_DescriptorPool = new DescriptorPool(m_Device);
+		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
 
 		m_UniformBuffersSize = 0;
 		m_UniformBuffersCapacity = 1000;
@@ -22,13 +22,13 @@ namespace BetterThanNothing
 
 	Renderer::~Renderer()
 	{
-		for (auto & entry : m_pPipeLines) {
+		for (auto & entry : m_PipeLines) {
 			delete entry.second;
 		}
 
 		DestroyUniformBuffers();
-		delete m_pDescriptorPool;
-		delete m_pSwapChain;
+		delete m_DescriptorPool;
+		delete m_SwapChain;
 	}
 
 	void Renderer::CreateNewUniformBuffer()
@@ -46,13 +46,13 @@ namespace BetterThanNothing
 		}
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_pDevice->CreateBuffer(bufferSize,
+			m_Device->CreateBuffer(bufferSize,
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 				m_UniformBuffers[i][m_UniformBuffersSize],
 				m_UniformBuffersMemory[i][m_UniformBuffersSize]);
 
-			vkMapMemory(m_pDevice->GetVkDevice(),
+			vkMapMemory(m_Device->GetVkDevice(),
 				m_UniformBuffersMemory[i][m_UniformBuffersSize], 0,
 				bufferSize, 0,
 				&m_UniformBuffersMapped[i][m_UniformBuffersSize]);
@@ -63,7 +63,7 @@ namespace BetterThanNothing
 
 	void Renderer::DestroyUniformBuffers()
 	{
-		auto device = m_pDevice->GetVkDevice();
+		auto device = m_Device->GetVkDevice();
 
 		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT || m_UniformBuffersMemory.size() < MAX_FRAMES_IN_FLIGHT) {
 			return;
@@ -85,24 +85,24 @@ namespace BetterThanNothing
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 	{
 		const std::string& basePath = "/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/";
-		auto pipeline = new Pipeline(id, m_pDevice, m_pSwapChain, m_pDescriptorPool, basePath + vertexShaderFilePath, basePath + fragmentShaderFilePath);
+		auto pipeline = new Pipeline(id, m_Device, m_SwapChain, m_DescriptorPool, basePath + vertexShaderFilePath, basePath + fragmentShaderFilePath);
 		auto entry = std::pair<std::string, Pipeline*>(id, pipeline);
 
-		m_pPipeLines.insert(entry);
+		m_PipeLines.insert(entry);
 	}
 
 	void Renderer::Render(Scene* pScene)
 	{
-		Pipeline* pPipeline = m_pPipeLines.at("main");
+		Pipeline* pPipeline = m_PipeLines.at("main");
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
 		while (pScene->HasPendingEntities()) {
 			Entity* newEntity = pScene->NextPendingEntity();
 			CreateNewUniformBuffer();
-			m_pDescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
+			m_DescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
 		}
 
-		if (!m_pSwapChain->BeginRecordCommandBuffer()) {
+		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");
 		}
 
@@ -136,19 +136,19 @@ namespace BetterThanNothing
 
 			if (drawPacket.pipeline != currentPipeline) {
 				currentPipeline = drawPacket.pipeline;
-				m_pSwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
+				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
 
 			globalUniforms.model = drawPacket.model;
 
 			memcpy(
-				m_UniformBuffersMapped[m_pSwapChain->GetCurrentFrame()][i],
+				m_UniformBuffersMapped[m_SwapChain->GetCurrentFrame()][i],
 				&globalUniforms,
 				sizeof(globalUniforms));
 
-			m_pSwapChain->Draw(&drawPacket, i);
+			m_SwapChain->Draw(&drawPacket, i);
 		}
 
-		m_pSwapChain->EndRecordCommandBuffer();
+		m_SwapChain->EndRecordCommandBuffer();
 	}
 }
