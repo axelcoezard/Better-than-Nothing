@@ -87,21 +87,71 @@ namespace BetterThanNothing
 		/**
 		 * @brief Update a mouse button
 		 * @param button The button to update
-		 * @param action The
+		 * @param action The action of the button
 		 */
 		static void UpdateMouseButton(int button, int action);
+
+		/**
+		 * @brief Set a mouse button as pressed
+		 * @param button The button to set as pressed
+		 */
 		static void PressMouseButton(int button);
+
+		/**
+		 * @brief Set a mouse button as released
+		 * @param button The button to set as released
+		 */
 		static void ReleaseMouseButton(int button);
 
+		/**
+		 * @brief Update the mouse position
+		 * @param x The X position of the mouse
+		 * @param y The Y position of the mouse
+		 */
 		static void UpdateMousePosition(f64 x, f64 y);
+
+		/**
+		 * @brief Get the mouse position
+		 * @return The mouse position vector
+		 */
 		static glm::vec2 GetMousePosition();
+
+		/**
+		 * @brief Get the last mouse position
+		 * @return The last mouse position vector
+		 */
 		static glm::vec2 GetLastMousePosition();
+
+		/**
+		 * @brief Get the mouse delta
+		 * @return The mouse delta vector
+		 */
 		static glm::vec2 GetMouseDelta();
 
+		/**
+		 * @brief Update the mouse scroll
+		 * @param y The Y scroll of the mouse
+		 */
 		static void UpdateMouseScroll(f64 y);
+
+		/**
+		 * @brief Get the mouse scroll
+		 * @return The mouse scroll
+		 */
 		static f64 GetMouseScroll(void);
 
+		/**
+		 * @brief Check if a key is pressed
+		 * @param key The key to check
+		 * @return true if the key is pressed, false otherwise
+		 */
 		static bool IsKeyPressed(int key);
+
+		/**
+		 * @brief Check if a mouse button is pressed
+		 * @param button The button to check
+		 * @return true if the button is pressed, false otherwise
+		 */
 		static bool IsMouseButtonPressed(int button);
 	};
 };

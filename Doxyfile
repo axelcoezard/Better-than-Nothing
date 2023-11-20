@@ -10,7 +10,7 @@ INPUT					= Better-than-Nothing/Modules/Core
 
 FILE_PATTERNS			= *.cpp *.h *.hpp
 
-EXTRACT_ALL				= YES
+EXTRACT_ALL				= NO
 
 EXTRACT_PRIVATE			= YES
 
