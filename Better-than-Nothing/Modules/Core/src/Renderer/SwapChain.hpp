@@ -16,9 +16,9 @@ namespace BetterThanNothing
 	class SwapChain
 	{
 	private:
-		Window*										m_pWindow;
-		Device*										m_pDevice;
-		DescriptorPool*								m_pDescriptorPool;
+		Window*										m_Window;
+		Device*										m_Device;
+		DescriptorPool*								m_DescriptorPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;
@@ -80,7 +80,7 @@ namespace BetterThanNothing
 		bool										BeginRecordCommandBuffer();
 
 		void										BindPipeline(Pipeline* pPipeline);
-		void										Draw(DrawPacket* pDrawPacket, u32 index);
+		void										Draw(DrawPacket* drawPacket, u32 index);
 
 		void										EndRecordCommandBuffer();
 

@@ -10,9 +10,9 @@ namespace BetterThanNothing
 	{
 	private:
 		std::string			m_Id;
-		Device*				m_pDevice;
-		SwapChain*			m_pSwapChain;
-		DescriptorPool*		m_pDescriptorPool;
+		Device*				m_Device;
+		SwapChain*			m_SwapChain;
+		DescriptorPool*		m_DescriptorPool;
 
 
 
@@ -22,7 +22,7 @@ namespace BetterThanNothing
 		VkPipeline			m_GraphicsPipeline;
 
 	public:
-							Pipeline(const std::string& id, Device* pDevice, SwapChain* pSwapChain, DescriptorPool* pDescriptorPool, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
+							Pipeline(const std::string& id, Device* device, SwapChain* swapChain, DescriptorPool* descriptorPool, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 							~Pipeline();
 
 							Pipeline(const Pipeline&) = delete;

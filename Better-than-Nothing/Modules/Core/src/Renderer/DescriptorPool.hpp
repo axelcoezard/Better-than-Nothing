@@ -8,7 +8,7 @@ namespace BetterThanNothing
 	class DescriptorPool
 	{
 	private:
-		Device*										m_pDevice;
+		Device*										m_Device;
 
 		VkDescriptorSetLayout						m_DescriptorSetLayout;
 		VkDescriptorPool							m_DescriptorPool = VK_NULL_HANDLE;

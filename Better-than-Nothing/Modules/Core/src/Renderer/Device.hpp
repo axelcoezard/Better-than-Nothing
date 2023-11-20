@@ -48,7 +48,7 @@ namespace BetterThanNothing
 		std::string						m_ApiVersion;
 
 	public:
-										Device(Window* pWindow);
+										Device(Window* window);
 										~Device();
 
 										Device(const Device&) = delete;
@@ -88,12 +88,12 @@ namespace BetterThanNothing
 
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \
-																	 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, \
-																	 const VkAllocationCallbacks* pAllocator, \
-																	 VkDebugUtilsMessengerEXT* pDebugMessenger);
+																	 const VkDebugUtilsMessengerCreateInfoEXT* createInfo, \
+																	 const VkAllocationCallbacks* allocator, \
+																	 VkDebugUtilsMessengerEXT* debugMessenger);
 		void							DestroyDebugUtilsMessengerEXT(VkInstance instance, \
 																	  VkDebugUtilsMessengerEXT debugMessenger, \
-																	  const VkAllocationCallbacks* pAllocator);
+																	  const VkAllocationCallbacks* allocator);
 		void							PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
 	public:

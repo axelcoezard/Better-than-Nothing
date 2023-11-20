@@ -5,48 +5,43 @@
 namespace BetterThanNothing
 {
 	Window::Window(std::string_view title, u32 width, u32 height)
-		: m_pWindow(nullptr), m_Title(title), m_Width(width), m_Height(height)
-	{
-		Open();
-	}
-
-	Window::~Window()
-	{
-		if (m_pWindow != nullptr) {
-			glfwDestroyWindow(m_pWindow);
-			glfwTerminate();
-		}
-	}
-
-	void Window::Open()
+		: m_Window(nullptr), m_Title(title), m_Width(width), m_Height(height)
 	{
 		glfwInit();
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		m_pWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
 
-		glfwSetWindowUserPointer(m_pWindow, this);
-		glfwSetFramebufferSizeCallback(m_pWindow, ResizeCallback);
-		glfwSetKeyCallback(m_pWindow, KeyCallback);
-		glfwSetCursorPosCallback(m_pWindow, MouseCursorCallback);
-		glfwSetScrollCallback(m_pWindow, MouseScrollCallback);
-		glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
+		glfwSetWindowUserPointer(m_Window, this);
+		glfwSetFramebufferSizeCallback(m_Window, ResizeCallback);
+		glfwSetKeyCallback(m_Window, KeyCallback);
+		glfwSetCursorPosCallback(m_Window, MouseCursorCallback);
+		glfwSetScrollCallback(m_Window, MouseScrollCallback);
+		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);
+	}
+
+	Window::~Window()
+	{
+		if (m_Window != nullptr) {
+			glfwDestroyWindow(m_Window);
+			glfwTerminate();
+		}
 	}
 
 	void Window::SetEventCallback(std::function<void(Event*)> eventcallback)
 	{
-		m_eventCallback = eventcallback;
+		m_EventCallback = eventcallback;
 	}
 
-	void Window::ResizeCallback(GLFWwindow* pWindow, int width, int height)
+	void Window::ResizeCallback(GLFWwindow* window, int width, int height)
 	{
 		(void) width;
 		(void) height;
 
-		auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(pWindow));
-		window->SetResized(true);
+		auto windowPtr = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		windowPtr->SetResized(true);
 	}
 
 	void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -60,7 +55,7 @@ namespace BetterThanNothing
 
 		Input::UpdateKey(key, action);
 
-		auto pWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		auto windowPtr = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
 		KeyEvent* event = nullptr;
 		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -70,7 +65,7 @@ namespace BetterThanNothing
 		}
 
 		if (event != nullptr) {
-			pWindow->m_eventCallback(event);
+			windowPtr->m_EventCallback(event);
 		}
 	}
 

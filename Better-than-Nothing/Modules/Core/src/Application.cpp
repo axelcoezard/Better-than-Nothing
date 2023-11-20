@@ -17,16 +17,16 @@ namespace BetterThanNothing
 {
 	Application::Application(std::string_view title, u32 width, u32 height)
 	{
-		m_pWindow = new Window(title, width, height);
-		m_pWindow->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
+		m_Window = new Window(title, width, height);
+		m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
 
-		m_pDevice = new Device(m_pWindow);
+		m_Device = new Device(m_Window);
 
-		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice);
-		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_pDevice);
+		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
+		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
 
-		m_pRenderer = new Renderer(m_pWindow, m_pDevice);
-		m_pRenderer->LoadPipeline("main", "main/main.vert.spv", "main/main.frag.spv");
+		m_Renderer = new Renderer(m_Window, m_Device);
+		m_Renderer->LoadPipeline("main", "main/main.vert.spv", "main/main.frag.spv");
 	}
 
 	Application::~Application(void)
@@ -38,9 +38,9 @@ namespace BetterThanNothing
 		delete m_TexturePool;
 		delete m_ModelPool;
 
-		delete m_pRenderer;
-		delete m_pDevice;
-		delete m_pWindow;
+		delete m_Renderer;
+		delete m_Device;
+		delete m_Window;
 	}
 
 	void Application::Run(void)
@@ -52,8 +52,8 @@ namespace BetterThanNothing
 		f32 frameTime = 1.0f / 240.0f;
 		u32 frameCount = 0;
 
-		while (!m_pWindow->ShouldClose()) {
-			m_pWindow->Poll();
+		while (!m_Window->ShouldClose()) {
+			m_Window->Poll();
 
 			f32 currentFrame = glfwGetTime();
 			deltatime = currentFrame - lastFrame;
@@ -61,14 +61,14 @@ namespace BetterThanNothing
 			frameCount += 1;
 
 			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
-			m_pRenderer->Render(m_Scenes[m_CurrentSceneId]);
-			m_pDevice->WaitIdle();
+			m_Renderer->Render(m_Scenes[m_CurrentSceneId]);
+			m_Device->WaitIdle();
 
 			std::cout.precision(3);
 			std::cout << "\033[2J\033[1;1H";
-			std::cout << "Vendor: " << m_pDevice->GetVendorName() << std::endl;
-			std::cout << "Device: " << m_pDevice->GetDeviceName() << std::endl;
-			std::cout << "API version: " << m_pDevice->GetApiVersion() << std::endl;
+			std::cout << "Vendor: " << m_Device->GetVendorName() << std::endl;
+			std::cout << "Device: " << m_Device->GetDeviceName() << std::endl;
+			std::cout << "API version: " << m_Device->GetApiVersion() << std::endl;
 			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
 			std::cout << "Frame count: " << frameCount << std::endl;
 			std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;

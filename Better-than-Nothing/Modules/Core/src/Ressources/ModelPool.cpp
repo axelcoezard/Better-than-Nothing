@@ -81,25 +81,25 @@ namespace BetterThanNothing
 			for (const auto& index : shape.mesh.indices) {
 				Vertex vertex{};
 
-				vertex.m_Position = {
+				vertex.position = {
 					attrib.vertices[3 * index.vertex_index + 0],
 					attrib.vertices[3 * index.vertex_index + 1],
 					attrib.vertices[3 * index.vertex_index + 2]
 				};
 
-				if (vertex.m_Position.x < minX) minX = vertex.m_Position.x;
-				if (vertex.m_Position.x > maxX) maxX = vertex.m_Position.x;
-				if (vertex.m_Position.y < minY) minY = vertex.m_Position.y;
-				if (vertex.m_Position.y > maxY) maxY = vertex.m_Position.y;
-				if (vertex.m_Position.z < minZ) minZ = vertex.m_Position.z;
-				if (vertex.m_Position.z > maxZ) maxZ = vertex.m_Position.z;
+				if (vertex.position.x < minX) minX = vertex.position.x;
+				if (vertex.position.x > maxX) maxX = vertex.position.x;
+				if (vertex.position.y < minY) minY = vertex.position.y;
+				if (vertex.position.y > maxY) maxY = vertex.position.y;
+				if (vertex.position.z < minZ) minZ = vertex.position.z;
+				if (vertex.position.z > maxZ) maxZ = vertex.position.z;
 
-				vertex.m_TextureCoordinates = {
+				vertex.textureCoordinates = {
 					attrib.texcoords[2 * index.texcoord_index + 0],
 					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
 				};
 
-				vertex.m_Color = {1.0f, 1.0f, 1.0f};
+				vertex.color = {1.0f, 1.0f, 1.0f};
 
 				if (uniqueVertices.count(vertex) == 0) {
 					uniqueVertices[vertex] = static_cast<u32>(vertices.size());
@@ -114,7 +114,7 @@ namespace BetterThanNothing
 		glm::vec3 boundingBoxCenter = {minX + boundingBox.x / 2.0f, minY + boundingBox.y / 2.0f, minZ + boundingBox.z / 2.0f};
 
 		for (auto& vertex : vertices) {
-			vertex.m_Position -= boundingBoxCenter;
+			vertex.position -= boundingBoxCenter;
 		}
 
 		return {vertices, indices};

@@ -9,18 +9,18 @@ namespace BetterThanNothing
 	class Event
 	{
 	private:
-		bool	m_bHandled = false;
-		void*	m_pContext = nullptr;
+		bool	m_Handled = false;
+		void*	m_Context = nullptr;
 	public:
 		virtual ~Event() = default;
 
 		[[nodiscard]] virtual const char* GetName() const = 0;
 
-		void SetHandled(bool handled) { m_bHandled = handled; }
-		bool IsHandled() { return m_bHandled; }
+		void SetHandled(bool handled) { m_Handled = handled; }
+		bool IsHandled() { return m_Handled; }
 
-		void SetContext(void* pContext) { m_pContext = pContext; }
-		void* GetContext() { return m_pContext; }
-		bool HasContext() { return m_pContext != nullptr; }
+		void SetContext(void* context) { m_Context = context; }
+		void* GetContext() { return m_Context; }
+		bool HasContext() { return m_Context != nullptr; }
 	};
 };

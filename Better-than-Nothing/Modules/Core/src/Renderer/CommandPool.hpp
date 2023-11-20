@@ -11,7 +11,7 @@ namespace BetterThanNothing
 
 		VkCommandPool	m_CommandPool;
 	public:
-						CommandPool(Device* pDevice);
+						CommandPool(Device* device);
 						~CommandPool();
 
 						CommandPool(const CommandPool&) = delete;

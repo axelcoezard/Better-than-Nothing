@@ -10,6 +10,7 @@ namespace BetterThanNothing
 		u32	m_Key;
 		u32	m_ScanCode;
 		u32	m_Mods;
+
 	public:
 		KeyEvent(u32 key, u32 scanCode, u32 mods)
 			: m_Key(key), m_ScanCode(scanCode), m_Mods(mods) {}
