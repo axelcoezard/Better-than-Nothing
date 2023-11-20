@@ -5,19 +5,20 @@ namespace BetterThanNothing
 	class Window;
 	class Device;
 	class DescriptorPool;
-	class CommandPool;
+	class CommandBuffer;
 	class Pipeline;
 	class Texture;
 	class Vertex;
-	class Model;
+	class Entity;
 	class Scene;
+	struct DrawPacket;
 
 	class SwapChain
 	{
 	private:
 		Window*										m_pWindow;
 		Device*										m_pDevice;
-		CommandPool*								m_pCommandPool;
+		DescriptorPool*								m_pDescriptorPool;
 
 		VkSwapchainKHR								m_SwapChain;
 		VkRenderPass								m_RenderPass;
@@ -27,7 +28,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>						m_Images;
 		std::vector<VkImageView>					m_ImageViews;
 		std::vector<VkFramebuffer>					m_Framebuffers;
-		std::vector<VkCommandBuffer>				m_CommandBuffers;
+		std::vector<CommandBuffer*>					m_CommandBuffers;
 
 		VkImage										m_DepthImage;
 		VkDeviceMemory								m_DepthImageMemory;
@@ -37,20 +38,15 @@ namespace BetterThanNothing
 		VkDeviceMemory								m_ColorImageMemory;
 		VkImageView									m_ColorImageView;
 
-		std::vector<std::vector<VkBuffer>>			m_UniformBuffers;
-		std::vector<std::vector<VkDeviceMemory>>	m_UniformBuffersMemory;
-		std::vector<std::vector<void*>>				m_UniformBuffersMapped;
-
 		std::vector<VkSemaphore>					m_ImageAvailableSemaphores;
 		std::vector<VkSemaphore>					m_RenderFinishedSemaphores;
 		std::vector<VkFence>						m_InFlightFences;
 
-		u32									m_CurrentFrame = 0;
-		u32									m_CurrentImageIndex = 0;
-		DescriptorPool*								m_pDescriptorPool = nullptr;
+		u32											m_CurrentFrame = 0;
+		u32											m_CurrentImageIndex = 0;
 
 	public:
-													SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool);
+													SwapChain(Window* window, Device* device, DescriptorPool* descriptorPool);
 													~SwapChain();
 
 													SwapChain(const SwapChain&) = delete;
@@ -70,11 +66,8 @@ namespace BetterThanNothing
 		void										CreateFramebuffers();
 
 	public:
-		VkImageView									CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
-		void										CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		VkCommandBuffer								BeginSingleTimeCommands();
 		void										EndSingleTimeCommands(VkCommandBuffer& commandBuffer);
-		void										CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 		void										CleanupSwapChain();
 		void										RecreateSwapChain();
@@ -82,14 +75,13 @@ namespace BetterThanNothing
 		VkFormat									FindDepthFormat();
 		bool										HasStencilComponent(VkFormat format);
 
-		void										CreateUniformBuffers(Scene* pScene);
 		void										CreateCommandBuffers();
 
-		void										BindDescriptorPool(DescriptorPool* pDescriptorPool);
-		bool										BeginRecordCommandBuffer(Pipeline* pPipeline);
-		void										BindModel(Model* pModel);
-		void										UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex);
-		void										DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex);
+		bool										BeginRecordCommandBuffer();
+
+		void										BindPipeline(Pipeline* pPipeline);
+		void										Draw(DrawPacket* pDrawPacket, u32 index);
+
 		void										EndRecordCommandBuffer();
 
 	private:
@@ -112,10 +104,7 @@ namespace BetterThanNothing
 		std::vector<VkImage>&						GetImages()						{ return m_Images; }
 		std::vector<VkImageView>&					GetImageViews()					{ return m_ImageViews; }
 		std::vector<VkFramebuffer>&					GetFramebuffers()				{ return m_Framebuffers; }
-		std::vector<VkCommandBuffer>&				GetVkCommandBuffer()			{ return m_CommandBuffers; }
-		std::vector<std::vector<VkBuffer>>&			GetUniformBuffers()				{ return m_UniformBuffers; }
-		std::vector<std::vector<VkDeviceMemory>>&	GetUniformBuffersMemory()		{ return m_UniformBuffersMemory; }
-		std::vector<std::vector<void*>>& 			GetUniformBuffersMapped()		{ return m_UniformBuffersMapped; }
-		VkCommandBuffer&							GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
+		u32&										GetCurrentFrame()				{ return m_CurrentFrame; }
+		CommandBuffer*								GetCurrentCommandBuffer()		{ return m_CommandBuffers[m_CurrentFrame]; }
 	};
 };

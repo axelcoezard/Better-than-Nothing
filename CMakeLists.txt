@@ -5,12 +5,18 @@ cmake_minimum_required(VERSION 3.8)
 
 project("better-than-nothing")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+# ==================================================================================================
+# Options
+# ==================================================================================================
+
+set(SHADER_FOLDER "Better-than-Nothing/Shaders" CACHE STRING "Folder containing the shaders")
 
 # ==================================================================================================
 # Dependencies
@@ -21,6 +27,16 @@ add_subdirectory("Better-than-Nothing/ThirdParty/glm")
 add_subdirectory("Better-than-Nothing/ThirdParty/entt")
 add_subdirectory("Better-than-Nothing/ThirdParty/imgui")
 add_subdirectory("Better-than-Nothing/ThirdParty/stb")
+
+# ==================================================================================================
+# Shaders
+# ==================================================================================================
+
+add_custom_target(
+	Shaders ALL
+	COMMAND ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}/compile_shaders.sh ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}
+	COMMENT "Running shader compilation script"
+)
 
 # ==================================================================================================
 # Modules

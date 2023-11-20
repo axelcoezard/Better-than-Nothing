@@ -1,30 +1,32 @@
 #pragma once
 
-#include "Renderer/Window.hpp"
-
 namespace BetterThanNothing
 {
 	struct QueueFamilyIndices
 	{
-		std::optional<u32>			m_GraphicsFamily;
-		std::optional<u32>			m_PresentationFamily;
+		std::optional<u32>				graphicsFamily;
+		std::optional<u32>				presentationFamily;
 
 		bool IsComplete() {
-			return m_GraphicsFamily.has_value() && m_PresentationFamily.has_value();
+			return graphicsFamily.has_value() && presentationFamily.has_value();
 		}
 	};
 
 	struct SwapChainSupportDetails
 	{
-		VkSurfaceCapabilitiesKHR		m_Capabilities;
-		std::vector<VkSurfaceFormatKHR>	m_Formats;
-		std::vector<VkPresentModeKHR>	m_PresentationModes;
+		VkSurfaceCapabilitiesKHR		capabilities;
+		std::vector<VkSurfaceFormatKHR>	formats;
+		std::vector<VkPresentModeKHR>	presentationModes;
 	};
+
+	class Window;
+	class CommandPool;
 
 	class Device
 	{
 	private:
-		Window*							m_pWindow;
+		Window*							m_Window;
+		CommandPool*					m_CommandPool;
 
 		VkInstance						m_Instance;
 		VkDebugUtilsMessengerEXT		m_DebugMessenger;
@@ -34,11 +36,12 @@ namespace BetterThanNothing
 		VkQueue							m_GraphicsQueue;
 		VkQueue							m_PresentationQueue;
 
+
 		const bool						m_EnableValidationLayers = true;
 		const std::vector<const char*>	m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*>	m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
+		VkSampleCountFlagBits			m_MsaaSamples = VK_SAMPLE_COUNT_8_BIT;
 
 		std::string						m_VendorName;
 		std::string						m_DeviceName;
@@ -69,11 +72,19 @@ namespace BetterThanNothing
 		std::string						GetVendorById(u32 vendorId) const;
 
 	public:
-		void							Idle() { vkDeviceWaitIdle(m_Device); }
+		void							WaitIdle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
-		u32						FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
+		u32								FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);
 		VkFormat						FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+
+		void							CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void							CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+		VkImageView						CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels);
+
+		void							CreateImage(u32 width, u32 height, u32 mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void							TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, u32 mipLevels);
+		void							CopyBufferToImage(VkBuffer buffer, VkImage image, u32 width, u32 height);
 
 	private:
 		VkResult						CreateDebugUtilsMessengerEXT(VkInstance instance, \
@@ -96,6 +107,8 @@ namespace BetterThanNothing
 		const std::vector<const char*>	GetValidationLayers()		{ return m_ValidationLayers; }
 		const std::vector<const char*>	GetDeviceExtensions()		{ return m_DeviceExtensions; }
 		VkSampleCountFlagBits&			GetMsaaSamples()			{ return m_MsaaSamples; }
+
+		CommandPool*					GetCommandPool()			{ return m_CommandPool; }
 
 		std::string&					GetVendorName() { return m_VendorName; }
 		std::string&					GetDeviceName() { return m_DeviceName; }

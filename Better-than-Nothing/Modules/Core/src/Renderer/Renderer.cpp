@@ -1,101 +1,154 @@
-#include "Renderer/Renderer.hpp"
-#include "Renderer/Window.hpp"
-#include "Renderer/Device.hpp"
-#include "Renderer/CommandPool.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Texture.hpp"
-#include "Renderer/Pipeline.hpp"
-#include "Renderer/Model.hpp"
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
 	Renderer::Renderer(Window* pWindow, Device* pDevice): m_pWindow(pWindow), m_pDevice(pDevice)
 	{
-		m_pCommandPool = new CommandPool(m_pDevice);
-		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice, m_pCommandPool);
-		m_pDescriptorPool = new DescriptorPool(m_pDevice, m_pSwapChain);
+		m_pDescriptorPool = new DescriptorPool(m_pDevice);
+		m_pSwapChain = new SwapChain(m_pWindow, m_pDevice, m_pDescriptorPool);
+
+		m_UniformBuffersSize = 0;
+		m_UniformBuffersCapacity = 1000;
+
+		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
+			m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
+			m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
+		}
 	}
 
 	Renderer::~Renderer()
 	{
-		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-
 		for (auto & entry : m_pPipeLines) {
 			delete entry.second;
 		}
 
+		DestroyUniformBuffers();
 		delete m_pDescriptorPool;
 		delete m_pSwapChain;
-		delete m_pCommandPool;
 	}
 
-	void Renderer::LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
+	void Renderer::CreateNewUniformBuffer()
 	{
-		auto pipeline = new Pipeline(m_pDevice, m_pSwapChain, m_pDescriptorPool, vertexShaderFilePath, fragmentShaderFilePath);
-		auto entry = std::pair<std::string, Pipeline*>(pipelineID, pipeline);
+		VkDeviceSize bufferSize = sizeof(GlobalUniforms);
+
+		if (m_UniformBuffersSize >= m_UniformBuffersCapacity) {
+			m_UniformBuffersCapacity *= 2;
+
+			for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+				m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
+				m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
+				m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
+			}
+		}
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			m_pDevice->CreateBuffer(bufferSize,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+				m_UniformBuffers[i][m_UniformBuffersSize],
+				m_UniformBuffersMemory[i][m_UniformBuffersSize]);
+
+			vkMapMemory(m_pDevice->GetVkDevice(),
+				m_UniformBuffersMemory[i][m_UniformBuffersSize], 0,
+				bufferSize, 0,
+				&m_UniformBuffersMapped[i][m_UniformBuffersSize]);
+		}
+
+		m_UniformBuffersSize += 1;
+	}
+
+	void Renderer::DestroyUniformBuffers()
+	{
+		auto device = m_pDevice->GetVkDevice();
+
+		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT || m_UniformBuffersMemory.size() < MAX_FRAMES_IN_FLIGHT) {
+			return;
+		}
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
+				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
+					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
+				}
+			}
+
+			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
+				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
+			}
+		}
+	}
+
+	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
+	{
+		const std::string& basePath = "/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/";
+		auto pipeline = new Pipeline(id, m_pDevice, m_pSwapChain, m_pDescriptorPool, basePath + vertexShaderFilePath, basePath + fragmentShaderFilePath);
+		auto entry = std::pair<std::string, Pipeline*>(id, pipeline);
 
 		m_pPipeLines.insert(entry);
 	}
 
-	void Renderer::Prepare(Scene* pScene)
+	void Renderer::Render(Scene* pScene)
 	{
-		auto models = pScene->GetModels();
+		Pipeline* pPipeline = m_pPipeLines.at("main");
 
-		m_pSwapChain->CreateUniformBuffers(pScene);
-		m_pSwapChain->CreateCommandBuffers();
+		// Create a new uniform buffer and a new descriptor set for each new entity
+		while (pScene->HasPendingEntities()) {
+			Entity* newEntity = pScene->NextPendingEntity();
+			CreateNewUniformBuffer();
+			m_pDescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
+		}
 
-		m_pDescriptorPool->CreateDescriptorPool(models);
-		m_pDescriptorPool->CreateDescriptorSets(models);
+		if (!m_pSwapChain->BeginRecordCommandBuffer()) {
+			throw std::runtime_error("Failed to record command buffer!");
+		}
 
-		m_pSwapChain->BindDescriptorPool(m_pDescriptorPool);
+		// Create a GlobalUniforms with camera data
+		GlobalUniforms globalUniforms;
+		globalUniforms.projection = pScene->GetCamera()->GetProjectionMatrix();
+		globalUniforms.view = pScene->GetCamera()->GetViewMatrix();
 
-		ImGui::CreateContext();
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		// Append all the usefull Model's data to create a sorted DrawStream
+		DrawStreamBuilder drawStreamBuilder(pScene->GetEntities().size());
+		for (auto & entity : pScene->GetEntities()) {
+			Model* model = entity->GetModel();
 
-		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetPointer(), true);
+			drawStreamBuilder.Draw({
+				.pipeline = pPipeline,
+				.texture = entity->GetTexture(),
+				.vertexBuffer = model->vertexBuffer,
+				.indexBuffer = model->indexBuffer,
+				.indicesCount = model->indexCount,
+				.model = entity->GetModelMatrix()
+			});
+		}
 
-		ImGui_ImplVulkan_InitInfo info = {};
-		info.Instance = m_pDevice->GetVkInstance();
-		info.PhysicalDevice = m_pDevice->GetVkPhysicalDevice();
-		info.Device = m_pDevice->GetVkDevice();
-		info.DescriptorPool = m_pDescriptorPool->GetVkDescriptorPool();
-		info.ImageCount = MAX_FRAMES_IN_FLIGHT;
-		info.MinImageCount = 2;
-		info.MSAASamples = m_pDevice->GetMsaaSamples();
-		info.Queue = m_pDevice->GetVkGraphicsQueue();
+		DrawStream* drawStream = drawStreamBuilder.GetStream();
+		void* currentPipeline = nullptr;
 
-		ImGui_ImplVulkan_Init(&info, m_pSwapChain->GetVkRenderPass());
+		// Draw all the DrawPacket in the DrawStream ordered by pipeline
+		// and bind the pipeline only when it changes
+		for (u32 i = 0; i < drawStream->size; i++) {
+			DrawPacket drawPacket = drawStream->drawPackets[i];
 
-		VkCommandBuffer commandBuffer = m_pSwapChain->BeginSingleTimeCommands();
-		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
-		m_pSwapChain->EndSingleTimeCommands(commandBuffer);
+			if (drawPacket.pipeline != currentPipeline) {
+				currentPipeline = drawPacket.pipeline;
+				m_pSwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
+			}
 
-		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
-	}
+			globalUniforms.model = drawPacket.model;
 
-	bool Renderer::BeginRender()
-	{
-		auto pPipeline = m_pPipeLines.at("main");
+			memcpy(
+				m_UniformBuffersMapped[m_pSwapChain->GetCurrentFrame()][i],
+				&globalUniforms,
+				sizeof(globalUniforms));
 
-		return m_pSwapChain->BeginRecordCommandBuffer(pPipeline);
-	}
+			m_pSwapChain->Draw(&drawPacket, i);
+		}
 
-	void Renderer::DrawModel(Model* pModel, u32 modelIndex)
-	{
-		auto pPipeline = m_pPipeLines.at("main");
-
-		m_pSwapChain->BindModel(pModel);
-		m_pSwapChain->DrawModel(pPipeline, pModel, modelIndex);
-	}
-
-	void Renderer::EndRender()
-	{
 		m_pSwapChain->EndRecordCommandBuffer();
 	}
 }

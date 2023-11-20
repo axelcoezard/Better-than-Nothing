@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project("Core")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
@@ -12,6 +12,8 @@ file(GLOB SOURCES
 	"src/*.cpp"
 	"src/*.hpp"
 	"src/*.h"
+	"src/Ressources/*.cpp"
+	"src/Ressources/*.hpp"
 	"src/Renderer/*.cpp"
 	"src/Renderer/*.hpp"
 	"src/Handlers/*.cpp"

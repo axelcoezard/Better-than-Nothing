@@ -9,9 +9,12 @@ namespace BetterThanNothing
 	class Pipeline
 	{
 	private:
+		std::string			m_Id;
 		Device*				m_pDevice;
 		SwapChain*			m_pSwapChain;
 		DescriptorPool*		m_pDescriptorPool;
+
+
 
 		VkShaderModule		m_VertexShaderModule;
 		VkShaderModule		m_FragmentShaderModule;
@@ -19,7 +22,7 @@ namespace BetterThanNothing
 		VkPipeline			m_GraphicsPipeline;
 
 	public:
-							Pipeline(Device* pDevice, SwapChain* pSwapChain, DescriptorPool* pDescriptorPool, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
+							Pipeline(const std::string& id, Device* pDevice, SwapChain* pSwapChain, DescriptorPool* pDescriptorPool, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 							~Pipeline();
 
 							Pipeline(const Pipeline&) = delete;
@@ -37,6 +40,7 @@ namespace BetterThanNothing
 		void				CreateGraphicsPipeline();
 
 	public:
+		std::string&		GetId()						{ return m_Id; }
 		VkShaderModule&		GetVkVertexShaderModule()	{ return m_VertexShaderModule; }
 		VkShaderModule&		GetVkFragmentShaderModule()	{ return m_FragmentShaderModule; }
 		VkPipelineLayout&	GetVkPipelineLayout()		{ return m_PipelineLayout; }

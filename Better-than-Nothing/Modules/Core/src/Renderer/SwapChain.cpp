@@ -1,22 +1,11 @@
-#include "Renderer/Window.hpp"
-#include "Renderer/Device.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/Texture.hpp"
-#include "Renderer/Pipeline.hpp"
-#include "Renderer/Vertex.hpp"
-#include "Renderer/UniformBufferObject.hpp"
-#include "Renderer/CommandPool.hpp"
-#include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Model.hpp"
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
+#include "BetterThanNothing.hpp"
 
 #include <unordered_map>
 
 namespace BetterThanNothing
 {
-	SwapChain::SwapChain(Window* pWindow, Device* pDevice, CommandPool* pCommandPool)
-		: m_pWindow(pWindow), m_pDevice(pDevice), m_pCommandPool(pCommandPool)
+	SwapChain::SwapChain(Window* pWindow, Device* pDevice, DescriptorPool* descriptorPool)
+		: m_pWindow(pWindow), m_pDevice(pDevice), m_pDescriptorPool(descriptorPool)
 	{
 		CreateSwapChain();
 		CreateImageViews();
@@ -26,6 +15,7 @@ namespace BetterThanNothing
 
 		CreateRenderPass();
 		CreateFramebuffers();
+		CreateCommandBuffers();
 		CreateSyncObjects();
 	}
 
@@ -43,22 +33,8 @@ namespace BetterThanNothing
 
 		vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
-		vkFreeCommandBuffers(
-			m_pDevice->GetVkDevice(),
-			m_pCommandPool->GetVkCommandPool(),
-			m_CommandBuffers.size(),
-			m_CommandBuffers.data());
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
-				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
-					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
-				}
-			}
-
-			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
-				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
-			}
+		for (auto commandBuffer : m_CommandBuffers) {
+			delete commandBuffer;
 		}
 	}
 
@@ -66,16 +42,16 @@ namespace BetterThanNothing
 	{
 		SwapChainSupportDetails swapChainSupport = m_pDevice->QuerySwapChainSupport(m_pDevice->GetVkPhysicalDevice());
 
-		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.m_Formats);
-		VkPresentModeKHR presentationMode = ChooseSwapPresentMode(swapChainSupport.m_PresentationModes);
-		VkExtent2D extent = ChooseSwapExtent(swapChainSupport.m_Capabilities);
+		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+		VkPresentModeKHR presentationMode = ChooseSwapPresentMode(swapChainSupport.presentationModes);
+		VkExtent2D extent = ChooseSwapExtent(swapChainSupport.capabilities);
 
 		m_Format = surfaceFormat.format;
 		m_Extent = extent;
 
-		u32 imageCount = swapChainSupport.m_Capabilities.minImageCount + 1;
-		if (swapChainSupport.m_Capabilities.maxImageCount > 0 && imageCount > swapChainSupport.m_Capabilities.maxImageCount) {
-			imageCount = swapChainSupport.m_Capabilities.maxImageCount;
+		u32 imageCount = swapChainSupport.capabilities.minImageCount + 1;
+		if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+			imageCount = swapChainSupport.capabilities.maxImageCount;
 		}
 
 		VkSwapchainCreateInfoKHR createInfo{};
@@ -89,9 +65,9 @@ namespace BetterThanNothing
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 		QueueFamilyIndices indices = m_pDevice->FindQueueFamilies(m_pDevice->GetVkPhysicalDevice());
-		u32 queueFamilyIndices[] = { indices.m_GraphicsFamily.value(), indices.m_PresentationFamily.value() };
+		u32 queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentationFamily.value() };
 
-		if (indices.m_GraphicsFamily != indices.m_PresentationFamily) {
+		if (indices.graphicsFamily != indices.presentationFamily) {
 			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 			createInfo.queueFamilyIndexCount = 2;
 			createInfo.pQueueFamilyIndices = queueFamilyIndices;
@@ -101,7 +77,7 @@ namespace BetterThanNothing
 			createInfo.pQueueFamilyIndices = nullptr;
 		}
 
-		createInfo.preTransform = swapChainSupport.m_Capabilities.currentTransform;
+		createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
 		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 		createInfo.presentMode = presentationMode;
 		createInfo.clipped = VK_TRUE;
@@ -122,7 +98,7 @@ namespace BetterThanNothing
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
-			m_ImageViews[i] = CreateImageView(m_Images[i], m_Format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+			m_ImageViews[i] = m_pDevice->CreateImageView(m_Images[i], m_Format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 		}
 	}
 
@@ -130,8 +106,7 @@ namespace BetterThanNothing
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		Texture::CreateImage(
-			m_pDevice,
+		m_pDevice->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(),
 			depthFormat,
@@ -141,16 +116,15 @@ namespace BetterThanNothing
 			m_DepthImage,
 			m_DepthImageMemory);
 
-		m_DepthImageView = CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-		Texture::TransitionImageLayout(this, m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		m_DepthImageView = m_pDevice->CreateImageView(m_DepthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+		m_pDevice->TransitionImageLayout(m_DepthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 
 	void SwapChain::CreateColorResources()
 	{
 		VkFormat colorFormat = m_Format;
 
-		Texture::CreateImage(
-			m_pDevice,
+		m_pDevice->CreateImage(
 			m_Extent.width, m_Extent.height, 1,
 			m_pDevice->GetMsaaSamples(), colorFormat,
 			VK_IMAGE_TILING_OPTIMAL,
@@ -158,7 +132,7 @@ namespace BetterThanNothing
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_ColorImage, m_ColorImageMemory);
 
-		m_ColorImageView = CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+		m_ColorImageView = m_pDevice->CreateImageView(m_ColorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
 	void SwapChain::CreateRenderPass()
@@ -173,7 +147,7 @@ namespace BetterThanNothing
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		 VkAttachmentDescription colorAttachmentResolve{};
+		VkAttachmentDescription colorAttachmentResolve{};
 		colorAttachmentResolve.format = m_Format;
 		colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
 		colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -238,153 +212,12 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkImageView SwapChain::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels)
-	{
-		VkImageViewCreateInfo viewInfo{};
-		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewInfo.image = image;
-		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		viewInfo.format = format;
-		viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-		viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-		viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-		viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-		viewInfo.subresourceRange.aspectMask = aspectFlags;
-		viewInfo.subresourceRange.baseMipLevel = 0;
-		viewInfo.subresourceRange.levelCount = 1;
-		viewInfo.subresourceRange.baseArrayLayer = 0;
-		viewInfo.subresourceRange.layerCount = 1;
-		viewInfo.subresourceRange.levelCount = mipLevels;
-
-		VkImageView imageView;
-		if (vkCreateImageView(m_pDevice->GetVkDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create texture image view!");
-		}
-
-		return imageView;
-	}
-
-	void SwapChain::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
-	{
-		VkBufferCreateInfo bufferInfo{};
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = size;
-		bufferInfo.usage = usage;
-		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-		auto device = m_pDevice->GetVkDevice();
-		if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create vertex buffer!");
-		}
-
-		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-		VkMemoryAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = m_pDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
-
-		if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate vertex buffer memory!");
-		}
-
-		vkBindBufferMemory(device, buffer, bufferMemory, 0);
-	}
-
-	VkCommandBuffer SwapChain::BeginSingleTimeCommands()
-	{
-		auto device = m_pDevice->GetVkDevice();
-		auto commandPool = m_pCommandPool->GetVkCommandPool();
-
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = commandPool;
-		allocInfo.commandBufferCount = 1;
-
-		VkCommandBuffer commandBuffer;
-		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-		vkBeginCommandBuffer(commandBuffer, &beginInfo);
-		return commandBuffer;
-	}
-
-	void SwapChain::EndSingleTimeCommands(VkCommandBuffer& commandBuffer)
-	{
-		auto device = m_pDevice->GetVkDevice();
-		auto graphicsQueue = m_pDevice->GetVkGraphicsQueue();
-		auto commandPool = m_pCommandPool->GetVkCommandPool();
-
-		vkEndCommandBuffer(commandBuffer);
-
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
-		vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-		vkQueueWaitIdle(graphicsQueue);
-
-		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-	}
-
-	void SwapChain::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
-	{
-		VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
-		{
-			VkBufferCopy copyRegion{};
-			copyRegion.size = size;
-			vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-		}
-		EndSingleTimeCommands(commandBuffer);
-	}
-
-	void SwapChain::CreateUniformBuffers(Scene* pScene)
-	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-
-		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-
-		auto modelCount = pScene->GetModels().size();
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_UniformBuffers[i].resize(modelCount);
-			m_UniformBuffersMemory[i].resize(modelCount);
-			m_UniformBuffersMapped[i].resize(modelCount);
-
-			for (size_t j = 0; j < modelCount; j++) {
-				CreateBuffer(bufferSize,
-					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-					m_UniformBuffers[i][j],
-					m_UniformBuffersMemory[i][j]);
-
-				vkMapMemory(m_pDevice->GetVkDevice(),
-					m_UniformBuffersMemory[i][j], 0,
-					bufferSize, 0,
-					&m_UniformBuffersMapped[i][j]);
-			}
-		}
-	}
-
 	void SwapChain::CreateCommandBuffers()
 	{
 		m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_pCommandPool->GetVkCommandPool();
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = m_CommandBuffers.size();
-
-		if (vkAllocateCommandBuffers(m_pDevice->GetVkDevice(), &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate command buffers!");
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			m_CommandBuffers[i] = new CommandBuffer(m_pDevice);
 		}
 	}
 
@@ -472,7 +305,7 @@ namespace BetterThanNothing
 			glfwWaitEvents();
 		}
 
-		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+		m_pDevice->WaitIdle();
 
 		CleanupSwapChain();
 
@@ -491,19 +324,9 @@ namespace BetterThanNothing
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	bool SwapChain::HasStencilComponent(VkFormat format)
+	bool SwapChain::BeginRecordCommandBuffer()
 	{
-		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-	}
-
-	void SwapChain::BindDescriptorPool(DescriptorPool* pDescriptorPool)
-	{
-		m_pDescriptorPool = pDescriptorPool;
-	}
-
-	bool SwapChain::BeginRecordCommandBuffer(Pipeline* pPipeline)
-	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		WaitForFences();
 		VkResult result = AcquireNextImage();
@@ -517,13 +340,7 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-		if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
+		commandBuffer->Begin();
 
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -539,8 +356,7 @@ namespace BetterThanNothing
 		renderPassInfo.clearValueCount = static_cast<u32>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
-		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetVkGraphicsPipeline());
+		commandBuffer->BeginRenderPass(renderPassInfo);
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -549,71 +365,48 @@ namespace BetterThanNothing
 		viewport.height = static_cast<f32>(m_Extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+		commandBuffer->SetViewport(viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = {0, 0};
 		scissor.extent = m_Extent;
-		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		commandBuffer->SetScissor(scissor);
 		return true;
 	}
 
-	void SwapChain::UpdateUniformBuffer(Scene* pScene, Model* pModel, int modelIndex)
+	void SwapChain::BindPipeline(Pipeline* pPipeline)
 	{
-		UniformBufferObject ubo{};
-
-		// move all those calculus to shader
-		ubo.m_Model = glm::mat4(1.0f);
-		ubo.m_Model = glm::scale(ubo.m_Model, glm::vec3(pModel->GetScale()));
-		ubo.m_Model = glm::translate(ubo.m_Model, pModel->GetPosition());
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.m_Model = glm::rotate(ubo.m_Model, glm::radians(pModel->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		ubo.m_View = pScene->GetCamera()->GetViewMatrix();
-		ubo.m_Projection = pScene->GetCamera()->GetProjectionMatrix();
-
-		memcpy(m_UniformBuffersMapped[m_CurrentFrame][modelIndex], &ubo, sizeof(ubo));
+		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pPipeline->GetVkGraphicsPipeline());
 	}
 
-	void SwapChain::BindModel(Model* pModel)
+	void SwapChain::Draw(DrawPacket* pDrawPacket, u32 index)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		Pipeline* pipeline = static_cast<Pipeline*>(pDrawPacket->pipeline);
 
-		VkBuffer vertexBuffers[] = {pModel->GetVertexBuffer()};
-		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, pModel->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-	}
+		commandBuffer->BindVertexBuffer(pDrawPacket->vertexBuffer);
+		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);
 
-	void SwapChain::DrawModel(Pipeline* pPipeline, Model* pModel, int modelIndex)
-	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		commandBuffer->BindDescriptorSets(
+			m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
+			pipeline->GetVkPipelineLayout());
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pPipeline->GetVkPipelineLayout(), 0, 1,
-			&m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][modelIndex], 0, nullptr);
-
-		vkCmdDrawIndexed(commandBuffer, static_cast<u32>(pModel->GetIndicesCount()), 1, 0, 0, 0);
+		commandBuffer->DrawIndexed(pDrawPacket->indicesCount);
 	}
 
 	void SwapChain::EndRecordCommandBuffer()
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
-		vkCmdEndRenderPass(commandBuffer);
-
-		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to record command buffer!");
-		}
+		commandBuffer->EndRenderPass();
+		commandBuffer->End();
 
 		ResetFences();
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
+		submitInfo.pCommandBuffers = &commandBuffer->GetVkCommandBuffer();
 
 		VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]};
 		VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};

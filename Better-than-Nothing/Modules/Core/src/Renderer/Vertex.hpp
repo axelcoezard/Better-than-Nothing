@@ -8,7 +8,8 @@ namespace BetterThanNothing
 		glm::vec3	m_Color;
 		glm::vec2	m_TextureCoordinates;
 
-		static VkVertexInputBindingDescription GetBindingDescription() {
+		static VkVertexInputBindingDescription GetBindingDescription()
+		{
 			VkVertexInputBindingDescription bindingDescription{};
 			bindingDescription.binding = 0;
 			bindingDescription.stride = sizeof(Vertex);
@@ -16,7 +17,8 @@ namespace BetterThanNothing
 			return bindingDescription;
 		}
 
-		static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() {
+		static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
+		{
 			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 			attributeDescriptions[0].binding = 0;
 			attributeDescriptions[0].location = 0;
@@ -35,7 +37,8 @@ namespace BetterThanNothing
 			return attributeDescriptions;
 		}
 
-		bool operator==(const Vertex& other) const {
+		bool operator==(const Vertex& other) const
+		{
 			return m_Position == other.m_Position && m_Color == other.m_Color && m_TextureCoordinates == other.m_TextureCoordinates;
 		}
 	};
