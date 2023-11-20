@@ -71,7 +71,14 @@ namespace BetterThanNothing
 		*/
 		void Run();
 
+		/**
+		 * @brief Called when the Application is enabled
+		*/
 		virtual void OnEnable() = 0;
+
+		/**
+		 * @brief Called when the Application is disabled
+		*/
 		virtual void OnDisable() = 0;
 
 		/**
