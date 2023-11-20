@@ -4,8 +4,8 @@
 
 namespace BetterThanNothing
 {
-	SwapChain::SwapChain(Window* pWindow, Device* pDevice, DescriptorPool* descriptorPool)
-		: m_Window(pWindow), m_Device(pDevice), m_DescriptorPool(descriptorPool)
+	SwapChain::SwapChain(Window* window, Device* device, DescriptorPool* descriptorPool)
+		: m_Window(window), m_Device(device), m_DescriptorPool(descriptorPool)
 	{
 		CreateSwapChain();
 		CreateImageViews();
@@ -374,24 +374,24 @@ namespace BetterThanNothing
 		return true;
 	}
 
-	void SwapChain::BindPipeline(Pipeline* pPipeline)
+	void SwapChain::BindPipeline(Pipeline* pipeline)
 	{
-		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pPipeline->GetVkGraphicsPipeline());
+		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pipeline->GetVkGraphicsPipeline());
 	}
 
-	void SwapChain::Draw(DrawPacket* pDrawPacket, u32 index)
+	void SwapChain::Draw(DrawPacket* drawPacket, u32 index)
 	{
 		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
-		Pipeline* pipeline = static_cast<Pipeline*>(pDrawPacket->pipeline);
+		Pipeline* pipeline = static_cast<Pipeline*>(drawPacket->pipeline);
 
-		commandBuffer->BindVertexBuffer(pDrawPacket->vertexBuffer);
-		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);
+		commandBuffer->BindVertexBuffer(drawPacket->vertexBuffer);
+		commandBuffer->BindIndexBuffer(drawPacket->indexBuffer);
 
 		commandBuffer->BindDescriptorSets(
 			m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
 			pipeline->GetVkPipelineLayout());
 
-		commandBuffer->DrawIndexed(pDrawPacket->indicesCount);
+		commandBuffer->DrawIndexed(drawPacket->indicesCount);
 	}
 
 	void SwapChain::EndRecordCommandBuffer()

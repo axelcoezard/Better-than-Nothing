@@ -31,7 +31,7 @@ namespace BetterThanNothing
 		u32											m_UniformBuffersCapacity;
 
 	public:
-											Renderer(Window* pWindow, Device* pDevice);
+											Renderer(Window* window, Device* device);
 											~Renderer();
 
 											Renderer(const Renderer&) = delete;
@@ -45,7 +45,7 @@ namespace BetterThanNothing
 
 	public:
 		void								LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
-		void								Render(Scene* pScene);
+		void								Render(Scene* scene);
 
 	public:
 		Window*								GetWindow()			{ return m_Window; }

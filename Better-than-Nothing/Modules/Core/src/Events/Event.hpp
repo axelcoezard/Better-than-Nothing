@@ -19,7 +19,7 @@ namespace BetterThanNothing
 		void SetHandled(bool handled) { m_Handled = handled; }
 		bool IsHandled() { return m_Handled; }
 
-		void SetContext(void* pContext) { m_Context = pContext; }
+		void SetContext(void* context) { m_Context = context; }
 		void* GetContext() { return m_Context; }
 		bool HasContext() { return m_Context != nullptr; }
 	};

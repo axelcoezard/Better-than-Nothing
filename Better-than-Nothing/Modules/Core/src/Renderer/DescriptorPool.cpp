@@ -2,8 +2,8 @@
 
 namespace BetterThanNothing
 {
-	DescriptorPool::DescriptorPool(Device* pDevice)
-		: m_pDevice(pDevice)
+	DescriptorPool::DescriptorPool(Device* device)
+		: m_Device(device)
 	{
 		m_DescriptorPoolSize = 0;
 
@@ -14,7 +14,7 @@ namespace BetterThanNothing
 	DescriptorPool::~DescriptorPool()
 	{
 		DestroyDescriptorPool();
-		vkDestroyDescriptorSetLayout(m_pDevice->GetVkDevice(), m_DescriptorSetLayout, nullptr);
+		vkDestroyDescriptorSetLayout(m_Device->GetVkDevice(), m_DescriptorSetLayout, nullptr);
 	}
 
 	void DescriptorPool::CreateDescriptorSetLayout()
@@ -42,7 +42,7 @@ namespace BetterThanNothing
 		layoutInfo.bindingCount = static_cast<u32>(bindings.size());
 		layoutInfo.pBindings = bindings.data();
 
-		if (vkCreateDescriptorSetLayout(m_pDevice->GetVkDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
+		if (vkCreateDescriptorSetLayout(m_Device->GetVkDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
 	}
@@ -65,7 +65,7 @@ namespace BetterThanNothing
 		poolInfo.pPoolSizes = poolSizes.data();
 		poolInfo.maxSets = static_cast<u32>(m_DescriptorPoolCapacity * MAX_FRAMES_IN_FLIGHT);
 
-		if (vkCreateDescriptorPool(m_pDevice->GetVkDevice(), &poolInfo, nullptr, newDescriptorPool) != VK_SUCCESS) {
+		if (vkCreateDescriptorPool(m_Device->GetVkDevice(), &poolInfo, nullptr, newDescriptorPool) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor pool!");
 		}
 
@@ -90,7 +90,7 @@ namespace BetterThanNothing
 		TransferDescriptorSets(&newDescriptorPool);
 
 		// Destroy the old descriptor pool
-		vkDestroyDescriptorPool(m_pDevice->GetVkDevice(), m_DescriptorPool, nullptr);
+		vkDestroyDescriptorPool(m_Device->GetVkDevice(), m_DescriptorPool, nullptr);
 
 		// Set the new descriptor pool
 		m_DescriptorPool = newDescriptorPool;
@@ -99,7 +99,7 @@ namespace BetterThanNothing
 	void DescriptorPool::DestroyDescriptorPool()
 	{
 		if (m_DescriptorPool != VK_NULL_HANDLE) {
-			vkDestroyDescriptorPool(m_pDevice->GetVkDevice(), m_DescriptorPool, nullptr);
+			vkDestroyDescriptorPool(m_Device->GetVkDevice(), m_DescriptorPool, nullptr);
 		}
 		m_DescriptorPool = VK_NULL_HANDLE;
 		m_DescriptorPoolSize = 0;
@@ -108,7 +108,7 @@ namespace BetterThanNothing
 
 	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers)
 	{
-		VkDevice device = m_pDevice->GetVkDevice();
+		VkDevice device = m_Device->GetVkDevice();
 
 		if (m_DescriptorPoolSize >= m_DescriptorPoolCapacity) {
 			ExtendDescriptorPool();
@@ -162,7 +162,7 @@ namespace BetterThanNothing
 
 	void DescriptorPool::TransferDescriptorSets(VkDescriptorPool* newDescriptorPool)
 	{
-		VkDevice device = m_pDevice->GetVkDevice();
+		VkDevice device = m_Device->GetVkDevice();
 
 		for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			for (u32 j = 0; j < m_DescriptorPoolSize; j++) {

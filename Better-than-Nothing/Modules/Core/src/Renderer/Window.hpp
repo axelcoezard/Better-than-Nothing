@@ -22,7 +22,6 @@ namespace BetterThanNothing
 						Window(const Window&) = delete;
 						Window& operator=(const Window&) = delete;
 
-		void			Open();
 		void			Poll()						{ glfwPollEvents(); }
 		bool			ShouldClose()				{ return glfwWindowShouldClose(m_Window) ==  GLFW_TRUE; }
 		void			Close()						{ glfwSetWindowShouldClose(m_Window, GLFW_TRUE); }
