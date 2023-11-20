@@ -62,7 +62,7 @@ namespace BetterThanNothing
 
 			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
 			m_pRenderer->Render(m_Scenes[m_CurrentSceneId]);
-			m_pDevice->Idle();
+			m_pDevice->WaitIdle();
 
 			std::cout.precision(3);
 			std::cout << "\033[2J\033[1;1H";
@@ -80,7 +80,6 @@ namespace BetterThanNothing
 				usleep(frameTimeMicroseconds - static_cast<useconds_t>(elapsedTime * 1000000));
 			}
 		}
-
 
 		OnDisable();
 	}

@@ -72,7 +72,7 @@ namespace BetterThanNothing
 		std::string						GetVendorById(u32 vendorId) const;
 
 	public:
-		void							Idle() { vkDeviceWaitIdle(m_Device); }
+		void							WaitIdle() { vkDeviceWaitIdle(m_Device); }
 		QueueFamilyIndices				FindQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails			QuerySwapChainSupport(VkPhysicalDevice device);
 		u32								FindMemoryType(u32 typeFilter, VkMemoryPropertyFlags properties);

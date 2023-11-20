@@ -305,7 +305,7 @@ namespace BetterThanNothing
 			glfwWaitEvents();
 		}
 
-		vkDeviceWaitIdle(m_pDevice->GetVkDevice());
+		m_pDevice->WaitIdle();
 
 		CleanupSwapChain();
 
