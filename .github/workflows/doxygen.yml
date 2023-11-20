@@ -21,5 +21,4 @@ jobs:
     - uses: mattnotmitt/doxygen-action@v1.9.5
       with:
         working-directory: ./Better-than-Nothing/Modules/Core
-        doxyfile-path: ./Doxyfile
 
