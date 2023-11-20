@@ -141,8 +141,10 @@ namespace BetterThanNothing
 
 			globalUniforms.model = drawPacket.model;
 
-			u32 currentFrame = m_pSwapChain->GetCurrentFrame();
-			memcpy(m_UniformBuffersMapped[currentFrame][i], &globalUniforms, sizeof(globalUniforms));
+			memcpy(
+				m_UniformBuffersMapped[m_pSwapChain->GetCurrentFrame()][i],
+				&globalUniforms,
+				sizeof(globalUniforms));
 
 			m_pSwapChain->Draw(&drawPacket, i);
 		}

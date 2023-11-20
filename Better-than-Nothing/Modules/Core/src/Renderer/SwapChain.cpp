@@ -381,15 +381,15 @@ namespace BetterThanNothing
 
 	void SwapChain::Draw(DrawPacket* pDrawPacket, u32 index)
 	{
-		auto commandBuffer = m_CommandBuffers[m_CurrentFrame];
-		auto pPipeline = static_cast<Pipeline*>(pDrawPacket->pipeline);
+		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
+		Pipeline* pipeline = static_cast<Pipeline*>(pDrawPacket->pipeline);
 
 		commandBuffer->BindVertexBuffer(pDrawPacket->vertexBuffer);
 		commandBuffer->BindIndexBuffer(pDrawPacket->indexBuffer);
 
 		commandBuffer->BindDescriptorSets(
 			m_pDescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
-			pPipeline->GetVkPipelineLayout());
+			pipeline->GetVkPipelineLayout());
 
 		commandBuffer->DrawIndexed(pDrawPacket->indicesCount);
 	}
