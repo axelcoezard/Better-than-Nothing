@@ -5,26 +5,79 @@
 
 namespace BetterThanNothing
 {
+	/**
+	 * @brief The Input class is the base class of all input management
+	 */
 	struct Input {
 	protected:
+		/**
+		 * @brief The keys
+		 */
 		static int m_Keys[KEYBOARD_KEY_COUNT];
 
+		/**
+		 * @brief The mouse position
+		 */
 		static f64 m_MouseX, m_MouseY;
+
+		/**
+		 * @brief The last mouse position
+		 */
 		static f64 m_LastMouseX, m_LastMouseY;
+
+		/**
+		 * @brief The mouse scroll
+		 */
 		static f64 m_MouseScroll;
+
+		/**
+		 * @brief The mouse buttons
+		 */
 		static int m_Buttons[MOUSE_BUTTON_COUNT];
 
 	public:
+		/**
+		 * @brief Construct a new Input object
+		 */
 		Input(void);
+
+		/**
+		 * @brief Destroy the Input object
+		 */
 		~Input(void);
 
+		/**
+		 * @brief Delete the copy constructor
+		 */
 		Input(Input&) = delete;
+
+		/**
+		 * @brief Delete the assignment operator
+		 */
 		void operator=(const Input&) = delete;
 
+		/**
+		 * @brief Update the input key
+		 */
 		static void UpdateKey(int key, int action);
+
+		/**
+		 * @brief Set a key as pressed
+		 * @param key The key to set as pressed
+		 */
 		static void PressKey(int key);
+
+		/**
+		 * @brief Set a key as released
+		 * @param key The key to set as released
+		 */
 		static void ReleaseKey(int key);
 
+		/**
+		 * @brief Update a mouse button
+		 * @param button The button to update
+		 * @param action The
+		 */
 		static void UpdateMouseButton(int button, int action);
 		static void PressMouseButton(int button);
 		static void ReleaseMouseButton(int button);
