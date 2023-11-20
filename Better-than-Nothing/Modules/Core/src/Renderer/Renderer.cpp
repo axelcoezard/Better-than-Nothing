@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	Renderer::Renderer(Window* pWindow, Device* pDevice): m_Window(pWindow), m_Device(pDevice)
+	Renderer::Renderer(Window* window, Device* device): m_Window(window), m_Device(device)
 	{
 		m_DescriptorPool = new DescriptorPool(m_Device);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
@@ -91,13 +91,13 @@ namespace BetterThanNothing
 		m_PipeLines.insert(entry);
 	}
 
-	void Renderer::Render(Scene* pScene)
+	void Renderer::Render(Scene* scene)
 	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
-		while (pScene->HasPendingEntities()) {
-			Entity* newEntity = pScene->NextPendingEntity();
+		while (scene->HasPendingEntities()) {
+			Entity* newEntity = scene->NextPendingEntity();
 			CreateNewUniformBuffer();
 			m_DescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
 		}
@@ -108,12 +108,12 @@ namespace BetterThanNothing
 
 		// Create a GlobalUniforms with camera data
 		GlobalUniforms globalUniforms;
-		globalUniforms.projection = pScene->GetCamera()->GetProjectionMatrix();
-		globalUniforms.view = pScene->GetCamera()->GetViewMatrix();
+		globalUniforms.projection = scene->GetCamera()->GetProjectionMatrix();
+		globalUniforms.view = scene->GetCamera()->GetViewMatrix();
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(pScene->GetEntities().size());
-		for (auto & entity : pScene->GetEntities()) {
+		DrawStreamBuilder drawStreamBuilder(scene->GetEntities().size());
+		for (auto & entity : scene->GetEntities()) {
 			Model* model = entity->GetModel();
 
 			drawStreamBuilder.Draw({

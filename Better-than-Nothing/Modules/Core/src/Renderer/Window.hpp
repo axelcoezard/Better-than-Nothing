@@ -40,6 +40,6 @@ namespace BetterThanNothing
 		u32		GetHeight()					{ return m_Height; }
 
 		bool			IsResized()					{ return m_Resized; }
-		void			SetResized(bool bResized)	{ m_Resized = bResized; }
+		void			SetResized(bool resized)	{ m_Resized = resized; }
 	};
 };

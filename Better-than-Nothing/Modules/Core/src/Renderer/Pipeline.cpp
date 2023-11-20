@@ -8,12 +8,12 @@ namespace BetterThanNothing
 {
 	Pipeline::Pipeline(
 		const std::string& id,
-		Device* pDevice,
-		SwapChain* pSwapChain,
-		DescriptorPool* pDescriptorPool,
+		Device* device,
+		SwapChain* swapChain,
+		DescriptorPool* descriptorPool,
 		const std::string& vertexShaderFilePath,
 		const std::string& fragmentShaderFilePath
-	) : m_Id(id), m_Device(pDevice), m_SwapChain(pSwapChain), m_DescriptorPool(pDescriptorPool) {
+	) : m_Id(id), m_Device(device), m_SwapChain(swapChain), m_DescriptorPool(descriptorPool) {
 		LoadShader(vertexShaderFilePath, fragmentShaderFilePath);
 		CreateGraphicsPipeline();
 	}
