@@ -1,9 +1,33 @@
-PROJECT_NAME           = Better-Than-Nothing
+PROJECT_NAME			= Better-than-Nothing
 
-OUTPUT_DIRECTORY       = Better-Than-Nothing/Documentation
+OUTPUT_DIRECTORY		= Better-than-Nothing/Documentation
 
-GENERATE_HTML          = YES
+GENERATE_HTML			= YES
 
-GENERATE_LATEX         = NO
+GENERATE_LATEX			= NO
 
-INPUT                  = Better-Than-Nothing/Modules/Core
+INPUT					= Better-than-Nothing/Modules/Core
+
+FILE_PATTERNS			= *.cpp *.h *.hpp
+
+EXTRACT_ALL				= YES
+
+EXTRACT_PRIVATE			= YES
+
+EXTRACT_STATIC			= YES
+
+SOURCE_BROWSER			= YES
+
+RECURSIVE				= YES
+
+GENERATE_TREEVIEW		= YES
+
+HAVE_DOT				= NO
+
+CALL_GRAPH				= NO
+
+CALLER_GRAPH			= NO
+
+SHOW_FILES				= NO
+
+CLASS_DIAGRAMS			= NO
