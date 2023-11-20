@@ -1,0 +1,9 @@
+PROJECT_NAME           = Better-Than-Nothing
+
+OUTPUT_DIRECTORY       = Better-Than-Nothing/Documentation
+
+GENERATE_HTML          = YES
+
+GENERATE_LATEX         = NO
+
+INPUT                  = Better-Than-Nothing/Modules/Core
