@@ -16,14 +16,25 @@ namespace BetterThanNothing
 		static int m_Keys[KEYBOARD_KEY_COUNT];
 
 		/**
-		 * @brief The mouse position
+		 * @brief The mouse X position
 		 */
-		static f64 m_MouseX, m_MouseY;
+		static f64 m_MouseX;
+
 
 		/**
-		 * @brief The last mouse position
+		 * @brief The mouse X position
 		 */
-		static f64 m_LastMouseX, m_LastMouseY;
+		static f64 m_MouseY;
+
+		/**
+		 * @brief The last mouse X position
+		 */
+		static f64 m_LastMouseX;
+
+		/**
+		 * @brief The last mouse Y position
+		 */
+		static f64 m_LastMouseY;
 
 		/**
 		 * @brief The mouse scroll
