@@ -2,6 +2,8 @@
 
 namespace BetterThanNothing
 {
+	class ConfigManager;
+
 	class Window;
 	class Device;
 	class Renderer;
@@ -18,6 +20,11 @@ namespace BetterThanNothing
 	class Application
 	{
 	protected:
+		/**
+		 * @brief A pointer to the ConfigManager
+		*/
+		ConfigManager* m_ConfigManager;
+
 		/**
 		 * @brief A pointer to the Window
 		*/
@@ -60,7 +67,7 @@ namespace BetterThanNothing
 		 * @param width The width of the window
 		 * @param height The height of the window
 		*/
-		Application(std::string_view title, u32 width, u32 height);
+		Application();
 
 		/**
 		 * @brief Destroy the Application object

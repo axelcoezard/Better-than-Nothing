@@ -28,5 +28,5 @@ namespace BetterThanNothing
 
 BetterThanNothing::Application* CreateApplication()
 {
-	return new BetterThanNothing::Runtime("better-than-nothing", WINDOW_WIDTH, WINDOW_HEIGHT);
+	return new BetterThanNothing::Runtime();
 }

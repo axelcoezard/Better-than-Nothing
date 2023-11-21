@@ -12,6 +12,8 @@ file(GLOB SOURCES
 	"src/*.cpp"
 	"src/*.hpp"
 	"src/*.h"
+	"src/Utils/*.cpp"
+	"src/Utils/*.hpp"
 	"src/Ressources/*.cpp"
 	"src/Ressources/*.hpp"
 	"src/Renderer/*.cpp"
@@ -34,7 +36,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb imgui)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb imgui inih)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/glfw/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/vulkan)
@@ -43,6 +45,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/.
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/tinyobjloader)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/entt/single_include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/imgui/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/inih/include)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 

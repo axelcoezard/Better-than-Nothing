@@ -13,8 +13,7 @@ namespace BetterThanNothing
 
 	class Runtime: public Application {
 	public:
-		Runtime(std::string_view title, u32 width, u32 height)
-			: Application(title, width, height) { };
+		Runtime() { };
 
 		void OnEnable() override;
 		void OnDisable() override;

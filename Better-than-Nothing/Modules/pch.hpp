@@ -19,6 +19,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
+#include <INIReader.h>
+
 #define MAX_FRAMES_IN_FLIGHT 30
 
 #define WINDOW_WIDTH 1280

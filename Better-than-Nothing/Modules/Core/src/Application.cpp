@@ -1,23 +1,17 @@
-#include "Application.hpp"
-
-#include "Renderer/Window.hpp"
-#include "Renderer/Device.hpp"
-#include "Renderer/Renderer.hpp"
-#include "Renderer/DrawStream.hpp"
-
-#include "Ressources/RessourcePool.hpp"
-#include "Ressources/Model.hpp"
-
-#include "Events/Event.hpp"
-
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
-	Application::Application(std::string_view title, u32 width, u32 height)
+	Application::Application()
 	{
-		m_Window = new Window(title, width, height);
+		m_ConfigManager = new ConfigManager("/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Config/");
+
+		ConfigReader config = m_ConfigManager->Read("Config.ini");
+		std::string windowTitle = config->Get("window", "title", "Application");
+		u32 windowWidth = config->GetInteger("window", "width", 800);
+		u32 windowHeight = config->GetInteger("window", "height", 600);
+
+		m_Window = new Window(windowTitle, windowWidth, windowHeight);
 		m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
 
 		m_Device = new Device(m_Window);
@@ -29,7 +23,7 @@ namespace BetterThanNothing
 		m_Renderer->LoadPipeline("main", "main/main.vert.spv", "main/main.frag.spv");
 	}
 
-	Application::~Application(void)
+	Application::~Application()
 	{
 		for (auto & scene : m_Scenes) {
 			delete scene;
@@ -41,9 +35,10 @@ namespace BetterThanNothing
 		delete m_Renderer;
 		delete m_Device;
 		delete m_Window;
+		delete m_ConfigManager;
 	}
 
-	void Application::Run(void)
+	void Application::Run()
 	{
 		OnEnable();
 
