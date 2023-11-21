@@ -60,7 +60,7 @@ namespace BetterThanNothing
 		 * @param width The width of the window
 		 * @param height The height of the window
 		*/
-		Application(std::string_view title, u32 width, u32 height);
+		Application();
 
 		/**
 		 * @brief Destroy the Application object
