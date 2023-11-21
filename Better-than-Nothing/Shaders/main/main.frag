@@ -1,31 +1,102 @@
 #version 450
 
+struct DirectionalLight {
+	vec3 color;
+
+	float ambient;
+	float diffuse;
+	float specular;
+
+	vec3 direction;
+};
+
+struct PointLight {
+	vec3 color;
+
+	float ambient;
+	float diffuse;
+	float specular;
+
+	vec3 position;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+layout(binding = 0) uniform GlobalUniforms {
+	mat4 model;
+	mat4 view;
+	mat4 projection;
+	vec3 cameraPosition;
+
+	DirectionalLight directionalLight;
+	PointLight pointLights[4];
+} ubo;
+
 layout(binding = 1) uniform sampler2D texSampler;
 
 layout(location = 0) in vec3 fragPosition;
 layout(location = 1) in vec3 fragNormal;
 layout(location = 2) in vec2 fragTexCoord;
-layout(location = 3) in vec3 fragLightDirection;
 
 layout(location = 0) out vec4 outColor;
 
-void main() {
-	vec3 lightDirection = fragLightDirection;
-	vec3 lightColor = vec3(1.0, 1.0, 1.0);
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+{
+	vec3 lightDir = normalize(-light.direction);
 
-	float ambient  = 0.5;
+	// diffuse shading
+	float diff = max(dot(normal, lightDir), 0.0);
 
-	// diffuse light
-	vec3 unitNormal = normalize(fragNormal);
-	vec3 unitLightDirection = normalize(lightDirection);
-	float diffuse = 0.1 * max(dot(unitNormal, unitLightDirection), 0.0);
+	// specular shading
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = max(dot(viewDir, reflectDir), 0.0);
 
-	// specular light
-	vec3 viewDirection = normalize(-fragPosition);
-	vec3 reflectDirection = reflect(-lightDirection, unitNormal);
-	float specular = 0.05 * max(dot(viewDirection, reflectDirection), 0.0);
+	// combine results
+	float ambient = light.ambient;
+	float diffuse = light.diffuse * diff;
+	float specular = light.specular * spec;
 
-	float brightness = max(ambient + diffuse + specular, 1.0);
+	return max(ambient + diffuse + specular, 1.0) * light.color;
+}
 
-	outColor = vec4(brightness * lightColor, 1.0) * texture(texSampler, fragTexCoord);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+	vec3 lightDir = normalize(light.position - fragPos);
+
+	// diffuse shading
+	float diff = max(dot(normal, lightDir), 0.0);
+
+	// specular shading
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = max(dot(viewDir, reflectDir), 0.0);
+
+	// attenuation
+	float distance = length(light.position - fragPos);
+	float attenuation = 1.0 / (light.constant + light.linear * distance +
+					light.quadratic * (distance * distance));
+
+	// combine results
+	float ambient = light.ambient;
+	float diffuse =  light.diffuse * diff;
+	float specular = light.specular * spec;
+
+	return max(ambient + diffuse + specular, 1.0) * attenuation * light.color;
+}
+
+void main()
+{
+	vec3 norm = normalize(fragNormal);
+	vec3 viewDir = normalize(ubo.cameraPosition - fragPosition);
+
+	// phase 1: Directional lighting
+	vec3 result = CalcDirectionalLight(ubo.directionalLight, norm, viewDir);
+
+	// phase 2: Point lights
+	//for(int i = 0; i < 2; i++) {
+	//	result += CalcPointLight(ubo.pointLights[i], norm, fragPosition, viewDir);
+	//}
+
+	outColor = vec4(result, 1.0) * texture(texSampler, fragTexCoord);
 }

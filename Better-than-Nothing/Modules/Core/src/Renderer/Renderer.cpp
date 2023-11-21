@@ -110,6 +110,37 @@ namespace BetterThanNothing
 		GlobalUniforms globalUniforms;
 		globalUniforms.projection = scene->GetCamera()->GetProjectionMatrix();
 		globalUniforms.view = scene->GetCamera()->GetViewMatrix();
+		globalUniforms.cameraPosition = scene->GetCamera()->GetPosition();
+
+		globalUniforms.directionalLight = {
+			.color = glm::vec3(1.0f, 1.0f, 1.0f),
+			.ambient = 1.0f,
+			.diffuse = 0.5f,
+			.specular = 0.5f,
+			.direction = glm::vec3(0.0f, 0.0f, 0.0f)
+		};
+
+		globalUniforms.pointLights.push_back({
+			.color = glm::vec3(1.0f, 1.0f, 1.0f),
+			.ambient = 0.5f,
+			.diffuse = 0.5f,
+			.specular = 0.5f,
+			.position = glm::vec3(15.0f, 0.0f, 0.0f),
+			.constant = 1.0f,
+			.linear = 0.09f,
+			.quadratic = 0.032f
+		});
+
+		globalUniforms.pointLights.push_back({
+			.color = glm::vec3(1.0f, 1.0f, 1.0f),
+			.ambient = 0.5f,
+			.diffuse = 0.5f,
+			.specular = 0.5f,
+			.position = glm::vec3(2.3f, -3.3f, -4.0f),
+			.constant = 1.0f,
+			.linear = 0.09f,
+			.quadratic = 0.032f
+		});
 
 		// Append all the usefull Model's data to create a sorted DrawStream
 		DrawStreamBuilder drawStreamBuilder(scene->GetEntities().size());

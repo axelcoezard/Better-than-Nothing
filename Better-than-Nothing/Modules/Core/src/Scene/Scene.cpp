@@ -50,18 +50,12 @@ namespace BetterThanNothing
 
 	void Scene::OnUpdate(f32 deltatime)
 	{
-		if (Input::IsKeyPressed(GLFW_KEY_0)) {
-			Entity* newModel = CreateEntity("42/42.obj", "42/42.jpg");
-			newModel->SetRotation(glm::vec3(30.0f * (f32) glfwGetTime()));
-		}
-
 		m_Camera->Update(deltatime);
 
 		f32 speed = 1.5f;
 		f32 rotation = glm::mod(speed * 30.0f * (f32) glfwGetTime() * 1.5f, 360.0f);
 
 		if (m_Entities.size() > 0) {
-			m_Entities[0]->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 			m_Entities[0]->SetRotation(glm::vec3(0.0f, (f32) rotation, 0.0f));
 		}
 	}
