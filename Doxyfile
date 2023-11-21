@@ -1,6 +1,6 @@
 PROJECT_NAME			= Better-than-Nothing
 
-OUTPUT_DIRECTORY		= Better-than-Nothing/Documentation
+OUTPUT_DIRECTORY		= Better-than-Nothing/docs
 
 GENERATE_HTML			= YES
 
