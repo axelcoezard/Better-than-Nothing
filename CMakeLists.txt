@@ -43,8 +43,10 @@ add_custom_target(
 # Modules
 # ==================================================================================================
 add_subdirectory("Better-than-Nothing/Modules/Core")
-add_subdirectory("Better-than-Nothing/Modules/Runtime")
+add_dependencies(Core Shaders)
 
+add_subdirectory("Better-than-Nothing/Modules/Runtime")
+add_dependencies(Runtime Shaders)
 
 
 
