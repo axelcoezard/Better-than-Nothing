@@ -2,36 +2,102 @@
 
 namespace BetterThanNothing
 {
+	/**
+	 * @brief A DrawPacket is a collection of data that is used to draw a single object.
+	 */
 	struct DrawPacket
 	{
-		void*					pipeline;
-		void*					texture;
+		/**
+		 * @brief A pointer to a Pipeline.
+		 */
+		void* pipeline;
 
-		VkBuffer				vertexBuffer;
-		VkBuffer				indexBuffer;
-		u32						indicesCount;
+		/**
+		 * @brief A pointer to a Texture.
+		 */
+		void* texture;
 
-		glm::mat4				model;
+		/**
+		 * @brief The vertex buffer.
+		 */
+		VkBuffer vertexBuffer;
+
+		/**
+		 * @brief The index buffer.
+		 */
+		VkBuffer indexBuffer;
+
+		/**
+		 * @brief The number of indices.
+		 */
+		u32 indicesCount;
+
+		/**
+		 * @brief The model matrix.
+		 */
+		glm::mat4 model;
 	};
 
+	/**
+	 * @brief A DrawStream is a collection of DrawPackets.
+	 */
 	struct DrawStream
 	{
-		u32						size;
-		DrawPacket*				drawPackets;
+		/**
+		 * @brief The size of the DrawStream.
+		 */
+		u32 size;
+
+		/**
+		 * @brief The DrawPackets.
+		 */
+		DrawPacket* drawPackets;
 	};
 
+	/**
+	 * @brief A DrawStreamBuilder is used to build a DrawStream.
+	 */
 	class DrawStreamBuilder
 	{
 	private:
-		u32						m_Size;
-		u32						m_Capacity;
+		/**
+		 * @brief The size of the DrawStream.
+		 */
+		u32 m_Size;
+
+		/**
+		 * @brief The capacity of the DrawStream.
+		 */
+		u32 m_Capacity;
+
+		/**
+		 * @brief The DrawPackets.
+		 */
 		std::vector<DrawPacket> m_DrawPackets;
 
 	public:
+		/**
+		 * @brief Construct a new DrawStreamBuilder.
+		 * @param capacity The maximum capacity of the DrawStream.
+		 */
 		DrawStreamBuilder(u32 capacity);
+
+		/**
+		 * @brief Destroy the DrawStreamBuilder and clear DrawPackets.
+		 */
 		~DrawStreamBuilder();
 
+		/**
+		 * @brief Add a DrawPacket to the DrawStream.
+		 * @param drawPacket The DrawPacket to add.
+		 */
 		void Draw(DrawPacket drawPacket);
+
+		/**
+		 * @brief Build the DrawStream.
+		 * @return A pointer to the new DrawStream.
+		 * @note The DrawPackets are sorted by pipeline while building the DrawStream.
+		 */
 		DrawStream* GetStream();
 	};
 };
