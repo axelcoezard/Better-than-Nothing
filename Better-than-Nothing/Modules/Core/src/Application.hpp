@@ -2,6 +2,8 @@
 
 namespace BetterThanNothing
 {
+	class ConfigManager;
+
 	class Window;
 	class Device;
 	class Renderer;
@@ -18,6 +20,11 @@ namespace BetterThanNothing
 	class Application
 	{
 	protected:
+		/**
+		 * @brief A pointer to the ConfigManager
+		*/
+		ConfigManager* m_ConfigManager;
+
 		/**
 		 * @brief A pointer to the Window
 		*/

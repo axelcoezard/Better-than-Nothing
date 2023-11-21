@@ -1,21 +1,15 @@
 #include "BetterThanNothing.hpp"
 
-#include "INIReader.h"
-
 namespace BetterThanNothing
 {
 	Application::Application()
 	{
-		INIReader configReader("/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Config/Config.ini");
+		m_ConfigManager = new ConfigManager("/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Config/");
 
-		if (configReader.ParseError() < 0) {
-			std::cout << "Can't load 'Config.ini'\n";
-			exit(1);
-		}
-
-		std::string windowTitle = configReader.Get("window", "title", "Application");
-		u32 windowWidth = configReader.GetInteger("window", "width", 800);
-		u32 windowHeight = configReader.GetInteger("window", "height", 600);
+		ConfigReader config = m_ConfigManager->Read("Config.ini");
+		std::string windowTitle = config->Get("window", "title", "Application");
+		u32 windowWidth = config->GetInteger("window", "width", 800);
+		u32 windowHeight = config->GetInteger("window", "height", 600);
 
 		m_Window = new Window(windowTitle, windowWidth, windowHeight);
 		m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
@@ -41,6 +35,7 @@ namespace BetterThanNothing
 		delete m_Renderer;
 		delete m_Device;
 		delete m_Window;
+		delete m_ConfigManager;
 	}
 
 	void Application::Run()

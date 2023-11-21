@@ -1,6 +1,10 @@
 #pragma once
 
+// Application
 #include "Application.hpp"
+
+// Utils
+#include "Utils/ConfigManager.hpp"
 
 // Events
 

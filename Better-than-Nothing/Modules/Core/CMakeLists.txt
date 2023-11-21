@@ -12,6 +12,8 @@ file(GLOB SOURCES
 	"src/*.cpp"
 	"src/*.hpp"
 	"src/*.h"
+	"src/Utils/*.cpp"
+	"src/Utils/*.hpp"
 	"src/Ressources/*.cpp"
 	"src/Ressources/*.hpp"
 	"src/Renderer/*.cpp"
