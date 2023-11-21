@@ -4,6 +4,9 @@
 
 namespace BetterThanNothing
 {
+	/**
+	 * @brief A class to dispatch events to listeners
+	 */
 	class EventDispatcher
 	{
 	private:
