@@ -2,12 +2,31 @@
 
 namespace BetterThanNothing
 {
+	/**
+	 * @brief The Vertex struct that is used to store vertex data
+	 */
 	struct Vertex
 	{
+		/**
+		 * @brief The position of the vertex
+		 */
 		glm::vec3	position;
+
+		/**
+		 * @brief The color of the vertex
+		 */
 		glm::vec3	color;
+
+		/**
+		 * @brief The texture coordinates of the vertex
+		 */
 		glm::vec2	textureCoordinates;
 
+		/**
+		 * @brief Get the binding description of the vertex
+		 *
+		 * @return VkVertexInputBindingDescription The binding description of the vertex
+		 */
 		static VkVertexInputBindingDescription GetBindingDescription()
 		{
 			VkVertexInputBindingDescription bindingDescription{};
@@ -17,6 +36,11 @@ namespace BetterThanNothing
 			return bindingDescription;
 		}
 
+		/**
+		 * @brief Get the attribute descriptions of the vertex
+		 *
+		 * @return std::array<VkVertexInputAttributeDescription, 3> The attribute descriptions of the vertex
+		 */
 		static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
 		{
 			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
@@ -37,6 +61,16 @@ namespace BetterThanNothing
 			return attributeDescriptions;
 		}
 
+		/**
+		 * @brief Check if the vertex is equal to another vertex
+		 *
+		 * @param other The other vertex
+		 *
+		 * @retval true if the vertex is equal to the other vertex
+		 * @retval false otherwise
+		 *
+		 * @note The vertex is equal to another vertex if the position, color and texture coordinates are equal
+		 */
 		bool operator==(const Vertex& other) const
 		{
 			return position == other.position && color == other.color && textureCoordinates == other.textureCoordinates;
