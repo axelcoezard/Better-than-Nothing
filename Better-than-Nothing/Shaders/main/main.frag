@@ -2,26 +2,23 @@
 
 struct DirectionalLight {
 	vec3 color;
-
-	float ambient;
-	float diffuse;
-	float specular;
-
 	vec3 direction;
 };
 
 struct PointLight {
 	vec3 color;
-
-	float ambient;
-	float diffuse;
-	float specular;
-
 	vec3 position;
 
 	float constant;
 	float linear;
 	float quadratic;
+};
+
+struct Material {
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
 };
 
 layout(binding = 0) uniform GlobalUniforms {
@@ -30,6 +27,7 @@ layout(binding = 0) uniform GlobalUniforms {
 	mat4 projection;
 	vec3 cameraPosition;
 
+	Material material;
 	DirectionalLight directionalLight;
 	PointLight pointLights[4];
 } ubo;
@@ -54,11 +52,11 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	float spec = max(dot(viewDir, reflectDir), 0.0);
 
 	// combine results
-	float ambient = light.ambient;
-	float diffuse = light.diffuse * diff;
-	float specular = light.specular * spec;
+	vec3 ambient = ubo.material.ambient;
+	vec3 diffuse = ubo.material.diffuse * diff;
+	vec3 specular = ubo.material.specular * spec;
 
-	return max(ambient + diffuse + specular, 1.0) * light.color;
+	return (ambient + diffuse + specular) * light.color;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -78,11 +76,11 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 					light.quadratic * (distance * distance));
 
 	// combine results
-	float ambient = light.ambient;
-	float diffuse =  light.diffuse * diff;
-	float specular = light.specular * spec;
+	vec3 ambient = ubo.material.ambient;
+	vec3 diffuse =  ubo.material.diffuse * diff;
+	vec3 specular = ubo.material.specular * spec;
 
-	return max(ambient + diffuse + specular, 1.0) * attenuation * light.color;
+	return (ambient + diffuse + specular) * attenuation * light.color;
 }
 
 void main()

@@ -27,6 +27,7 @@
 #include "Renderer/GlobalUniforms.hpp"
 #include "Renderer/Vertex.hpp"
 #include "Renderer/DrawStream.hpp"
+#include "Renderer/Material.hpp"
 
 // Ressources
 #include "Ressources/RessourcePool.hpp"

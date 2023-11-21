@@ -1,37 +1,9 @@
 #version 450
 
-struct DirectionalLight {
-	vec3 color;
-
-	float ambient;
-	float diffuse;
-	float specular;
-
-	vec3 position;
-};
-
-struct PointLight {
-	vec3 color;
-
-	float ambient;
-	float diffuse;
-	float specular;
-
-	vec3 position;
-
-	float constant;
-	float linear;
-	float quadratic;
-};
-
 layout(binding = 0) uniform GlobalUniforms {
 	mat4 model;
 	mat4 view;
 	mat4 projection;
-	vec3 cameraPosition;
-
-	DirectionalLight directionalLight;
-	PointLight pointLight[4];
 } ubo;
 
 layout(location = 0) in vec3 inPosition;

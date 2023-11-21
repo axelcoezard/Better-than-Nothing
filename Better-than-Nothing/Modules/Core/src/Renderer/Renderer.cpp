@@ -114,17 +114,11 @@ namespace BetterThanNothing
 
 		globalUniforms.directionalLight = {
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.ambient = 1.0f,
-			.diffuse = 0.5f,
-			.specular = 0.5f,
 			.direction = glm::vec3(0.0f, 0.0f, 0.0f)
 		};
 
 		globalUniforms.pointLights.push_back({
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.ambient = 0.5f,
-			.diffuse = 0.5f,
-			.specular = 0.5f,
 			.position = glm::vec3(15.0f, 0.0f, 0.0f),
 			.constant = 1.0f,
 			.linear = 0.09f,
@@ -133,9 +127,6 @@ namespace BetterThanNothing
 
 		globalUniforms.pointLights.push_back({
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.ambient = 0.5f,
-			.diffuse = 0.5f,
-			.specular = 0.5f,
 			.position = glm::vec3(2.3f, -3.3f, -4.0f),
 			.constant = 1.0f,
 			.linear = 0.09f,
@@ -171,6 +162,12 @@ namespace BetterThanNothing
 			}
 
 			globalUniforms.model = drawPacket.model;
+			globalUniforms.material = {
+				.ambient = glm::vec3(1.0f, 0.5f, 0.31f),
+				.diffuse = glm::vec3(1.0f, 0.5f, 0.31f),
+				.specular = glm::vec3(0.5f, 0.5f, 0.5f),
+				.shininess = 32.0f
+			},
 
 			memcpy(
 				m_UniformBuffersMapped[m_SwapChain->GetCurrentFrame()][i],

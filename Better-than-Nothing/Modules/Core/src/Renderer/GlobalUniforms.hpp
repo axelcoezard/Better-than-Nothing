@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene/Light.hpp"
+#include "Renderer/Material.hpp"
 
 namespace BetterThanNothing
 {
@@ -28,6 +29,11 @@ namespace BetterThanNothing
 		 * @brief The camera position
 		 */
 		alignas(16) glm::vec3 cameraPosition;
+
+		/**
+		 * @brief The material
+		 */
+		Material material;
 
 		/**
 		 * @brief The directional light

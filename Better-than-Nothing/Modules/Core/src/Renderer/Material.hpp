@@ -10,28 +10,23 @@ namespace BetterThanNothing
 	struct Material
 	{
 		/**
-		 * @brief The material name
-		 */
-		std::string name;
-
-		/**
 		 * @brief The material ambient color
 		 */
-		glm::vec3 ambient;
+		alignas(16) glm::vec3 ambient;
 
 		/**
 		 * @brief The material diffuse color
 		 */
-		glm::vec3 diffuse;
+		alignas(16) glm::vec3 diffuse;
 
 		/**
 		 * @brief The material specular color
 		 */
-		glm::vec3 specular;
+		alignas(16) glm::vec3 specular;
 
 		/**
 		 * @brief The material shininess
 		 */
-		float shininess;
+		alignas(4) float shininess;
 	};
 };
