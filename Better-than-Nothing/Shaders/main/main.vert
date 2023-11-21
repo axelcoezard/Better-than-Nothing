@@ -13,6 +13,7 @@ layout(location = 2) in vec2 inTexCoord;
 layout(location = 0) out vec3 fragPosition;
 layout(location = 1) out vec3 fragNormal;
 layout(location = 2) out vec2 fragTexCoord;
+layout(location = 3) out vec3 fragLightDirection;
 
 void main() {
 	vec4 worldPosition = ubo.view * ubo.model * vec4(inPosition, 1.0);
@@ -23,4 +24,7 @@ void main() {
 	fragPosition = worldPosition.xyz;
 	fragNormal = worldNormal.xyz;
 	fragTexCoord = inTexCoord;
+
+	vec3 lightPosition = vec3(ubo.view * vec4(0.0, 0.0, 100.0, 1.0));
+	fragLightDirection = lightPosition.xyz - worldPosition.xyz;
 }

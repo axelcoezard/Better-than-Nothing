@@ -5,12 +5,13 @@ layout(binding = 1) uniform sampler2D texSampler;
 layout(location = 0) in vec3 fragPosition;
 layout(location = 1) in vec3 fragNormal;
 layout(location = 2) in vec2 fragTexCoord;
+layout(location = 3) in vec3 fragLightDirection;
 
 layout(location = 0) out vec4 outColor;
 
 void main() {
-	vec3 lightDirection = normalize(vec3(0.0, 0.0, 1.0));
-	vec3 lightColor = vec3(1.0, 0.0, 1.0);
+	vec3 lightDirection = fragLightDirection;
+	vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 	float ambient  = 0.5;
 
