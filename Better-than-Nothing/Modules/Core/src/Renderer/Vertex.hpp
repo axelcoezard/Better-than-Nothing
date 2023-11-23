@@ -10,17 +10,17 @@ namespace BetterThanNothing
 		/**
 		 * @brief The position of the vertex
 		 */
-		glm::vec3	position;
+		glm::vec3 position;
 
 		/**
-		 * @brief The color of the vertex
+		 * @brief The normal of the vertex
 		 */
-		glm::vec3	color;
+		glm::vec3 normal;
 
 		/**
 		 * @brief The texture coordinates of the vertex
 		 */
-		glm::vec2	textureCoordinates;
+		glm::vec2 textureCoordinates;
 
 		/**
 		 * @brief Get the binding description of the vertex
@@ -52,7 +52,7 @@ namespace BetterThanNothing
 			attributeDescriptions[1].binding = 0;
 			attributeDescriptions[1].location = 1;
 			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[1].offset = offsetof(Vertex, color);
+			attributeDescriptions[1].offset = offsetof(Vertex, normal);
 
 			attributeDescriptions[2].binding = 0;
 			attributeDescriptions[2].location = 2;
@@ -69,11 +69,11 @@ namespace BetterThanNothing
 		 * @retval true if the vertex is equal to the other vertex
 		 * @retval false otherwise
 		 *
-		 * @note The vertex is equal to another vertex if the position, color and texture coordinates are equal
+		 * @note The vertex is equal to another vertex if the position, normal and texture coordinates are equal
 		 */
 		bool operator==(const Vertex& other) const
 		{
-			return position == other.position && color == other.color && textureCoordinates == other.textureCoordinates;
+			return position == other.position && normal == other.normal && textureCoordinates == other.textureCoordinates;
 		}
 	};
 
@@ -83,7 +83,7 @@ namespace std {
 	template<> struct hash<BetterThanNothing::Vertex> {
 		size_t operator()(BetterThanNothing::Vertex const& vertex) const {
 			return ((hash<glm::vec3>()(vertex.position) ^
-					(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
+					(hash<glm::vec3>()(vertex.normal) << 1)) >> 1) ^
 					(hash<glm::vec2>()(vertex.textureCoordinates) << 1);
 		}
 	};

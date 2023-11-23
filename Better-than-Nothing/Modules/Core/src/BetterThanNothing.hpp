@@ -27,6 +27,7 @@
 #include "Renderer/GlobalUniforms.hpp"
 #include "Renderer/Vertex.hpp"
 #include "Renderer/DrawStream.hpp"
+#include "Renderer/Material.hpp"
 
 // Ressources
 #include "Ressources/RessourcePool.hpp"
@@ -38,3 +39,4 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 #include "Scene/Entity.hpp"
+#include "Scene/Light.hpp"
