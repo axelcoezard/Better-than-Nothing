@@ -114,24 +114,8 @@ namespace BetterThanNothing
 
 		globalUniforms.directionalLight = {
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.direction = glm::vec3(0.0f, 0.0f, 0.0f)
+			.direction = glm::vec3(-1.0f, 0.0f, -1.0f)
 		};
-
-		globalUniforms.pointLights.push_back({
-			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.position = glm::vec3(15.0f, 0.0f, 0.0f),
-			.constant = 1.0f,
-			.linear = 0.09f,
-			.quadratic = 0.032f
-		});
-
-		globalUniforms.pointLights.push_back({
-			.color = glm::vec3(1.0f, 1.0f, 1.0f),
-			.position = glm::vec3(2.3f, -3.3f, -4.0f),
-			.constant = 1.0f,
-			.linear = 0.09f,
-			.quadratic = 0.032f
-		});
 
 		// Append all the usefull Model's data to create a sorted DrawStream
 		DrawStreamBuilder drawStreamBuilder(scene->GetEntities().size());
@@ -163,10 +147,10 @@ namespace BetterThanNothing
 
 			globalUniforms.model = drawPacket.model;
 			globalUniforms.material = {
-				.ambient = glm::vec3(1.0f, 0.5f, 0.31f),
-				.diffuse = glm::vec3(1.0f, 0.5f, 0.31f),
-				.specular = glm::vec3(0.5f, 0.5f, 0.5f),
-				.shininess = 32.0f
+				.ambient = 0.5f,
+				.diffuse = 0.1f,
+				.specular = 0.5f,
+				.shininess = 1.0f
 			},
 
 			memcpy(

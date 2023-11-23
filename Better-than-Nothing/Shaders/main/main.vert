@@ -16,11 +16,10 @@ layout(location = 2) out vec2 fragTexCoord;
 
 void main() {
 	vec4 worldPosition = ubo.view * ubo.model * vec4(inPosition, 1.0);
-	vec4 worldNormal = ubo.view * ubo.model * vec4(inNormal, 0.0);
 
 	gl_Position = ubo.projection * worldPosition;
 
 	fragPosition = worldPosition.xyz;
-	fragNormal = worldNormal.xyz;
+	fragNormal = mat3(transpose(inverse(ubo.view * ubo.model))) * inNormal;
 	fragTexCoord = inTexCoord;
 }

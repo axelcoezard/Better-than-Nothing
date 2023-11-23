@@ -12,17 +12,17 @@ namespace BetterThanNothing
 		/**
 		 * @brief The material ambient color
 		 */
-		alignas(16) glm::vec3 ambient;
+		alignas(4) float ambient;
 
 		/**
 		 * @brief The material diffuse color
 		 */
-		alignas(16) glm::vec3 diffuse;
+		alignas(4) float diffuse;
 
 		/**
 		 * @brief The material specular color
 		 */
-		alignas(16) glm::vec3 specular;
+		alignas(4) float specular;
 
 		/**
 		 * @brief The material shininess
