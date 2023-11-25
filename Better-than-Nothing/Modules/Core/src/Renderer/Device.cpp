@@ -356,7 +356,7 @@ namespace BetterThanNothing
 		throw std::runtime_error("failed to find supported format!");
 	}
 
-	void Device::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+	void Device::CreateBuffer(Buffer* buffer, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 	{
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -364,23 +364,26 @@ namespace BetterThanNothing
 		bufferInfo.usage = usage;
 		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-		if (vkCreateBuffer(m_Device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+		if (vkCreateBuffer(m_Device, &bufferInfo, nullptr, &buffer->m_Buffer) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create vertex buffer!");
 		}
 
+		buffer->m_Size = size;
+		buffer->m_Usage = usage;
+
 		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(m_Device, buffer, &memRequirements);
+		vkGetBufferMemoryRequirements(m_Device, buffer->m_Buffer, &memRequirements);
 
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
 		allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-		if (vkAllocateMemory(m_Device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+		if (vkAllocateMemory(m_Device, &allocInfo, nullptr, &buffer->m_Memory) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate vertex buffer memory!");
 		}
 
-		vkBindBufferMemory(m_Device, buffer, bufferMemory, 0);
+		vkBindBufferMemory(m_Device, buffer->m_Buffer, buffer->m_Memory, 0);
 	}
 
 	void Device::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
@@ -390,6 +393,26 @@ namespace BetterThanNothing
 			copyRegion.size = size;
 			commandBuffer->CmdCopyBuffer(srcBuffer, dstBuffer, 1, copyRegion);
 		}, this);
+	}
+
+	void Device::MapBuffer(Buffer* buffer, VkDeviceSize offset, VkMemoryMapFlags flags, void** data)
+	{
+		vkMapMemory(m_Device, buffer->m_Memory, offset, buffer->m_Size, flags, data);
+	}
+
+	void Device::UnmapBuffer(Buffer* buffer)
+	{
+		vkUnmapMemory(m_Device, buffer->m_Memory);
+	}
+
+	void Device::DestroyBuffer(Buffer* buffer)
+	{
+		if (buffer->m_Buffer != VK_NULL_HANDLE) {
+			vkDestroyBuffer(m_Device, buffer->m_Buffer, nullptr);
+		}
+		if (buffer->m_Memory != VK_NULL_HANDLE) {
+			vkFreeMemory(m_Device, buffer->m_Memory, nullptr);
+		}
 	}
 
 	VkImageView Device::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, u32 mipLevels)

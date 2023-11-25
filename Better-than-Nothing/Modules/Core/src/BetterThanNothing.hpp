@@ -25,9 +25,11 @@
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/GlobalUniforms.hpp"
+#include "Renderer/UniformsPool.hpp"
 #include "Renderer/Vertex.hpp"
 #include "Renderer/DrawStream.hpp"
 #include "Renderer/Material.hpp"
+#include "Renderer/Buffer.hpp"
 
 // Ressources
 #include "Ressources/RessourcePool.hpp"

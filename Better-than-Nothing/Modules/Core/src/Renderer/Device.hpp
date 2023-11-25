@@ -21,6 +21,7 @@ namespace BetterThanNothing
 
 	class Window;
 	class CommandPool;
+	class Buffer;
 
 	/**
 	 * @brief A wrapper class for VkDevice
@@ -236,13 +237,12 @@ namespace BetterThanNothing
 		/**
 		 * @brief Create a buffer using vkCreateBuffer and vkAllocateMemory
 		 *
+		 * @param buffer The destination buffer
 		 * @param size The buffer size
 		 * @param usage The buffer usage flags
 		 * @param properties The memory properties flags
-		 * @param buffer The destination buffer
-		 * @param bufferMemory The destination buffer memory
 		 */
-		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void CreateBuffer(Buffer* buffer, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
 
 		/**
 		 * @brief Copy a buffer to another buffer using vkCmdCopyBuffer
@@ -252,6 +252,30 @@ namespace BetterThanNothing
 		 * @param size The buffer size
 		 */
 		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
+		/**
+		 * @brief Map a buffer using vkMapMemory
+		 *
+		 * @param buffer The buffer
+		 * @param offset The buffer offset
+		 * @param flags The memory map flags
+		 * @param data The destination data
+		 */
+		void MapBuffer(Buffer* buffer, VkDeviceSize offset, VkMemoryMapFlags flags, void** data);
+
+		/**
+		 * @brief Unmap a buffer using vkUnmapMemory
+		 *
+		 * @param buffer The buffer
+		 */
+		void UnmapBuffer(Buffer* buffer);
+
+		/**
+		 * @brief Destroy a buffer using vkDestroyBuffer and vkFreeMemory
+		 *
+		 * @param buffer The buffer
+		 */
+		void DestroyBuffer(Buffer* buffer);
 
 		/**
 		 * @brief Create a VkImageView using vkCreateImageView

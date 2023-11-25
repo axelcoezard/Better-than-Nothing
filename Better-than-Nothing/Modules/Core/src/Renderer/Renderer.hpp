@@ -12,6 +12,7 @@ namespace BetterThanNothing
 	class Entity;
 	class Scene;
 	class DrawStreamBuilder;
+	class Buffer;
 
 	/**
 	 * @brief The Renderer class that is used to render a scene
@@ -47,17 +48,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief All the uniform buffers
 		 */
-		std::vector<std::vector<VkBuffer>> m_UniformBuffers;
-
-		/**
-		 * @brief All the uniform buffers memory
-		 */
-		std::vector<std::vector<VkDeviceMemory>> m_UniformBuffersMemory;
-
-		/**
-		 * @brief All the uniform buffers mapped
-		 */
-		std::vector<std::vector<void*>> m_UniformBuffersMapped;
+		std::vector<std::vector<Buffer>> m_UniformBuffers;
 
 		/**
 		 * @brief The uniform buffers count
@@ -149,23 +140,5 @@ namespace BetterThanNothing
 		 * @return std::map<std::string, Pipeline*> All the pipelines
 		 */
 		std::map<std::string, Pipeline*> GetPipeLines() { return m_PipeLines; }
-
-		/**
-		 * @brief Get all the uniform buffers
-		 * @return std::vector<std::vector<VkBuffer>> All the uniform buffers
-		 */
-		std::vector<std::vector<VkBuffer>>& GetUniformBuffers() { return m_UniformBuffers; }
-
-		/**
-		 * @brief Get all the uniform buffers memory
-		 * @return std::vector<std::vector<VkDeviceMemory>> All the uniform buffers memory
-		 */
-		std::vector<std::vector<VkDeviceMemory>>& GetUniformBuffersMemory() { return m_UniformBuffersMemory; }
-
-		/**
-		 * @brief Get all the uniform buffers mapped
-		 * @return std::vector<std::vector<void*>> All the uniform buffers mapped
-		 */
-		std::vector<std::vector<void*>>& GetUniformBuffersMapped() { return m_UniformBuffersMapped; }
 	};
 };

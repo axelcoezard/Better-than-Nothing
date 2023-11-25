@@ -4,6 +4,7 @@ namespace BetterThanNothing
 {
 	class Device;
 	class Entity;
+	class Buffer;
 
 	/**
 	 * @brief A wrapper class for VkDescriptorPool
@@ -97,7 +98,7 @@ namespace BetterThanNothing
 		 * @param entity The entity that needs a descriptor set
 		 * @param uniformBuffers All the uniform buffers
 		 */
-		void CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers);
+		void CreateDescriptorSets(Entity* entity, std::vector<std::vector<Buffer>>& uniformBuffers);
 
 		/**
 		 * @brief Get the VkDescriptorSetLayout object

@@ -384,8 +384,8 @@ namespace BetterThanNothing
 		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 		Pipeline* pipeline = static_cast<Pipeline*>(drawPacket->pipeline);
 
-		commandBuffer->BindVertexBuffer(drawPacket->vertexBuffer);
-		commandBuffer->BindIndexBuffer(drawPacket->indexBuffer);
+		commandBuffer->BindVertexBuffer(drawPacket->vertexBuffer.m_Buffer);
+		commandBuffer->BindIndexBuffer(drawPacket->indexBuffer.m_Buffer);
 
 		commandBuffer->BindDescriptorSets(
 			m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],

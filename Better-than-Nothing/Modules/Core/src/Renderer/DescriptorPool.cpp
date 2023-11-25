@@ -106,7 +106,7 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = 0;
 	}
 
-	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers)
+	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<std::vector<Buffer>>& uniformBuffers)
 	{
 		VkDevice device = m_Device->GetVkDevice();
 
@@ -127,7 +127,7 @@ namespace BetterThanNothing
 			}
 
 			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = uniformBuffers[i][m_DescriptorPoolSize];
+			bufferInfo.buffer = uniformBuffers[i][m_DescriptorPoolSize].m_Buffer;
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(GlobalUniforms);
 

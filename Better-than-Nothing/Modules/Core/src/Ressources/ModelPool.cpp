@@ -1,8 +1,4 @@
-#include "Renderer/Device.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/Vertex.hpp"
-
-#include "Ressources/RessourcePool.hpp"
+#include "BetterThanNothing.hpp"
 
 #ifndef TINYOBJLOADER_IMPLEMENTATION
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -18,15 +14,10 @@ namespace BetterThanNothing
 
 	ModelPool::~ModelPool()
 	{
-		auto device = m_Device->GetVkDevice();
-
 		for (auto& [path, model] : m_Ressources)
 		{
-			vkDestroyBuffer(device, model->indexBuffer, nullptr);
-			vkFreeMemory(device, model->indexBufferMemory, nullptr);
-
-			vkDestroyBuffer(device, model->vertexBuffer, nullptr);
-			vkFreeMemory(device, model->vertexBufferMemory, nullptr);
+			m_Device->DestroyBuffer(&model->indexBuffer);
+			m_Device->DestroyBuffer(&model->vertexBuffer);
 
 			delete model;
 		}
@@ -41,14 +32,12 @@ namespace BetterThanNothing
 		Model* model = new Model();
 
 		auto [vertices, indices] = LoadModelData(m_BasePath + filePath);
-		auto [vertexBuffer, vertexBufferMemory] = CreateVertexBuffer(vertices);
-		auto [indexBuffer, indexBufferMemory] = CreateIndexBuffer(indices);
+		Buffer vertexBuffer = CreateVertexBuffer(vertices);
+		Buffer indexBuffer = CreateIndexBuffer(indices);
 
 		model->filePath = filePath;
 		model->vertexBuffer = vertexBuffer;
-		model->vertexBufferMemory = vertexBufferMemory;
 		model->indexBuffer = indexBuffer;
-		model->indexBufferMemory = indexBufferMemory;
 		model->indexCount = static_cast<u32>(indices.size());
 
 		m_Ressources[filePath] = model;
@@ -124,69 +113,63 @@ namespace BetterThanNothing
 		return {vertices, indices};
 	}
 
-	BufferData ModelPool::CreateVertexBuffer(std::vector<Vertex>& vertices)
+	Buffer ModelPool::CreateVertexBuffer(std::vector<Vertex>& vertices)
 	{
-		VkDevice device = m_Device->GetVkDevice();
 		VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory);
+		Buffer stagingBuffer;
+		m_Device->CreateBuffer(
+			&stagingBuffer,
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+		m_Device->MapBuffer(&stagingBuffer, 0, 0, &data);
 		memcpy(data, vertices.data(), (size_t) bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
+		m_Device->UnmapBuffer(&stagingBuffer);
 
-		VkBuffer vertexBuffer;
-		VkDeviceMemory vertexBufferMemory;
+		Buffer vertexBuffer;
+		m_Device->CreateBuffer(
+			&vertexBuffer,
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			vertexBuffer,
-			vertexBufferMemory);
+		m_Device->CopyBuffer(stagingBuffer.m_Buffer, vertexBuffer.m_Buffer, bufferSize);
 
-		m_Device->CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+		m_Device->DestroyBuffer(&stagingBuffer);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-
-		return {vertexBuffer, vertexBufferMemory};
+		return vertexBuffer;
 	}
 
-	BufferData ModelPool::CreateIndexBuffer(std::vector<u32>& indices)
+	Buffer ModelPool::CreateIndexBuffer(std::vector<u32>& indices)
 	{
-		VkDevice device = m_Device->GetVkDevice();
 		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory);
+		Buffer stagingBuffer;
+		m_Device->CreateBuffer(
+			&stagingBuffer,
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+		m_Device->MapBuffer(&stagingBuffer, 0, 0, &data);
 		memcpy(data, indices.data(), (size_t) bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
+		m_Device->UnmapBuffer(&stagingBuffer);
 
-		VkBuffer indexBuffer;
-		VkDeviceMemory indexBufferMemory;
+		Buffer indexBuffer;
+		m_Device->CreateBuffer(
+			&indexBuffer,
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		m_Device->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			indexBuffer,
-			indexBufferMemory);
+		m_Device->CopyBuffer(stagingBuffer.m_Buffer, indexBuffer.m_Buffer, bufferSize);
 
-		m_Device->CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
+		m_Device->DestroyBuffer(&stagingBuffer);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-
-		return {indexBuffer, indexBufferMemory};
+		return indexBuffer;
 	}
 };
