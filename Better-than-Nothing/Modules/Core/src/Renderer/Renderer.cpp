@@ -6,6 +6,7 @@ namespace BetterThanNothing
 	{
 		m_DescriptorPool = new DescriptorPool(m_Device);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
+		m_UniformPool = new UniformsPool(m_Device, m_SwapChain);
 
 		m_UniformBuffersSize = 0;
 		m_UniformBuffersCapacity = 1000;
@@ -23,6 +24,7 @@ namespace BetterThanNothing
 		}
 
 		DestroyUniformBuffers();
+		delete m_UniformPool;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
 	}
@@ -80,12 +82,19 @@ namespace BetterThanNothing
 	void Renderer::Render(Scene* scene)
 	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
+		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
 		while (scene->HasPendingEntities()) {
 			Entity* newEntity = scene->NextPendingEntity();
-			CreateNewUniformBuffer();
-			m_DescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
+
+			//CreateNewUniformBuffer();
+			if (m_UniformPool->ShouldExtends()) {
+				m_UniformPool->ExtendUniformsPool();
+			}
+			std::vector<Buffer*> newGU = m_UniformPool->GetAllGlobalUniforms();
+			std::vector<Buffer*> newDU = m_UniformPool->CreateDynamicUniforms();
+			m_DescriptorPool->CreateDescriptorSets(newEntity, newGU, newDU);
 		}
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
@@ -93,12 +102,11 @@ namespace BetterThanNothing
 		}
 
 		// Create a GlobalUniforms with camera data
-		GlobalUniforms globalUniforms;
-		globalUniforms.projection = scene->GetCamera()->GetProjectionMatrix();
-		globalUniforms.view = scene->GetCamera()->GetViewMatrix();
-		globalUniforms.cameraPosition = scene->GetCamera()->GetPosition();
-
-		globalUniforms.directionalLight = {
+		GlobalUniforms* globalUniforms = m_UniformPool->GetGlobalUniforms(currentFrame);
+		globalUniforms->projection = scene->GetCamera()->GetProjectionMatrix();
+		globalUniforms->view = scene->GetCamera()->GetViewMatrix();
+		globalUniforms->cameraPosition = scene->GetCamera()->GetPosition();
+		globalUniforms->directionalLight = {
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
 			.direction = glm::vec3(-1.0f, 0.0f, -1.0f)
 		};
@@ -123,6 +131,7 @@ namespace BetterThanNothing
 
 		// Draw all the DrawPacket in the DrawStream ordered by pipeline
 		// and bind the pipeline only when it changes
+		// TODO: Use multiple threads to draw the DrawStream
 		for (u32 i = 0; i < drawStream->size; i++) {
 			DrawPacket drawPacket = drawStream->drawPackets[i];
 
@@ -131,18 +140,9 @@ namespace BetterThanNothing
 				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
 
-			globalUniforms.model = drawPacket.model;
-			globalUniforms.material = {
-				.ambient = 0.5f,
-				.diffuse = 0.1f,
-				.specular = 0.5f,
-				.shininess = 1.0f
-			},
-
-			memcpy(
-				m_UniformBuffers[m_SwapChain->GetCurrentFrame()][i].m_Mapped,
-				&globalUniforms,
-				sizeof(globalUniforms));
+			DynamicUniforms* dynamicUniforms = m_UniformPool->GetDynamicUniforms(currentFrame, i);
+			dynamicUniforms->model = drawPacket.model;
+			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
 			m_SwapChain->Draw(&drawPacket, i);
 		}

@@ -11,11 +11,6 @@ namespace BetterThanNothing
 	struct GlobalUniforms
 	{
 		/**
-		 * @brief The model matrix
-		 */
-		alignas(16) glm::mat4 model;
-
-		/**
 		 * @brief The camera view matrix
 		 */
 		alignas(16) glm::mat4 view;
@@ -29,11 +24,6 @@ namespace BetterThanNothing
 		 * @brief The camera position
 		 */
 		alignas(16) glm::vec3 cameraPosition;
-
-		/**
-		 * @brief The material
-		 */
-		Material material;
 
 		/**
 		 * @brief The directional light

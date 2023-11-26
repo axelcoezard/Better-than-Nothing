@@ -13,6 +13,7 @@ namespace BetterThanNothing
 	class Scene;
 	class DrawStreamBuilder;
 	class Buffer;
+	class UniformsPool;
 
 	/**
 	 * @brief The Renderer class that is used to render a scene
@@ -39,6 +40,11 @@ namespace BetterThanNothing
 		 * @brief The pointer to the descriptor pool
 		 */
 		DescriptorPool* m_DescriptorPool;
+
+		/**
+		 * @brief The pointer to the uniform pool
+		 */
+		UniformsPool* m_UniformPool;
 
 		/**
 		 * @brief All the pipelines

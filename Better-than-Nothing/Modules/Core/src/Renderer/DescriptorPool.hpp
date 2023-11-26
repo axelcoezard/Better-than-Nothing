@@ -98,7 +98,7 @@ namespace BetterThanNothing
 		 * @param entity The entity that needs a descriptor set
 		 * @param uniformBuffers All the uniform buffers
 		 */
-		void CreateDescriptorSets(Entity* entity, std::vector<std::vector<Buffer>>& uniformBuffers);
+		void CreateDescriptorSets(Entity* entity, std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms);
 
 		/**
 		 * @brief Get the VkDescriptorSetLayout object
