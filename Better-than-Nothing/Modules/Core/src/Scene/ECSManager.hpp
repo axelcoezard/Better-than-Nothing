@@ -74,9 +74,6 @@ namespace BetterThanNothing
 			return m_Registry.get<T>(entity);
 		}
 
-		// get all components
-
-
 		/**
 		 * @brief Check if an entity has a component.
 		 * @tparam T The component type.
@@ -100,11 +97,10 @@ namespace BetterThanNothing
 			return m_Registry.view<ComponentTypes...>();
 		}
 
-		void ForEach(std::function<void(Entity)> func)
-		{
-			m_Registry.each(func);
-		}
-
+		/**
+		 * @brief Gets the number of entities.
+		 * @return The number of entities.
+		 */
 		u32 GetEntitiesCount()
 		{
 			return m_Registry.size();

@@ -4,8 +4,19 @@ namespace BetterThanNothing
 {
 	struct TransformComponent
 	{
+		/**
+		 * @brief The position of the entity.
+		 */
 		glm::vec3 position;
+
+		/**
+		 * @brief The rotation of the entity in degrees.
+		 */
 		glm::vec3 rotation;
+
+		/**
+		 * @brief The scale of the entity.
+		 */
 		glm::vec3 scale;
 
 		static glm::mat4 GetModelMatrix(TransformComponent& transformComponent)
