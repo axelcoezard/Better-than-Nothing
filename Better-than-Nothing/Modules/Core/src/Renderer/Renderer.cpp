@@ -7,14 +7,6 @@ namespace BetterThanNothing
 		m_UniformsPool = new UniformsPool(m_Device);
 		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
-
-		m_UniformBuffersSize = 0;
-		m_UniformBuffersCapacity = 1000;
-
-		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-		}
 	}
 
 	Renderer::~Renderer()
@@ -23,51 +15,9 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		DestroyUniformBuffers();
 		delete m_UniformsPool;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
-	}
-
-	void Renderer::CreateNewUniformBuffer()
-	{
-		VkDeviceSize bufferSize = sizeof(GlobalUniforms);
-
-		if (m_UniformBuffersSize >= m_UniformBuffersCapacity) {
-			m_UniformBuffersCapacity *= 2;
-
-			for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-				m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-			}
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_Device->CreateBuffer(
-				&m_UniformBuffers[i][m_UniformBuffersSize],
-				bufferSize,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-			m_Device->MapBuffer(
-				&m_UniformBuffers[i][m_UniformBuffersSize],
-				0, 0,
-				&m_UniformBuffers[i][m_UniformBuffersSize].m_Mapped);
-		}
-
-		m_UniformBuffersSize += 1;
-	}
-
-	void Renderer::DestroyUniformBuffers()
-	{
-		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT) {
-			return;
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
-				m_Device->DestroyBuffer(&m_UniformBuffers[i][j]);
-			}
-		}
 	}
 
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
@@ -88,7 +38,6 @@ namespace BetterThanNothing
 		while (scene->HasPendingEntities()) {
 			Entity* newEntity = scene->NextPendingEntity();
 
-			//CreateNewUniformBuffer();
 			if (m_UniformsPool->ShouldExtends()) {
 				m_UniformsPool->ExtendUniformsPool();
 			}

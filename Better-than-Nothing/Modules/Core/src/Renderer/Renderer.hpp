@@ -51,21 +51,6 @@ namespace BetterThanNothing
 		 */
 		std::map<std::string, Pipeline*> m_PipeLines;
 
-		/**
-		 * @brief All the uniform buffers
-		 */
-		std::vector<std::vector<Buffer>> m_UniformBuffers;
-
-		/**
-		 * @brief The uniform buffers count
-		 */
-		u32 m_UniformBuffersSize;
-
-		/**
-		 * @brief The uniform buffers maximum capacity
-		 */
-		u32 m_UniformBuffersCapacity;
-
 	public:
 		/**
 		 * @brief Construct a new Renderer object
@@ -84,17 +69,6 @@ namespace BetterThanNothing
 		Renderer& operator=(const Renderer&) = delete;
 		Renderer(Renderer&&) = delete;
 		Renderer& operator=(Renderer&&) = delete;
-
-	private:
-		/**
-		 * @brief Create a new uniform buffer
-		 */
-		void CreateNewUniformBuffer();
-
-		/**
-		 * @brief Destroy all the uniform buffers
-		 */
-		void DestroyUniformBuffers();
 
 	public:
 		/**
