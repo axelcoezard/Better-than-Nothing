@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Renderer/Buffer.hpp"
+
 namespace BetterThanNothing
 {
 	/**
@@ -20,12 +22,12 @@ namespace BetterThanNothing
 		/**
 		 * @brief The vertex buffer.
 		 */
-		VkBuffer vertexBuffer;
+		Buffer vertexBuffer;
 
 		/**
 		 * @brief The index buffer.
 		 */
-		VkBuffer indexBuffer;
+		Buffer indexBuffer;
 
 		/**
 		 * @brief The number of indices.

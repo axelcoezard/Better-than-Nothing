@@ -61,20 +61,17 @@ namespace BetterThanNothing
 			throw std::runtime_error("failed to load texture image!");
 		}
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-
-		m_Device->CreateBuffer(imageSize,
+		Buffer stagingBuffer;
+		m_Device->CreateBuffer(
+			&stagingBuffer,
+			imageSize,
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer, stagingBufferMemory);
-
-		VkDevice device = m_Device->GetVkDevice();
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
+		m_Device->MapBuffer(&stagingBuffer, 0, 0, &data);
 		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		vkUnmapMemory(device, stagingBufferMemory);
+		m_Device->UnmapBuffer(&stagingBuffer);
 
 		stbi_image_free(pixels);
 
@@ -91,11 +88,10 @@ namespace BetterThanNothing
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			image, imageMemory);
 		m_Device->TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, *mipLevels);
-		m_Device->CopyBufferToImage(stagingBuffer, image, static_cast<u32>(texWidth), static_cast<u32>(texHeight));
+		m_Device->CopyBufferToImage(stagingBuffer.m_Buffer, image, static_cast<u32>(texWidth), static_cast<u32>(texHeight));
 		GenerateMipmaps(image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, *mipLevels);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
+		m_Device->DestroyBuffer(&stagingBuffer);
 
 		return {image, imageMemory};
 	}

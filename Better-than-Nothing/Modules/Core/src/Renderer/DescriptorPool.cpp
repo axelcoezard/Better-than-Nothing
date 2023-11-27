@@ -2,8 +2,8 @@
 
 namespace BetterThanNothing
 {
-	DescriptorPool::DescriptorPool(Device* device)
-		: m_Device(device)
+	DescriptorPool::DescriptorPool(Device* device, UniformsPool* uniformsPool)
+		: m_Device(device), m_UniformsPool(uniformsPool)
 	{
 		m_DescriptorPoolSize = 0;
 
@@ -19,22 +19,29 @@ namespace BetterThanNothing
 
 	void DescriptorPool::CreateDescriptorSetLayout()
 	{
-		VkDescriptorSetLayoutBinding uboLayoutBinding{};
-		uboLayoutBinding.binding = 0;
-		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		uboLayoutBinding.descriptorCount = 1;
-		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		uboLayoutBinding.pImmutableSamplers = nullptr;
+		VkDescriptorSetLayoutBinding globalUniformsLayoutBinding{};
+		globalUniformsLayoutBinding.binding = 0;
+		globalUniformsLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		globalUniformsLayoutBinding.descriptorCount = 1;
+		globalUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		globalUniformsLayoutBinding.pImmutableSamplers = nullptr;
+
+		VkDescriptorSetLayoutBinding dynamicUniformsLayoutBinding{};
+		dynamicUniformsLayoutBinding.binding = 1;
+		dynamicUniformsLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		dynamicUniformsLayoutBinding.descriptorCount = 1;
+		dynamicUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		dynamicUniformsLayoutBinding.pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-		samplerLayoutBinding.binding = 1;
-		samplerLayoutBinding.descriptorCount = 1;
+		samplerLayoutBinding.binding = 2;
 		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerLayoutBinding.pImmutableSamplers = nullptr;
+		samplerLayoutBinding.descriptorCount = 1;
 		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		samplerLayoutBinding.pImmutableSamplers = nullptr;
 
-		std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-			uboLayoutBinding, samplerLayoutBinding
+		std::array<VkDescriptorSetLayoutBinding, 3> bindings = {
+			globalUniformsLayoutBinding, dynamicUniformsLayoutBinding, samplerLayoutBinding
 		};
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
@@ -52,11 +59,15 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = newCapacity;
 
 		// Create the descriptor pool
-		std::array<VkDescriptorPoolSize, 2> poolSizes{};
+		std::array<VkDescriptorPoolSize, 3> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[0].descriptorCount = static_cast<u32>(m_DescriptorPoolCapacity * MAX_FRAMES_IN_FLIGHT);
-		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+
+		poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[1].descriptorCount = static_cast<u32>(m_DescriptorPoolCapacity * MAX_FRAMES_IN_FLIGHT);
+
+		poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes[2].descriptorCount = static_cast<u32>(m_DescriptorPoolCapacity * MAX_FRAMES_IN_FLIGHT);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -106,7 +117,7 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = 0;
 	}
 
-	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<std::vector<VkBuffer>>& uniformBuffers)
+	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms)
 	{
 		VkDevice device = m_Device->GetVkDevice();
 
@@ -126,17 +137,22 @@ namespace BetterThanNothing
 				throw std::runtime_error("failed to allocate descriptor sets!");
 			}
 
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = uniformBuffers[i][m_DescriptorPoolSize];
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(GlobalUniforms);
+			VkDescriptorBufferInfo globalUniformsInfo{};
+			globalUniformsInfo.buffer = globalUniforms[i]->m_Buffer;
+			globalUniformsInfo.offset = 0;
+			globalUniformsInfo.range = sizeof(GlobalUniforms);
+
+			VkDescriptorBufferInfo dynamicUniformsInfo{};
+			dynamicUniformsInfo.buffer = dynamicUniforms[i]->m_Buffer;
+			dynamicUniformsInfo.offset = 0;
+			dynamicUniformsInfo.range = sizeof(DynamicUniforms);
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			imageInfo.imageView = entity->GetTexture()->imageView;
 			imageInfo.sampler = entity->GetTexture()->sampler;
 
-			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = m_DescriptorSets[i][m_DescriptorPoolSize];
@@ -144,15 +160,23 @@ namespace BetterThanNothing
 			descriptorWrites[0].dstArrayElement = 0;
 			descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			descriptorWrites[0].descriptorCount = 1;
-			descriptorWrites[0].pBufferInfo = &bufferInfo;
+			descriptorWrites[0].pBufferInfo = &globalUniformsInfo;
 
 			descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[1].dstSet = m_DescriptorSets[i][m_DescriptorPoolSize];
 			descriptorWrites[1].dstBinding = 1;
 			descriptorWrites[1].dstArrayElement = 0;
-			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			descriptorWrites[1].descriptorCount = 1;
-			descriptorWrites[1].pImageInfo = &imageInfo;
+			descriptorWrites[1].pBufferInfo = &dynamicUniformsInfo;
+
+			descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[2].dstSet = m_DescriptorSets[i][m_DescriptorPoolSize];
+			descriptorWrites[2].dstBinding = 2;
+			descriptorWrites[2].dstArrayElement = 0;
+			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			descriptorWrites[2].descriptorCount = 1;
+			descriptorWrites[2].pImageInfo = &imageInfo;
 
 			vkUpdateDescriptorSets(device, static_cast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}

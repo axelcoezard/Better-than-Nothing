@@ -9,6 +9,7 @@ namespace BetterThanNothing
 	class CommandPool;
 	class SwapChain;
 	class Vertex;
+	class Buffer;
 
 	template <typename T>
 	class RessourcePool
@@ -24,7 +25,6 @@ namespace BetterThanNothing
 	};
 
 	typedef std::pair<std::vector<Vertex>, std::vector<u32>>	ModelData;
-	typedef std::pair<VkBuffer, VkDeviceMemory>					BufferData;
 
 	class ModelPool: public RessourcePool<Model>
 	{
@@ -40,8 +40,8 @@ namespace BetterThanNothing
 	private:
 
 		ModelData		LoadModelData(const std::string& filePath);
-		BufferData		CreateVertexBuffer(std::vector<Vertex>& vertices);
-		BufferData		CreateIndexBuffer(std::vector<u32>& indices);
+		Buffer			CreateVertexBuffer(std::vector<Vertex>& vertices);
+		Buffer			CreateIndexBuffer(std::vector<u32>& indices);
 	};
 
 	typedef std::pair<VkImage, VkDeviceMemory>	ImageData;

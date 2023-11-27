@@ -4,20 +4,9 @@ namespace BetterThanNothing
 {
 	Renderer::Renderer(Window* window, Device* device): m_Window(window), m_Device(device)
 	{
-		m_DescriptorPool = new DescriptorPool(m_Device);
+		m_UniformsPool = new UniformsPool(m_Device);
+		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
-
-		m_UniformBuffersSize = 0;
-		m_UniformBuffersCapacity = 1000;
-
-		m_UniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
-		m_UniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-			m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
-			m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
-		}
 	}
 
 	Renderer::~Renderer()
@@ -26,60 +15,9 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		DestroyUniformBuffers();
+		delete m_UniformsPool;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
-	}
-
-	void Renderer::CreateNewUniformBuffer()
-	{
-		VkDeviceSize bufferSize = sizeof(GlobalUniforms);
-
-		if (m_UniformBuffersSize >= m_UniformBuffersCapacity) {
-			m_UniformBuffersCapacity *= 2;
-
-			for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-				m_UniformBuffers[i].resize(m_UniformBuffersCapacity);
-				m_UniformBuffersMemory[i].resize(m_UniformBuffersCapacity);
-				m_UniformBuffersMapped[i].resize(m_UniformBuffersCapacity);
-			}
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_Device->CreateBuffer(bufferSize,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				m_UniformBuffers[i][m_UniformBuffersSize],
-				m_UniformBuffersMemory[i][m_UniformBuffersSize]);
-
-			vkMapMemory(m_Device->GetVkDevice(),
-				m_UniformBuffersMemory[i][m_UniformBuffersSize], 0,
-				bufferSize, 0,
-				&m_UniformBuffersMapped[i][m_UniformBuffersSize]);
-		}
-
-		m_UniformBuffersSize += 1;
-	}
-
-	void Renderer::DestroyUniformBuffers()
-	{
-		auto device = m_Device->GetVkDevice();
-
-		if (m_UniformBuffers.size() < MAX_FRAMES_IN_FLIGHT || m_UniformBuffersMemory.size() < MAX_FRAMES_IN_FLIGHT) {
-			return;
-		}
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			for (size_t j = 0; j < m_UniformBuffers[i].size(); j++) {
-				if (m_UniformBuffers[i][j] != VK_NULL_HANDLE) {
-					vkDestroyBuffer(device, m_UniformBuffers[i][j], nullptr);
-				}
-			}
-
-			for (size_t j = 0; j < m_UniformBuffersMemory[i].size(); j++) {
-				vkFreeMemory(device, m_UniformBuffersMemory[i][j], nullptr);
-			}
-		}
 	}
 
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
@@ -94,12 +32,18 @@ namespace BetterThanNothing
 	void Renderer::Render(Scene* scene)
 	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
+		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
 		while (scene->HasPendingEntities()) {
 			Entity* newEntity = scene->NextPendingEntity();
-			CreateNewUniformBuffer();
-			m_DescriptorPool->CreateDescriptorSets(newEntity, m_UniformBuffers);
+
+			if (m_UniformsPool->ShouldExtends()) {
+				m_UniformsPool->ExtendUniformsPool();
+			}
+			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
+			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
+			m_DescriptorPool->CreateDescriptorSets(newEntity, newGU, newDU);
 		}
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
@@ -107,12 +51,11 @@ namespace BetterThanNothing
 		}
 
 		// Create a GlobalUniforms with camera data
-		GlobalUniforms globalUniforms;
-		globalUniforms.projection = scene->GetCamera()->GetProjectionMatrix();
-		globalUniforms.view = scene->GetCamera()->GetViewMatrix();
-		globalUniforms.cameraPosition = scene->GetCamera()->GetPosition();
-
-		globalUniforms.directionalLight = {
+		GlobalUniforms* globalUniforms = m_UniformsPool->GetGlobalUniforms(currentFrame);
+		globalUniforms->projection = scene->GetCamera()->GetProjectionMatrix();
+		globalUniforms->view = scene->GetCamera()->GetViewMatrix();
+		globalUniforms->cameraPosition = scene->GetCamera()->GetPosition();
+		globalUniforms->directionalLight = {
 			.color = glm::vec3(1.0f, 1.0f, 1.0f),
 			.direction = glm::vec3(-1.0f, 0.0f, -1.0f)
 		};
@@ -137,6 +80,7 @@ namespace BetterThanNothing
 
 		// Draw all the DrawPacket in the DrawStream ordered by pipeline
 		// and bind the pipeline only when it changes
+		// TODO: Use multiple threads to draw the DrawStream
 		for (u32 i = 0; i < drawStream->size; i++) {
 			DrawPacket drawPacket = drawStream->drawPackets[i];
 
@@ -145,18 +89,9 @@ namespace BetterThanNothing
 				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
 
-			globalUniforms.model = drawPacket.model;
-			globalUniforms.material = {
-				.ambient = 0.5f,
-				.diffuse = 0.1f,
-				.specular = 0.5f,
-				.shininess = 1.0f
-			},
-
-			memcpy(
-				m_UniformBuffersMapped[m_SwapChain->GetCurrentFrame()][i],
-				&globalUniforms,
-				sizeof(globalUniforms));
+			DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
+			dynamicUniforms->model = drawPacket.model;
+			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
 			m_SwapChain->Draw(&drawPacket, i);
 		}

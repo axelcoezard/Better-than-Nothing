@@ -12,6 +12,8 @@ namespace BetterThanNothing
 	class Entity;
 	class Scene;
 	class DrawStreamBuilder;
+	class Buffer;
+	class UniformsPool;
 
 	/**
 	 * @brief The Renderer class that is used to render a scene
@@ -40,34 +42,14 @@ namespace BetterThanNothing
 		DescriptorPool* m_DescriptorPool;
 
 		/**
+		 * @brief The pointer to the uniform pool
+		 */
+		UniformsPool* m_UniformsPool;
+
+		/**
 		 * @brief All the pipelines
 		 */
 		std::map<std::string, Pipeline*> m_PipeLines;
-
-		/**
-		 * @brief All the uniform buffers
-		 */
-		std::vector<std::vector<VkBuffer>> m_UniformBuffers;
-
-		/**
-		 * @brief All the uniform buffers memory
-		 */
-		std::vector<std::vector<VkDeviceMemory>> m_UniformBuffersMemory;
-
-		/**
-		 * @brief All the uniform buffers mapped
-		 */
-		std::vector<std::vector<void*>> m_UniformBuffersMapped;
-
-		/**
-		 * @brief The uniform buffers count
-		 */
-		u32 m_UniformBuffersSize;
-
-		/**
-		 * @brief The uniform buffers maximum capacity
-		 */
-		u32 m_UniformBuffersCapacity;
 
 	public:
 		/**
@@ -87,17 +69,6 @@ namespace BetterThanNothing
 		Renderer& operator=(const Renderer&) = delete;
 		Renderer(Renderer&&) = delete;
 		Renderer& operator=(Renderer&&) = delete;
-
-	private:
-		/**
-		 * @brief Create a new uniform buffer
-		 */
-		void CreateNewUniformBuffer();
-
-		/**
-		 * @brief Destroy all the uniform buffers
-		 */
-		void DestroyUniformBuffers();
 
 	public:
 		/**
@@ -149,23 +120,5 @@ namespace BetterThanNothing
 		 * @return std::map<std::string, Pipeline*> All the pipelines
 		 */
 		std::map<std::string, Pipeline*> GetPipeLines() { return m_PipeLines; }
-
-		/**
-		 * @brief Get all the uniform buffers
-		 * @return std::vector<std::vector<VkBuffer>> All the uniform buffers
-		 */
-		std::vector<std::vector<VkBuffer>>& GetUniformBuffers() { return m_UniformBuffers; }
-
-		/**
-		 * @brief Get all the uniform buffers memory
-		 * @return std::vector<std::vector<VkDeviceMemory>> All the uniform buffers memory
-		 */
-		std::vector<std::vector<VkDeviceMemory>>& GetUniformBuffersMemory() { return m_UniformBuffersMemory; }
-
-		/**
-		 * @brief Get all the uniform buffers mapped
-		 * @return std::vector<std::vector<void*>> All the uniform buffers mapped
-		 */
-		std::vector<std::vector<void*>>& GetUniformBuffersMapped() { return m_UniformBuffersMapped; }
 	};
 };
