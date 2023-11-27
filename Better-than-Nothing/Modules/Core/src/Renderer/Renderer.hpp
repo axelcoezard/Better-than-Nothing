@@ -9,7 +9,6 @@ namespace BetterThanNothing
 	class DescriptorPool;
 	class Texture;
 	class Pipeline;
-	class Entity;
 	class Scene;
 	class DrawStreamBuilder;
 	class Buffer;

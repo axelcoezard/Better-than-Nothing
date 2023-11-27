@@ -40,5 +40,7 @@
 
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
-#include "Scene/Entity.hpp"
 #include "Scene/Light.hpp"
+
+#include "Scene/Components/ModelComponent.hpp"
+#include "Scene/Components/TransformComponent.hpp"

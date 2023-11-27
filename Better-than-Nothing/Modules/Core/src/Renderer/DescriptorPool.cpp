@@ -117,7 +117,7 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = 0;
 	}
 
-	void DescriptorPool::CreateDescriptorSets(Entity* entity, std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms)
+	void DescriptorPool::CreateDescriptorSets(ModelComponent* modelComponent, std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms)
 	{
 		VkDevice device = m_Device->GetVkDevice();
 
@@ -149,8 +149,8 @@ namespace BetterThanNothing
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = entity->GetTexture()->imageView;
-			imageInfo.sampler = entity->GetTexture()->sampler;
+			imageInfo.imageView = modelComponent->texture->imageView;
+			imageInfo.sampler = modelComponent->texture->sampler;
 
 			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 
