@@ -93,7 +93,7 @@ namespace BetterThanNothing
 		 * @brief Add a DrawPacket to the DrawStream.
 		 * @param drawPacket The DrawPacket to add.
 		 */
-		void Draw(DrawPacket drawPacket) ;
+		void Draw(DrawPacket drawPacket);
 
 		/**
 		 * @brief Build the DrawStream.
