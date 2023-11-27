@@ -59,15 +59,15 @@ namespace BetterThanNothing
 			m_Renderer->Render(m_Scenes[m_CurrentSceneId]);
 			m_Device->WaitIdle();
 
-			//std::cout.precision(3);
-			//std::cout << "\033[2J\033[1;1H";
-			//std::cout << "Vendor: " << m_Device->GetVendorName() << std::endl;
-			//std::cout << "Device: " << m_Device->GetDeviceName() << std::endl;
-			//std::cout << "API version: " << m_Device->GetApiVersion() << std::endl;
-			//std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-			//std::cout << "Frame count: " << frameCount << std::endl;
-			//std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;
-			//std::cout << "Entities count: " << m_Scenes[m_CurrentSceneId]->GetEntities().size() << std::endl;
+			std::cout.precision(3);
+			std::cout << "\033[2J\033[1;1H";
+			std::cout << "Vendor: " << m_Device->GetVendorName() << std::endl;
+			std::cout << "Device: " << m_Device->GetDeviceName() << std::endl;
+			std::cout << "API version: " << m_Device->GetApiVersion() << std::endl;
+			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
+			std::cout << "Frame count: " << frameCount << std::endl;
+			std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;
+			std::cout << "Entities count: " << m_Scenes[m_CurrentSceneId]->GetEntities().size() << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
