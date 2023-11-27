@@ -407,6 +407,9 @@ namespace BetterThanNothing
 
 	void Device::DestroyBuffer(Buffer* buffer)
 	{
+		if (buffer == nullptr) {
+			return;
+		}
 		if (buffer->m_Buffer != VK_NULL_HANDLE) {
 			vkDestroyBuffer(m_Device, buffer->m_Buffer, nullptr);
 		}
