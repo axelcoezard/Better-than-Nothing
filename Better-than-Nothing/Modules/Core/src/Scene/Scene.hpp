@@ -14,18 +14,55 @@ namespace BetterThanNothing
 	class Scene
 	{
 	private:
+
+		/**
+		 * @brief The id of the scene.
+		 */
 		u32 m_Id;
+
+		/**
+		 * @brief The name of the scene.
+		 */
 		std::string m_Name;
 
+		/**
+		 * @brief A pointer to the model pool.
+		 */
 		ModelPool* m_ModelPool;
+
+		/**
+		 * @brief A pointer to the texture pool.
+		 */
 		TexturePool* m_TexturePool;
 
+		/**
+		 * @brief A pointer to the camera.
+		 */
 		Camera* m_Camera;
 
+		/**
+		 * @brief The registry of entities.
+		 */
 		Registry m_Registry;
+
+		/**
+		 * @brief A queue of pending entities.
+		 */
 		std::queue<Entity> m_PendingEntities;
 	public:
+		/**
+		 * @brief Construct a new Scene object
+		 *
+		 * @param id The id of the scene.
+		 * @param name The name of the scene.
+		 * @param modelPool A pointer to the model pool.
+		 * @param texturePool A pointer to the texture pool.
+		 */
  		Scene(u32 id, std::string_view name, ModelPool* modelPool, TexturePool* texturePool);
+
+		/**
+		 * @brief Destroy the Scene object
+		 */
  		~Scene();
 
 		/**
