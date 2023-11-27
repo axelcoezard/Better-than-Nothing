@@ -23,14 +23,14 @@ namespace BetterThanNothing
 		globalUniformsLayoutBinding.binding = 0;
 		globalUniformsLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		globalUniformsLayoutBinding.descriptorCount = 1;
-		globalUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		globalUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		globalUniformsLayoutBinding.pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutBinding dynamicUniformsLayoutBinding{};
 		dynamicUniformsLayoutBinding.binding = 1;
 		dynamicUniformsLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		dynamicUniformsLayoutBinding.descriptorCount = 1;
-		dynamicUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		dynamicUniformsLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		dynamicUniformsLayoutBinding.pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
