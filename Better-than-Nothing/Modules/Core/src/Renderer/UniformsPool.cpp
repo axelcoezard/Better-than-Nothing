@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	UniformsPool::UniformsPool(Device* device, SwapChain* swapChain): m_Device(device), m_SwapChain(swapChain)
+	UniformsPool::UniformsPool(Device* device): m_Device(device)
 	{
 		CreateUniformsPool(1000);
 		AllocateAllGlobalUniforms();

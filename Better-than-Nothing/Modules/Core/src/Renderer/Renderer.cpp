@@ -4,9 +4,9 @@ namespace BetterThanNothing
 {
 	Renderer::Renderer(Window* window, Device* device): m_Window(window), m_Device(device)
 	{
+		m_UniformPool = new UniformsPool(m_Device);
 		m_DescriptorPool = new DescriptorPool(m_Device);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
-		m_UniformPool = new UniformsPool(m_Device, m_SwapChain);
 
 		m_UniformBuffersSize = 0;
 		m_UniformBuffersCapacity = 1000;

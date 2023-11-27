@@ -17,7 +17,6 @@ namespace BetterThanNothing
 	{
 	private:
 		Device* m_Device;
-		SwapChain* m_SwapChain;
 
 		u32 m_Size;
 		u32 m_Capacity;
@@ -26,7 +25,7 @@ namespace BetterThanNothing
 		std::vector<std::vector<Buffer*>> m_DynamicUniforms; // 1 per entity per frame
 
 	public:
-		UniformsPool(Device* device, SwapChain* swapChain);
+		UniformsPool(Device* device);
 		~UniformsPool();
 
 	private:
