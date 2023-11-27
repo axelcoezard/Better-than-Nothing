@@ -54,8 +54,6 @@ namespace BetterThanNothing
 		return m_Camera;
 	}
 
-
-
 	Entity Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
 	{
 		ModelComponent modelComponent;
