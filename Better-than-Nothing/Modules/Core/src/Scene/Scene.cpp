@@ -8,7 +8,6 @@ namespace BetterThanNothing
 		m_Name = name;
 		m_ModelPool = modelPool;
 		m_TexturePool = texturePool;
-		m_ECSManager = new ECSManager();
 	}
 
 	Scene::~Scene()
@@ -22,6 +21,41 @@ namespace BetterThanNothing
 		return m_Camera;
 	}
 
+	void Scene::OnUpdate(f32 deltatime)
+	{
+		m_Camera->Update(deltatime);
+
+		f32 speed = 1.5f;
+		f32 rotation = glm::mod(speed * 30.0f * (f32) glfwGetTime() * 1.5f, 360.0f);
+
+		GetView<TransformComponent>().each([&](auto entity, TransformComponent& transform) {
+			(void) entity;
+			transform.rotation = glm::vec3(0.0f, (f32) rotation, 0.0f);
+		});
+	}
+
+	void Scene::OnEvent(Event* pEvent)
+	{
+		m_Camera->OnEvent(pEvent);
+	}
+
+	u32 Scene::GetId()
+	{
+		return m_Id;
+	}
+
+	std::string& Scene::GetName()
+	{
+		return m_Name;
+	}
+
+	Camera* Scene::GetCamera()
+	{
+		return m_Camera;
+	}
+
+
+
 	Entity Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
 	{
 		ModelComponent modelComponent;
@@ -33,28 +67,32 @@ namespace BetterThanNothing
 		transformComponent.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		transformComponent.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
-		Entity entity = m_ECSManager->CreateEntity();
-		m_ECSManager->AddComponent<ModelComponent>(entity, modelComponent);
-		m_ECSManager->AddComponent<TransformComponent>(entity, transformComponent);
+		Entity entity = m_Registry.create();
+		AddComponent<ModelComponent>(entity, modelComponent);
+		AddComponent<TransformComponent>(entity, transformComponent);
 		m_PendingEntities.push(entity);
 		return entity;
 	}
 
-	void Scene::OnUpdate(f32 deltatime)
+	void Scene::DestroyEntity(Entity entity)
 	{
-		m_Camera->Update(deltatime);
-
-		f32 speed = 1.5f;
-		f32 rotation = glm::mod(speed * 30.0f * (f32) glfwGetTime() * 1.5f, 360.0f);
-
-		m_ECSManager->GetView<TransformComponent>().each([&](auto entity, TransformComponent& transform) {
-			(void) entity;
-			transform.rotation = glm::vec3(0.0f, (f32) rotation, 0.0f);
-		});
+		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnEvent(Event* pEvent)
+	u32 Scene::GetEntitiesCount()
 	{
-		m_Camera->OnEvent(pEvent);
+		return m_Registry.size();
+	}
+
+	bool Scene::HasPendingEntities()
+	{
+		return m_PendingEntities.size() > 0;
+	}
+
+	Entity Scene::NextPendingEntity()
+	{
+		Entity entity = m_PendingEntities.front();
+		m_PendingEntities.pop();
+		return entity;
 	}
 };

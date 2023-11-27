@@ -39,7 +39,6 @@
 // Scene
 
 #include "Scene/Scene.hpp"
-#include "Scene/ECSManager.hpp"
 #include "Scene/Camera.hpp"
 #include "Scene/Light.hpp"
 

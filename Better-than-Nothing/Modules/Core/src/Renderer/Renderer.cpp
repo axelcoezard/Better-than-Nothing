@@ -31,7 +31,6 @@ namespace BetterThanNothing
 
 	void Renderer::Render(Scene* scene)
 	{
-		ECSManager* ecsManager = scene->GetECSManager();
 		Pipeline* pPipeline = m_PipeLines.at("main");
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
@@ -45,7 +44,7 @@ namespace BetterThanNothing
 			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
 			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
 
-			ModelComponent modelComp = ecsManager->GetComponent<ModelComponent>(newEntity);
+			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
 			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
 		}
 
@@ -64,8 +63,8 @@ namespace BetterThanNothing
 		};
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(ecsManager->GetEntitiesCount());
-		auto view = ecsManager->GetView<ModelComponent, TransformComponent>();
+		DrawStreamBuilder drawStreamBuilder(scene->GetEntitiesCount());
+		auto view = scene->GetView<ModelComponent, TransformComponent>();
 		for (auto entity : view) {
 			ModelComponent& modelComp = view.get<ModelComponent>(entity);
 			TransformComponent& transformComp = view.get<TransformComponent>(entity);
