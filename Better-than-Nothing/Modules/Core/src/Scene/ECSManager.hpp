@@ -1,9 +1,9 @@
 #pragma once
 
-namespace BetterThanNoting
+namespace BetterThanNothing
 {
-	using Entity = entt::entity;
-	using Registry = entt::registry;
+	typedef entt::entity Entity;
+	typedef entt::registry Registry;
 
 	/**
 	 * @brief The Entity Component System (ECS) class.
@@ -19,6 +19,9 @@ namespace BetterThanNoting
 		Registry m_Registry;
 
 	public:
+		ECSManager() = default;
+		~ECSManager() = default;
+
 		/**
 		 * @brief Creates a new entity.
 		 * @return The new entity.
@@ -43,9 +46,9 @@ namespace BetterThanNoting
 		 * @param entity The entity to add the component to.
 		 */
 		template<typename T>
-		void AddComponent(Entity entity)
+		void AddComponent(Entity entity, T component)
 		{
-			m_Registry.emplace<T>(entity);
+			m_Registry.emplace<T>(entity, component);
 		}
 
 		/**
@@ -71,6 +74,9 @@ namespace BetterThanNoting
 			return m_Registry.get<T>(entity);
 		}
 
+		// get all components
+
+
 		/**
 		 * @brief Check if an entity has a component.
 		 * @tparam T The component type.
@@ -80,7 +86,7 @@ namespace BetterThanNoting
 		template<typename T>
 		bool HasComponent(Entity entity)
 		{
-			return m_Registry.has<T>(entity);
+			return m_Registry.view<T>().contains(entity);
 		}
 
 		/**
@@ -89,9 +95,19 @@ namespace BetterThanNoting
 		 * @return The view.
 		 */
 		template <typename... ComponentTypes>
-		auto View()
+		auto GetView()
 		{
 			return m_Registry.view<ComponentTypes...>();
+		}
+
+		void ForEach(std::function<void(Entity)> func)
+		{
+			m_Registry.each(func);
+		}
+
+		u32 GetEntitiesCount()
+		{
+			return m_Registry.size();
 		}
 	};
 };

@@ -67,7 +67,7 @@ namespace BetterThanNothing
 			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
 			std::cout << "Frame count: " << frameCount << std::endl;
 			std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;
-			std::cout << "Entities count: " << m_Scenes[m_CurrentSceneId]->GetEntities().size() << std::endl;
+			//std::cout << "Entities count: " << m_Scenes[m_CurrentSceneId]->GetEntities().size() << std::endl;
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;

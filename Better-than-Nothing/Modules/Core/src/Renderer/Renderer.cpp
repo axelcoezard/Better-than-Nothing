@@ -31,19 +31,22 @@ namespace BetterThanNothing
 
 	void Renderer::Render(Scene* scene)
 	{
+		ECSManager* ecsManager = scene->GetECSManager();
 		Pipeline* pPipeline = m_PipeLines.at("main");
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
 		while (scene->HasPendingEntities()) {
-			Entity* newEntity = scene->NextPendingEntity();
+			Entity newEntity = scene->NextPendingEntity();
 
 			if (m_UniformsPool->ShouldExtends()) {
 				m_UniformsPool->ExtendUniformsPool();
 			}
 			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
 			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
-			m_DescriptorPool->CreateDescriptorSets(newEntity, newGU, newDU);
+
+			ModelComponent modelComp = ecsManager->GetComponent<ModelComponent>(newEntity);
+			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
 		}
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
@@ -61,19 +64,21 @@ namespace BetterThanNothing
 		};
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(scene->GetEntities().size());
-		for (auto & entity : scene->GetEntities()) {
-			Model* model = entity->GetModel();
+		DrawStreamBuilder drawStreamBuilder(ecsManager->GetEntitiesCount());
+		auto view = ecsManager->GetView<ModelComponent, TransformComponent>();
+		for (auto entity : view) {
+			ModelComponent& modelComp = view.get<ModelComponent>(entity);
+			TransformComponent& transformComp = view.get<TransformComponent>(entity);
 
 			drawStreamBuilder.Draw({
 				.pipeline = pPipeline,
-				.texture = entity->GetTexture(),
-				.vertexBuffer = model->vertexBuffer,
-				.indexBuffer = model->indexBuffer,
-				.indicesCount = model->indexCount,
-				.model = entity->GetModelMatrix()
+				.texture = modelComp.texture,
+				.vertexBuffer = modelComp.model->vertexBuffer,
+				.indexBuffer = modelComp.model->indexBuffer,
+				.indicesCount = modelComp.model->indexCount,
+				.model = TransformComponent::GetModelMatrix(transformComp)
 			});
-		}
+		};
 
 		DrawStream* drawStream = drawStreamBuilder.GetStream();
 		void* currentPipeline = nullptr;

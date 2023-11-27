@@ -22,6 +22,8 @@ file(GLOB SOURCES
 	"src/Handlers/*.hpp"
 	"src/Scene/*.cpp"
 	"src/Scene/*.hpp"
+	"src/Scene/Components/*.cpp"
+	"src/Scene/Components/*.hpp"
 	"src/Layers/*.hpp"
 	"src/Layers/*.cpp"
 	"src/Events/*.hpp"

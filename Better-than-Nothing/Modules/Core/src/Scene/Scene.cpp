@@ -1,18 +1,4 @@
-#include "Renderer/Device.hpp"
-#include "Renderer/Renderer.hpp"
-#include "Renderer/DrawStream.hpp"
-
-#include "Ressources/RessourcePool.hpp"
-#include "Ressources/Model.hpp"
-#include "Ressources/Texture.hpp"
-
-#include "Scene/Scene.hpp"
-#include "Scene/Camera.hpp"
-#include "Scene/Entity.hpp"
-
-#include "Events/Event.hpp"
-
-#include "Handlers/Input.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
@@ -22,14 +8,11 @@ namespace BetterThanNothing
 		m_Name = name;
 		m_ModelPool = modelPool;
 		m_TexturePool = texturePool;
+		m_ECSManager = new ECSManager();
 	}
 
 	Scene::~Scene()
 	{
-		for (u32 i = 0; i < m_Entities.size(); i++) {
-			delete m_Entities[i];
-		}
-
 		delete m_Camera;
 	}
 
@@ -39,11 +22,20 @@ namespace BetterThanNothing
 		return m_Camera;
 	}
 
-	Entity* Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
+	Entity Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
 	{
-		Entity* entity = new Entity();
-		entity->UseModel(m_ModelPool->GetRessource(modelPath));
-		entity->UseTexture(m_TexturePool->GetRessource(texturePath));
+		ModelComponent modelComponent;
+		modelComponent.model = m_ModelPool->GetRessource(modelPath);
+		modelComponent.texture = m_TexturePool->GetRessource(texturePath);
+
+		TransformComponent transformComponent;
+		transformComponent.position = glm::vec3(0.0f, 0.0f, 0.0f);
+		transformComponent.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+		transformComponent.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+		Entity entity = m_ECSManager->CreateEntity();
+		m_ECSManager->AddComponent<ModelComponent>(entity, modelComponent);
+		m_ECSManager->AddComponent<TransformComponent>(entity, transformComponent);
 		m_PendingEntities.push(entity);
 		return entity;
 	}
@@ -55,9 +47,10 @@ namespace BetterThanNothing
 		f32 speed = 1.5f;
 		f32 rotation = glm::mod(speed * 30.0f * (f32) glfwGetTime() * 1.5f, 360.0f);
 
-		if (m_Entities.size() > 0) {
-			m_Entities[0]->SetRotation(glm::vec3(0.0f, (f32) rotation, 0.0f));
-		}
+		m_ECSManager->GetView<TransformComponent>().each([&](auto entity, TransformComponent& transform) {
+			(void) entity;
+			transform.rotation = glm::vec3(0.0f, (f32) rotation, 0.0f);
+		});
 	}
 
 	void Scene::OnEvent(Event* pEvent)

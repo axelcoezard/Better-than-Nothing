@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Scene/ECSManager.hpp"
+
 namespace BetterThanNothing
 {
-	class Entity;
 	class Camera;
 	class Event;
 
@@ -20,8 +21,8 @@ namespace BetterThanNothing
 
 		Camera*					m_Camera;
 
-		std::vector<Entity*>	m_Entities;
-		std::queue<Entity*>		m_PendingEntities;
+		ECSManager*				m_ECSManager;
+		std::queue<Entity>		m_PendingEntities;
 	public:
 								Scene(u32 id, std::string_view name, ModelPool* modelPool, TexturePool* texturePool);
 								~Scene();
@@ -33,7 +34,7 @@ namespace BetterThanNothing
 
 	public:
 		Camera*					InitCamera(f64 x, f64 y, f64 z, f64 yaw, f64 pitch);
-		Entity*					CreateEntity(const std::string& modelPath, const std::string& texturePath);
+		Entity					CreateEntity(const std::string& modelPath, const std::string& texturePath);
 
 		void					OnUpdate(f32 deltatime);
 		void					OnEvent(Event* pEvent);
@@ -42,14 +43,13 @@ namespace BetterThanNothing
 		u32						GetId()		{ return m_Id; }
 		std::string&			GetName()	{ return m_Name; }
 		Camera*					GetCamera()	{ return m_Camera; }
-		std::vector<Entity*>&	GetEntities()	{ return m_Entities; }
 
+		ECSManager*				GetECSManager() { return m_ECSManager; }
 		bool					HasPendingEntities() { return m_PendingEntities.size() > 0; }
-		Entity*					NextPendingEntity()
+		Entity					NextPendingEntity()
 		{
-			auto entity = m_PendingEntities.front();
+			Entity entity = m_PendingEntities.front();
 			m_PendingEntities.pop();
-			m_Entities.push_back(entity);
 			return entity;
 		}
 	};
