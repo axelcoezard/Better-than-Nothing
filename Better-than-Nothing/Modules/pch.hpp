@@ -21,6 +21,8 @@
 
 #include <INIReader.h>
 
+#include <entt/entt.hpp>
+
 #define MAX_FRAMES_IN_FLIGHT 30
 
 #define WINDOW_WIDTH 1280
