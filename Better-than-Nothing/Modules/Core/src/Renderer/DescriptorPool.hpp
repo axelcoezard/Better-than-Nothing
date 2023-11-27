@@ -5,6 +5,7 @@ namespace BetterThanNothing
 	class Device;
 	class Entity;
 	class Buffer;
+	class UniformsPool;
 
 	/**
 	 * @brief A wrapper class for VkDescriptorPool
@@ -18,6 +19,11 @@ namespace BetterThanNothing
 		 * @brief The device that owns this descriptor pool
 		 */
 		Device* m_Device;
+
+		/**
+		 * @brief The uniforms pool
+		 */
+		UniformsPool* m_UniformsPool;
 
 		/**
 		 * @brief The VkDescriptorSetLayout
@@ -48,8 +54,9 @@ namespace BetterThanNothing
 		/**
 		 * @brief Construct a new Descriptor Pool object
 		 * @param device The device that owns this descriptor pool
+		 * @param uniformsPool The uniforms pool
 		 */
-		DescriptorPool(Device* device);
+		DescriptorPool(Device* device, UniformsPool* uniformsPool);
 
 		/**
 		 * @brief Destroy the Descriptor Pool object

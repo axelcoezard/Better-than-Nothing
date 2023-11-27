@@ -4,8 +4,8 @@ namespace BetterThanNothing
 {
 	Renderer::Renderer(Window* window, Device* device): m_Window(window), m_Device(device)
 	{
-		m_UniformPool = new UniformsPool(m_Device);
-		m_DescriptorPool = new DescriptorPool(m_Device);
+		m_UniformsPool = new UniformsPool(m_Device);
+		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
 
 		m_UniformBuffersSize = 0;
@@ -24,7 +24,7 @@ namespace BetterThanNothing
 		}
 
 		DestroyUniformBuffers();
-		delete m_UniformPool;
+		delete m_UniformsPool;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
 	}
@@ -89,11 +89,11 @@ namespace BetterThanNothing
 			Entity* newEntity = scene->NextPendingEntity();
 
 			//CreateNewUniformBuffer();
-			if (m_UniformPool->ShouldExtends()) {
-				m_UniformPool->ExtendUniformsPool();
+			if (m_UniformsPool->ShouldExtends()) {
+				m_UniformsPool->ExtendUniformsPool();
 			}
-			std::vector<Buffer*> newGU = m_UniformPool->GetAllGlobalUniforms();
-			std::vector<Buffer*> newDU = m_UniformPool->CreateDynamicUniforms();
+			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
+			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
 			m_DescriptorPool->CreateDescriptorSets(newEntity, newGU, newDU);
 		}
 
@@ -102,7 +102,7 @@ namespace BetterThanNothing
 		}
 
 		// Create a GlobalUniforms with camera data
-		GlobalUniforms* globalUniforms = m_UniformPool->GetGlobalUniforms(currentFrame);
+		GlobalUniforms* globalUniforms = m_UniformsPool->GetGlobalUniforms(currentFrame);
 		globalUniforms->projection = scene->GetCamera()->GetProjectionMatrix();
 		globalUniforms->view = scene->GetCamera()->GetViewMatrix();
 		globalUniforms->cameraPosition = scene->GetCamera()->GetPosition();
@@ -140,7 +140,7 @@ namespace BetterThanNothing
 				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
 
-			DynamicUniforms* dynamicUniforms = m_UniformPool->GetDynamicUniforms(currentFrame, i);
+			DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
 			dynamicUniforms->model = drawPacket.model;
 			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 

@@ -44,7 +44,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief The pointer to the uniform pool
 		 */
-		UniformsPool* m_UniformPool;
+		UniformsPool* m_UniformsPool;
 
 		/**
 		 * @brief All the pipelines
