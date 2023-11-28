@@ -80,7 +80,6 @@ namespace BetterThanNothing
 		}
 	}
 
-
 	void DefaultRenderPass::GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index)
 	{
 		renderPassInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
