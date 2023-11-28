@@ -12,6 +12,10 @@ namespace BetterThanNothing
 	class Scene;
 	struct DrawPacket;
 
+	class DefaultRenderPass;
+	class ImGuiRenderPass;
+	class ImGuiDescriptorPool;
+
 	/**
 	 * @brief The swap chain class
 	 */
@@ -39,9 +43,19 @@ namespace BetterThanNothing
 		VkSwapchainKHR m_SwapChain;
 
 		/**
-		 * @brief The render pass
+		 * @brief The swap chain render pass
 		 */
-		VkRenderPass m_RenderPass;
+		DefaultRenderPass* m_DefaultRenderPass;
+
+		/**
+		 * @brief The ImGui render pass
+		 */
+		ImGuiRenderPass* m_ImGuiRenderPass;
+
+		/**
+		 * @brief The ImGui descriptor pool
+		 */
+		ImGuiDescriptorPool* m_ImGuiDescriptorPool;
 
 		/**
 		 * @brief The image format
@@ -59,49 +73,9 @@ namespace BetterThanNothing
 		std::vector<VkImage> m_Images;
 
 		/**
-		 * @brief The swap chain image views
-		 */
-		std::vector<VkImageView> m_ImageViews;
-
-		/**
-		 * @brief The swap chain framebuffers
-		 */
-		std::vector<VkFramebuffer> m_Framebuffers;
-
-		/**
 		 * @brief The command buffers
 		 */
 		std::vector<CommandBuffer*> m_CommandBuffers;
-
-		/**
-		 * @brief The depth image
-		 */
-		VkImage m_DepthImage;
-
-		/**
-		 * @brief The depth image memory
-		 */
-		VkDeviceMemory m_DepthImageMemory;
-
-		/**
-		 * @brief The depth image view
-		 */
-		VkImageView m_DepthImageView;
-
-		/**
-		 * @brief The color image
-		 */
-		VkImage m_ColorImage;
-
-		/**
-		 * @brief The color image memory
-		 */
-		VkDeviceMemory m_ColorImageMemory;
-
-		/**
-		 * @brief The color image view
-		 */
-		VkImageView m_ColorImageView;
 
 		/**
 		 * @brief The swap chain semaphores that is available for rendering
@@ -154,25 +128,6 @@ namespace BetterThanNothing
 		 */
 		void CreateSwapChain();
 
-		/**
-		 * @brief Create the image views
-		 */
-		void CreateImageViews();
-
-		/**
-		 * @brief Create the render pass
-		 */
-		void CreateRenderPass();
-
-		/**
-		 * @brief Create the framebuffers
-		 */
-		void CreateColorResources();
-
-		/**
-		 * @brief Create the depth resources
-		 */
-		void CreateDepthResources();
 
 		/**
 		 * @brief Create the semaphores and fences
@@ -180,9 +135,9 @@ namespace BetterThanNothing
 		void CreateSyncObjects();
 
 		/**
-		 * @brief Create the framebuffers
+		 * @brief Setup ImGui
 		 */
-		void CreateFramebuffers();
+		void SetupImGui();
 
 	public:
 		/**
@@ -290,12 +245,6 @@ namespace BetterThanNothing
 		VkSwapchainKHR& GetVkSwapChain() { return m_SwapChain; }
 
 		/**
-		 * @brief Get the VkRenderPass
-		 * @return VkRenderPass& the VkRenderPass
-		 */
-		VkRenderPass& GetVkRenderPass() { return m_RenderPass; }
-
-		/**
 		 * @brief Get the VkFormat
 		 * @return VkFormat& the VkFormat
 		 */
@@ -314,16 +263,11 @@ namespace BetterThanNothing
 		std::vector<VkImage>& GetImages() { return m_Images; }
 
 		/**
-		 * @brief Get all the VkImageView
-		 * @return std::vector<VkImageView>& All the VkImageView
+		 * @brief Get a VkImage by index
+		 * @param index the index of the VkImage
+		 * @return VkImage& the VkImage
 		 */
-		std::vector<VkImageView>& GetImageViews() { return m_ImageViews; }
-
-		/**
-		 * @brief Get all the VkFramebuffer
-		 * @return std::vector<VkFramebuffer>& All the VkFramebuffer
-		 */
-		std::vector<VkFramebuffer>& GetFramebuffers() { return m_Framebuffers; }
+		VkImage& GetImage(u32 index) { return m_Images[index]; }
 
 		/**
 		 * @brief Get the Current Frame index
@@ -336,5 +280,7 @@ namespace BetterThanNothing
 		 * @return CommandBuffer* A pointer to the current command buffer
 		 */
 		CommandBuffer* GetCurrentCommandBuffer() { return m_CommandBuffers[m_CurrentFrame]; }
+
+		DefaultRenderPass* GetDefaultRenderPass() { return m_DefaultRenderPass; }
 	};
 };

@@ -23,6 +23,8 @@
 #include "Renderer/DescriptorPool.hpp"
 #include "Renderer/Device.hpp"
 #include "Renderer/Pipeline.hpp"
+#include "Renderer/RenderPass.hpp"
+#include "Renderer/DefaultRenderPass.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/GlobalUniforms.hpp"
 #include "Renderer/UniformsPool.hpp"
@@ -30,6 +32,9 @@
 #include "Renderer/DrawStream.hpp"
 #include "Renderer/Material.hpp"
 #include "Renderer/Buffer.hpp"
+
+#include "Renderer/ImGui/ImGuiDescriptorPool.hpp"
+#include "Renderer/ImGui/ImGuiRenderPass.hpp"
 
 // Ressources
 #include "Ressources/RessourcePool.hpp"

@@ -48,6 +48,16 @@ namespace BetterThanNothing
 			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
 		}
 
+		/**
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		{
+			ImGui::Text("Hello, world!");
+		}
+		ImGui::Render();
+		*/
+
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");
 		}
