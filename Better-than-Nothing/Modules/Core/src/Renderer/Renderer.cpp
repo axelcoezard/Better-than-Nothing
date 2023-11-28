@@ -48,7 +48,7 @@ namespace BetterThanNothing
 			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
 		}
 
-		/**
+#if ENABLE_IMGUI
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -56,7 +56,7 @@ namespace BetterThanNothing
 			ImGui::Text("Hello, world!");
 		}
 		ImGui::Render();
-		*/
+#endif
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");

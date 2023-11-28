@@ -20,7 +20,21 @@ namespace BetterThanNothing
 		m_DefaultRenderPass = new DefaultRenderPass(renderPassProperties);
 		m_DefaultRenderPass->Create();
 
-		//SetupImGui();
+#if ENABLE_IMGUI
+		RenderPassProperties imguiRenderPassProperties;
+		imguiRenderPassProperties.device = m_Device;
+		imguiRenderPassProperties.swapChain = this;
+		imguiRenderPassProperties.swapChainFormat = m_Format;
+		imguiRenderPassProperties.swapChainExtent = m_Extent;
+		imguiRenderPassProperties.msaaSamples = m_Device->GetMsaaSamples();
+		imguiRenderPassProperties.attachmentTypeFlags = RENDER_PASS_ATTACHMENT_TYPE_COLOR;
+
+		m_ImGuiDescriptorPool = new ImGuiDescriptorPool(m_Device);
+		m_ImGuiRenderPass = new ImGuiRenderPass(imguiRenderPassProperties);
+		m_ImGuiRenderPass->Create();
+
+		SetupImGui();
+#endif
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
@@ -46,6 +60,9 @@ namespace BetterThanNothing
 		//vkDestroyRenderPass(device, m_RenderPass, nullptr);
 
 		delete m_DefaultRenderPass;
+#if ENABLE_IMGUI
+		delete m_ImGuiRenderPass;
+#endif
 
 		for (auto commandBuffer : m_CommandBuffers) {
 			delete commandBuffer;
@@ -142,10 +159,7 @@ namespace BetterThanNothing
 
 	void SwapChain::SetupImGui()
 	{
-		// Prepare ImGui descriptors pool and render pass
-		//m_ImGuiDescriptorPool = new ImGuiDescriptorPool(m_Device);
-		//m_ImGuiRenderPass = new ImGuiRenderPass(m_Device, m_Format);
-
+#if ENABLE_IMGUI
 		// Setup Dear ImGui context
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -168,6 +182,7 @@ namespace BetterThanNothing
 
 		// Upload Fonts
 		ImGui_ImplVulkan_CreateFontsTexture();
+#endif
 	}
 
 	void SwapChain::CleanupSwapChain()
@@ -176,6 +191,9 @@ namespace BetterThanNothing
 
 		// TODO: Cleanup all RenderPasses ressources
 		m_DefaultRenderPass->CleanDependencies();
+#if ENABLE_IMGUI
+		m_ImGuiRenderPass->CleanDependencies();
+#endif
 
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
@@ -198,6 +216,9 @@ namespace BetterThanNothing
 
 		// TODO: Recreate all RenderPasses ressources
 		m_DefaultRenderPass->RecreateDependencies();
+#if ENABLE_IMGUI
+		m_ImGuiRenderPass->RecreateDependencies();
+#endif
 	}
 
 	VkFormat SwapChain::FindDepthFormat()
@@ -274,21 +295,18 @@ namespace BetterThanNothing
 		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
 
 		commandBuffer->EndRenderPass();
-		/**
-		VkRenderPassBeginInfo imGuiRenderPassInfo = {};
-		imGuiRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		imGuiRenderPassInfo.renderPass = m_ImGuiRenderPass->GetVkRenderPass();
-		imGuiRenderPassInfo.framebuffer = m_Framebuffers[m_CurrentImageIndex];
-		imGuiRenderPassInfo.renderArea.offset = {0, 0};
-		imGuiRenderPassInfo.renderArea.extent = m_Extent;
 
+#if ENABLE_IMGUI
+		VkRenderPassBeginInfo imGuiRenderPassInfo = {};
+		m_ImGuiRenderPass->GetRenderPassBeginInfo(&imGuiRenderPassInfo, m_CurrentImageIndex);
 		commandBuffer->BeginRenderPass(imGuiRenderPassInfo);
 
 		ImDrawData* draw_data = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer->GetVkCommandBuffer());
 
 		commandBuffer->EndRenderPass();
-		*/
+#endif
+
 		commandBuffer->End();
 
 		ResetFences();
