@@ -227,7 +227,8 @@ namespace BetterThanNothing
 		commandBuffer->Begin();
 
 		// Begin default render pass;
-		VkRenderPassBeginInfo renderPassInfo = m_DefaultRenderPass->GetRenderPassBeginInfo(m_CurrentImageIndex);
+		VkRenderPassBeginInfo renderPassInfo {};
+		m_DefaultRenderPass->GetRenderPassBeginInfo(&renderPassInfo, m_CurrentImageIndex);
 		commandBuffer->BeginRenderPass(renderPassInfo);
 
 		// Prepare viewport and scissor

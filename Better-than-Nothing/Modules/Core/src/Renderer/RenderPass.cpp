@@ -20,12 +20,8 @@ namespace BetterThanNothing
 
 	void RenderPass::CreateImageViews()
 	{
-		LOG_INFO("Creating RenderPass image views...");
 		std::vector<VkImage> m_Images = m_Properties.swapChain->GetImages();
 
-		LOG_INFO("=> images count: " + std::to_string(m_Images.size()));
-
-		m_ImageViews.clear();
 		m_ImageViews.resize(m_Images.size());
 
 		for (size_t i = 0; i < m_Images.size(); i++) {
@@ -126,23 +122,30 @@ namespace BetterThanNothing
 
 	void RenderPass::CleanDependencies()
 	{
-		LOG_INFO("Cleaning RenderPass dependencies...");
 		VkDevice device = m_Properties.device->GetVkDevice();
 
-		vkDestroyImageView(device, m_DepthImageView, nullptr);
-		vkDestroyImage(device, m_DepthImage, nullptr);
-		vkFreeMemory(device, m_DepthImageMemory, nullptr);
+		if (m_Properties.attachmentTypeFlags & RENDER_PASS_ATTACHMENT_TYPE_COLOR) {
+			vkDestroyImageView(device, m_ColorImageView, nullptr);
+			vkDestroyImage(device, m_ColorImage, nullptr);
+			vkFreeMemory(device, m_ColorImageMemory, nullptr);
+		}
 
-		vkDestroyImageView(device, m_ColorImageView, nullptr);
-		vkDestroyImage(device, m_ColorImage, nullptr);
-		vkFreeMemory(device, m_ColorImageMemory, nullptr);
+		if (m_Properties.attachmentTypeFlags & RENDER_PASS_ATTACHMENT_TYPE_DEPTH) {
+			vkDestroyImageView(device, m_DepthImageView, nullptr);
+			vkDestroyImage(device, m_DepthImage, nullptr);
+			vkFreeMemory(device, m_DepthImageMemory, nullptr);
+		}
 
 		for (auto framebuffer : m_Framebuffers) {
-			vkDestroyFramebuffer(device, framebuffer, nullptr);
+			if (framebuffer != VK_NULL_HANDLE) {
+				vkDestroyFramebuffer(device, framebuffer, nullptr);
+			}
 		}
 
 		for (auto imageView : m_ImageViews) {
-			vkDestroyImageView(device, imageView, nullptr);
+			if (imageView != VK_NULL_HANDLE) {
+				vkDestroyImageView(device, imageView, nullptr);
+			}
 		}
 	}
 

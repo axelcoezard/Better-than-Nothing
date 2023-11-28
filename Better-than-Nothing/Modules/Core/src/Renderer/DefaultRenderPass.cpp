@@ -82,23 +82,14 @@ namespace BetterThanNothing
 	}
 
 
-	VkRenderPassBeginInfo DefaultRenderPass::GetRenderPassBeginInfo(u32 index)
+	void DefaultRenderPass::GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index)
 	{
 		LOG_INFO("Getting RenderPass begin info...");
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_RenderPass;
-		renderPassInfo.framebuffer = m_Framebuffers[index];
-		renderPassInfo.renderArea.offset = {0, 0};
-		renderPassInfo.renderArea.extent = m_Properties.swapChainExtent;
 
-		std::vector<VkClearValue> clearValues(2);
-		clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-		clearValues[1].depthStencil = {1.0f, 0};
-
-		renderPassInfo.clearValueCount = static_cast<u32>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
-
-		return renderPassInfo;
+		renderPassInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo->renderPass = m_RenderPass;
+		renderPassInfo->framebuffer = m_Framebuffers[index];
+		renderPassInfo->renderArea.offset = {0, 0};
+		renderPassInfo->renderArea.extent = m_Properties.swapChainExtent;
 	}
 };

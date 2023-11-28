@@ -11,6 +11,6 @@ namespace BetterThanNothing
 		~DefaultRenderPass() = default;
 
 		void CreateRenderPass() override;
-		VkRenderPassBeginInfo GetRenderPassBeginInfo(u32 index) override;
+		void GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index) override;
 	};
 };

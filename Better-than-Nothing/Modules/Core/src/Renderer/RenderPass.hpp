@@ -54,7 +54,7 @@ namespace BetterThanNothing
 		void CleanDependencies();
 		void RecreateDependencies();
 
-		virtual VkRenderPassBeginInfo GetRenderPassBeginInfo(u32 index) = 0;
+		virtual void GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index) = 0;
 
 		VkImageView& GetDepthImageView();
 		VkImageView& GetColorImageView();

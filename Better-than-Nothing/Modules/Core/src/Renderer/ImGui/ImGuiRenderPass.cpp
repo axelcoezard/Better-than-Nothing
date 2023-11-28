@@ -36,15 +36,12 @@ namespace BetterThanNothing
 		}
 	}
 
-	VkRenderPassBeginInfo ImGuiRenderPass::GetRenderPassBeginInfo(u32 index)
+	void ImGuiRenderPass::GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index)
 	{
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_RenderPass;
-		renderPassInfo.framebuffer = m_Framebuffers[index];
-		renderPassInfo.renderArea.offset = {0, 0};
-		renderPassInfo.renderArea.extent = m_Properties.swapChainExtent;
-
-		return renderPassInfo;
+		renderPassInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo->renderPass = m_RenderPass;
+		renderPassInfo->framebuffer = m_Framebuffers[index];
+		renderPassInfo->renderArea.offset = {0, 0};
+		renderPassInfo->renderArea.extent = m_Properties.swapChainExtent;
 	}
 };
