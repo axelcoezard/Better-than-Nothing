@@ -45,7 +45,6 @@ namespace BetterThanNothing
 
 	void RenderPass::CreateColorResources()
 	{
-		LOG_INFO("Creating RenderPass color resources...");
 		VkFormat colorFormat = m_Properties.swapChainFormat;
 
 		m_Properties.device->CreateImage(
@@ -64,7 +63,6 @@ namespace BetterThanNothing
 
 	void RenderPass::CreateDepthResources()
 	{
-		LOG_INFO("Creating RenderPass depth resources...");
 		VkFormat depthFormat = m_Properties.swapChain->FindDepthFormat();
 
 		m_Properties.device->CreateImage(
@@ -87,22 +85,17 @@ namespace BetterThanNothing
 
 	void RenderPass::CreateFramebuffers()
 	{
-		LOG_INFO("Creating RenderPass framebuffers...");
 		m_Framebuffers.resize(m_ImageViews.size());
 
-		for (u32 i = 0; i < m_ImageViews.size(); i++) {
+		for (u32 i = 0; i < m_ImageViews.size(); i++)
+		{
 			std::vector<VkImageView> attachments;
-
 			if (m_Properties.attachmentTypeFlags & RENDER_PASS_ATTACHMENT_TYPE_COLOR) {
-				LOG_INFO("=> Adding color image view to framebuffer attachments...");
 				attachments.push_back(m_ColorImageView);
 			}
-
 			if (m_Properties.attachmentTypeFlags & RENDER_PASS_ATTACHMENT_TYPE_DEPTH) {
-				LOG_INFO("=> Adding depth image view to framebuffer attachments...");
 				attachments.push_back(m_DepthImageView);
 			}
-
 			attachments.push_back(m_ImageViews[i]);
 
 			VkFramebufferCreateInfo framebufferInfo{};
@@ -151,7 +144,6 @@ namespace BetterThanNothing
 
 	void RenderPass::RecreateDependencies()
 	{
-		LOG_INFO("Recreating RenderPass dependencies...");
 		CreateImageViews();
 		CreateResources();
 		CreateFramebuffers();

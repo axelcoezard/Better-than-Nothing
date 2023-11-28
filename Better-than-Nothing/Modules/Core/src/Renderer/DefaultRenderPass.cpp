@@ -4,7 +4,6 @@ namespace BetterThanNothing
 {
 	void DefaultRenderPass::CreateRenderPass()
 	{
-		LOG_INFO("Creating default render pass...");
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_Properties.swapChainFormat;
 		colorAttachment.samples = m_Properties.msaaSamples;
@@ -84,8 +83,6 @@ namespace BetterThanNothing
 
 	void DefaultRenderPass::GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index)
 	{
-		LOG_INFO("Getting RenderPass begin info...");
-
 		renderPassInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo->renderPass = m_RenderPass;
 		renderPassInfo->framebuffer = m_Framebuffers[index];
