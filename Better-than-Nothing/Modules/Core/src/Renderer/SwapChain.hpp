@@ -48,11 +48,6 @@ namespace BetterThanNothing
 		DefaultRenderPass* m_DefaultRenderPass;
 
 		/**
-		 * @brief The ImGui render pass
-		 */
-		ImGuiRenderPass* m_ImGuiRenderPass;
-
-		/**
 		 * @brief The ImGui descriptor pool
 		 */
 		ImGuiDescriptorPool* m_ImGuiDescriptorPool;

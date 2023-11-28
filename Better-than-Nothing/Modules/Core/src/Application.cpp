@@ -55,8 +55,17 @@ namespace BetterThanNothing
 			lastFrame = currentFrame;
 			frameCount += 1;
 
+			RendererDebugInfo debugInfo{};
+			debugInfo.vendorName = m_Device->GetVendorName();
+			debugInfo.deviceName = m_Device->GetDeviceName();
+			debugInfo.apiVersion = m_Device->GetApiVersion();
+			debugInfo.frameCount = frameCount;
+			debugInfo.frameTime = deltatime;
+			debugInfo.sceneName = m_Scenes[m_CurrentSceneId]->GetName();
+			debugInfo.sceneEntitiesCount = m_Scenes[m_CurrentSceneId]->GetEntitiesCount();
+
 			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
-			m_Renderer->Render(m_Scenes[m_CurrentSceneId]);
+			m_Renderer->Render(m_Scenes[m_CurrentSceneId], &debugInfo);
 			m_Device->WaitIdle();
 
 			//std::cout.precision(3);

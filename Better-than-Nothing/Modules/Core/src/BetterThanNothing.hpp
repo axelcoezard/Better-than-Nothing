@@ -14,13 +14,14 @@
 #include "Events/WindowCloseEvent.hpp"
 
 // Renderer
-
 #include "Renderer/Device.hpp"
 #include "Renderer/Window.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Renderer/RendererDebugInfo.hpp"
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/CommandBuffer.hpp"
 #include "Renderer/DescriptorPool.hpp"
+#include "Renderer/ImGuiDescriptorPool.hpp"
 #include "Renderer/Device.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/RenderPass.hpp"
@@ -33,16 +34,12 @@
 #include "Renderer/Material.hpp"
 #include "Renderer/Buffer.hpp"
 
-#include "Renderer/ImGui/ImGuiDescriptorPool.hpp"
-#include "Renderer/ImGui/ImGuiRenderPass.hpp"
-
 // Ressources
 #include "Ressources/RessourcePool.hpp"
 #include "Ressources/Model.hpp"
 #include "Ressources/Texture.hpp"
 
 // Scene
-
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 #include "Scene/Light.hpp"
