@@ -5,19 +5,14 @@ namespace BetterThanNothing
 	class Device;
 	class SwapChain;
 
-	#define RENDER_PASS_ATTACHMENT_TYPE_COLOR 0x01
-	#define RENDER_PASS_ATTACHMENT_TYPE_DEPTH 0x02
-
 	struct RenderPassProperties
 	{
 		Device* device;
 		SwapChain* swapChain;
 
-		VkFormat swapChainFormat;
-		VkExtent2D swapChainExtent;
+		VkFormat* swapChainFormat;
+		VkExtent2D* swapChainExtent;
 		VkSampleCountFlagBits msaaSamples;
-
-		u32 attachmentTypeFlags;
 	};
 
 	class RenderPass
@@ -48,13 +43,13 @@ namespace BetterThanNothing
 		void CreateResources();
 		void CreateColorResources();
 		void CreateDepthResources();
-		virtual void CreateRenderPass() = 0;
+		void CreateRenderPass();
 		void CreateFramebuffers();
 
 		void CleanDependencies();
 		void RecreateDependencies();
 
-		virtual void GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index) = 0;
+		void GetRenderPassBeginInfo(VkRenderPassBeginInfo* renderPassInfo, u32 index);
 
 		VkImageView& GetDepthImageView();
 		VkImageView& GetColorImageView();

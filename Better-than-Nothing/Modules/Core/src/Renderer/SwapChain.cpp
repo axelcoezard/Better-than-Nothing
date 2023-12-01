@@ -12,13 +12,12 @@ namespace BetterThanNothing
 		RenderPassProperties renderPassProperties;
 		renderPassProperties.device = m_Device;
 		renderPassProperties.swapChain = this;
-		renderPassProperties.swapChainFormat = m_Format;
-		renderPassProperties.swapChainExtent = m_Extent;
+		renderPassProperties.swapChainFormat = &m_Format;
+		renderPassProperties.swapChainExtent = &m_Extent;
 		renderPassProperties.msaaSamples = m_Device->GetMsaaSamples();
-		renderPassProperties.attachmentTypeFlags = RENDER_PASS_ATTACHMENT_TYPE_COLOR | RENDER_PASS_ATTACHMENT_TYPE_DEPTH;
 
-		m_DefaultRenderPass = new DefaultRenderPass(renderPassProperties);
-		m_DefaultRenderPass->Create();
+		m_RenderPass = new RenderPass(renderPassProperties);
+		m_RenderPass->Create();
 
 #if ENABLE_IMGUI
 		SetupImGui();
@@ -40,13 +39,14 @@ namespace BetterThanNothing
 			vkDestroyFence(device, m_InFlightFences[i], nullptr);
 		}
 
-		delete m_DefaultRenderPass;
 #if ENABLE_IMGUI
 
 		ImGui_ImplVulkan_DestroyFontsTexture();
 		ImGui_ImplVulkan_Shutdown();
 		delete m_ImGuiDescriptorPool;
 #endif
+
+		delete m_RenderPass;
 
 		for (auto commandBuffer : m_CommandBuffers) {
 			delete commandBuffer;
@@ -164,7 +164,7 @@ namespace BetterThanNothing
 		init_info.Queue = m_Device->GetVkGraphicsQueue();
 
 		// Init Vulkan
-		ImGui_ImplVulkan_Init(&init_info, m_DefaultRenderPass->GetVkRenderPass());
+		ImGui_ImplVulkan_Init(&init_info, m_RenderPass->GetVkRenderPass());
 
 		// Upload Fonts
 		ImGui_ImplVulkan_CreateFontsTexture();
@@ -176,7 +176,7 @@ namespace BetterThanNothing
 		auto device = m_Device->GetVkDevice();
 
 		// TODO: Cleanup all RenderPasses ressources
-		m_DefaultRenderPass->CleanDependencies();
+		m_RenderPass->CleanDependencies();
 
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 	}
@@ -198,7 +198,7 @@ namespace BetterThanNothing
 		CreateSwapChain();
 
 		// TODO: Recreate all RenderPasses ressources
-		m_DefaultRenderPass->RecreateDependencies();
+		m_RenderPass->RecreateDependencies();
 	}
 
 	VkFormat SwapChain::FindDepthFormat()
@@ -229,7 +229,7 @@ namespace BetterThanNothing
 
 		// Begin default render pass;
 		VkRenderPassBeginInfo renderPassInfo {};
-		m_DefaultRenderPass->GetRenderPassBeginInfo(&renderPassInfo, m_CurrentImageIndex);
+		m_RenderPass->GetRenderPassBeginInfo(&renderPassInfo, m_CurrentImageIndex);
 		commandBuffer->BeginRenderPass(renderPassInfo);
 
 		// Prepare viewport and scissor

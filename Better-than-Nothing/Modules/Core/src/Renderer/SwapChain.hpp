@@ -12,8 +12,7 @@ namespace BetterThanNothing
 	class Scene;
 	struct DrawPacket;
 
-	class DefaultRenderPass;
-	class ImGuiRenderPass;
+	class RenderPass;
 	class ImGuiDescriptorPool;
 
 	/**
@@ -45,7 +44,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief The swap chain render pass
 		 */
-		DefaultRenderPass* m_DefaultRenderPass;
+		RenderPass* m_RenderPass;
 
 		/**
 		 * @brief The ImGui descriptor pool
@@ -276,6 +275,6 @@ namespace BetterThanNothing
 		 */
 		CommandBuffer* GetCurrentCommandBuffer() { return m_CommandBuffers[m_CurrentFrame]; }
 
-		DefaultRenderPass* GetDefaultRenderPass() { return m_DefaultRenderPass; }
+		RenderPass* GetDefaultRenderPass() { return m_RenderPass; }
 	};
 };

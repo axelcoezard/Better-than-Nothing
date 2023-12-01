@@ -25,7 +25,6 @@
 #include "Renderer/Device.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/RenderPass.hpp"
-#include "Renderer/DefaultRenderPass.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/GlobalUniforms.hpp"
 #include "Renderer/UniformsPool.hpp"
