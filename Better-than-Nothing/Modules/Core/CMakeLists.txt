@@ -20,8 +20,6 @@ file(GLOB SOURCES
 	"src/Renderer/*.hpp"
 	"src/Renderer/ImGui/*.cpp"
 	"src/Renderer/ImGui/*.hpp"
-	"src/Handlers/*.cpp"
-	"src/Handlers/*.hpp"
 	"src/Scene/*.cpp"
 	"src/Scene/*.hpp"
 	"src/Scene/Components/*.cpp"
