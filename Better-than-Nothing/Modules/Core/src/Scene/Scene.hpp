@@ -5,6 +5,7 @@ namespace BetterThanNothing
 	class Camera;
 	class Event;
 
+	class Window;
 	class ModelPool;
 	class TexturePool;
 
@@ -24,6 +25,11 @@ namespace BetterThanNothing
 		 * @brief The name of the scene.
 		 */
 		std::string m_Name;
+
+		/**
+		 * @brief A pointer to the device.
+		 */
+		Window* m_Window;
 
 		/**
 		 * @brief A pointer to the model pool.
@@ -55,10 +61,11 @@ namespace BetterThanNothing
 		 *
 		 * @param id The id of the scene.
 		 * @param name The name of the scene.
+		 * @param window A pointer to the window.
 		 * @param modelPool A pointer to the model pool.
 		 * @param texturePool A pointer to the texture pool.
 		 */
- 		Scene(u32 id, std::string_view name, ModelPool* modelPool, TexturePool* texturePool);
+ 		Scene(u32 id, std::string_view name, Window* window, ModelPool* modelPool, TexturePool* texturePool);
 
 		/**
 		 * @brief Destroy the Scene object

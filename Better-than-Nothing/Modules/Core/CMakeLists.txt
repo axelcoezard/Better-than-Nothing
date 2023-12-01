@@ -18,8 +18,8 @@ file(GLOB SOURCES
 	"src/Ressources/*.hpp"
 	"src/Renderer/*.cpp"
 	"src/Renderer/*.hpp"
-	"src/Handlers/*.cpp"
-	"src/Handlers/*.hpp"
+	"src/Renderer/ImGui/*.cpp"
+	"src/Renderer/ImGui/*.hpp"
 	"src/Scene/*.cpp"
 	"src/Scene/*.hpp"
 	"src/Scene/Components/*.cpp"
@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME} ${SOURCES})
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../pch.hpp)
 
+target_compile_definitions(Core PRIVATE ENABLE_IMGUI=1)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb imgui inih)

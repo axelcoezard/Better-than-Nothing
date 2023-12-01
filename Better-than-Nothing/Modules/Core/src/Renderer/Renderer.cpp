@@ -29,7 +29,7 @@ namespace BetterThanNothing
 		m_PipeLines.insert(entry);
 	}
 
-	void Renderer::Render(Scene* scene)
+	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
 	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
@@ -47,6 +47,8 @@ namespace BetterThanNothing
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
 			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
 		}
+
+		RenderDebugInfo(debugInfo);
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");
@@ -101,5 +103,44 @@ namespace BetterThanNothing
 		}
 
 		m_SwapChain->EndRecordCommandBuffer();
+	}
+
+	void Renderer::RenderDebugInfo(RendererDebugInfo* debugInfo)
+	{
+		(void) debugInfo;
+#if ENABLE_IMGUI
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+
+		ImGui::NewFrame();
+
+		ImGui::SetNextWindowPos(ImVec2(0, 0), 0);
+		ImGui::SetNextWindowSize(ImVec2(350, 200), 0);
+
+		ImGuiWindowFlags windowFlags = 0;
+		windowFlags |= ImGuiWindowFlags_NoMove;
+		windowFlags |= ImGuiWindowFlags_NoResize;
+
+		ImGui::Begin("Debug", nullptr, windowFlags);
+
+		ImGui::Text("Vendor: %s", debugInfo->vendorName.c_str());
+		ImGui::Text("Device: %s", debugInfo->deviceName.c_str());
+		ImGui::Text("API: %s", debugInfo->apiVersion.c_str());
+
+		ImGui::Separator();
+
+		ImGui::Text("Frame: %d", debugInfo->frameCount);
+		ImGui::Text("Frame time: %f ms", debugInfo->frameTime * 1000);
+		ImGui::Text("Frame per second (fps): %f fps", 1.0f / debugInfo->frameTime);
+
+		ImGui::Separator();
+
+		ImGui::Text("Scene: %s", debugInfo->sceneName.c_str());
+		ImGui::Text("Entities: %d", debugInfo->sceneEntitiesCount);
+
+		ImGui::End();
+
+		ImGui::Render();
+#endif
 	}
 }

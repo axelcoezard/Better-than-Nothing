@@ -55,19 +55,18 @@ namespace BetterThanNothing
 			lastFrame = currentFrame;
 			frameCount += 1;
 
-			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
-			m_Renderer->Render(m_Scenes[m_CurrentSceneId]);
-			m_Device->WaitIdle();
+			RendererDebugInfo debugInfo{};
+			debugInfo.vendorName = m_Device->GetVendorName();
+			debugInfo.deviceName = m_Device->GetDeviceName();
+			debugInfo.apiVersion = m_Device->GetApiVersion();
+			debugInfo.frameCount = frameCount;
+			debugInfo.frameTime = deltatime;
+			debugInfo.sceneName = m_Scenes[m_CurrentSceneId]->GetName();
+			debugInfo.sceneEntitiesCount = m_Scenes[m_CurrentSceneId]->GetEntitiesCount();
 
-			std::cout.precision(3);
-			std::cout << "\033[2J\033[1;1H";
-			std::cout << "Vendor: " << m_Device->GetVendorName() << std::endl;
-			std::cout << "Device: " << m_Device->GetDeviceName() << std::endl;
-			std::cout << "API version: " << m_Device->GetApiVersion() << std::endl;
-			std::cout << "Frame time: " << deltatime * 1000 << "ms (" << (1.0f / deltatime) << " fps) " << std::endl;
-			std::cout << "Frame count: " << frameCount << std::endl;
-			std::cout << "Scene: " << m_Scenes[m_CurrentSceneId]->GetName() << std::endl;
-			std::cout << "Entities count: " << m_Scenes[m_CurrentSceneId]->GetEntitiesCount() << std::endl;
+			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
+			m_Renderer->Render(m_Scenes[m_CurrentSceneId], &debugInfo);
+			m_Device->WaitIdle();
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
@@ -86,7 +85,7 @@ namespace BetterThanNothing
 
 	Scene* Application::CreateScene(const std::string& name)
 	{
-		auto scene = new Scene(m_Scenes.size(), name, m_ModelPool, m_TexturePool);
+		auto scene = new Scene(m_Scenes.size(), name, m_Window, m_ModelPool, m_TexturePool);
 		m_Scenes.push_back(scene);
 		m_CurrentSceneId = scene->GetId();
 		return scene;

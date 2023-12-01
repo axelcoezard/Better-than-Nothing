@@ -2,9 +2,12 @@
 
 // Application
 #include "Application.hpp"
+#include "Device.hpp"
+#include "Window.hpp"
 
 // Utils
 #include "Utils/ConfigManager.hpp"
+#include "Utils/Input.hpp"
 
 // Events
 
@@ -14,15 +17,14 @@
 #include "Events/WindowCloseEvent.hpp"
 
 // Renderer
-
-#include "Renderer/Device.hpp"
-#include "Renderer/Window.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Renderer/RendererDebugInfo.hpp"
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/CommandBuffer.hpp"
 #include "Renderer/DescriptorPool.hpp"
-#include "Renderer/Device.hpp"
+#include "Renderer/ImGuiDescriptorPool.hpp"
 #include "Renderer/Pipeline.hpp"
+#include "Renderer/RenderPass.hpp"
 #include "Renderer/SwapChain.hpp"
 #include "Renderer/GlobalUniforms.hpp"
 #include "Renderer/UniformsPool.hpp"
@@ -37,7 +39,6 @@
 #include "Ressources/Texture.hpp"
 
 // Scene
-
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 #include "Scene/Light.hpp"

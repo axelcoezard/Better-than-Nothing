@@ -139,11 +139,15 @@ namespace BetterThanNothing
 		 */
 		u32 GetWidth() { return m_Width; }
 
+		void SetWidth(u32 width) { m_Width = width; }
+
 		/**
 		 * @brief Gets the height of the window
 		 * @return The height of the window
 		 */
 		u32 GetHeight() { return m_Height; }
+
+		void SetHeight(u32 height) { m_Height = height; }
 
 		/**
 		 * @brief Gets if the window is resized

@@ -13,6 +13,7 @@ namespace BetterThanNothing
 	class DrawStreamBuilder;
 	class Buffer;
 	class UniformsPool;
+	class RendererDebugInfo;
 
 	/**
 	 * @brief The Renderer class that is used to render a scene
@@ -86,8 +87,16 @@ namespace BetterThanNothing
 		/**
 		 * @brief Render the scene
 		 * @param scene The scene to render
+		 * @param debugInfo The debug info to display
 		 */
-		void Render(Scene* scene);
+		void Render(Scene* scene, RendererDebugInfo* debugInfo);
+
+	private:
+		/**
+		 * @brief Render the debug info using ImGui
+		 * @param debugInfo The debug info to display
+		 */
+		void RenderDebugInfo(RendererDebugInfo* debugInfo);
 
 	public:
 		/**

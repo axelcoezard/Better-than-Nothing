@@ -1,8 +1,4 @@
-#include "Renderer/Device.hpp"
-#include "Renderer/SwapChain.hpp"
-#include "Renderer/Pipeline.hpp"
-#include "Renderer/Vertex.hpp"
-#include "Renderer/DescriptorPool.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
@@ -173,7 +169,7 @@ namespace BetterThanNothing
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicState;
 		pipelineInfo.layout = m_PipelineLayout;
-		pipelineInfo.renderPass = m_SwapChain->GetVkRenderPass();
+		pipelineInfo.renderPass = m_SwapChain->GetDefaultRenderPass()->GetVkRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.basePipelineIndex = -1;

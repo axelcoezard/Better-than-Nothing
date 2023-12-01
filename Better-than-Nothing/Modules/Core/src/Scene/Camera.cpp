@@ -1,8 +1,4 @@
-#include "Scene/Camera.hpp"
-#include "Handlers/Input.hpp"
-#include "Events/Event.hpp"
-#include "Events/EventDispatcher.hpp"
-#include "Events/KeyEvent.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
@@ -31,7 +27,7 @@ namespace BetterThanNothing
 		m_ZFar = zFar;
 	}
 
-	void Camera::Update(f32 deltatime)
+	void Camera::Update(Window* window, f32 deltatime)
 	{
 		static bool firstMouse = true;
 		static f32 lastMouseX = 0;
@@ -95,7 +91,7 @@ namespace BetterThanNothing
 		}
 
 		CalculateViewMatrix();
-		CalculateProjectionMatrix();
+		CalculateProjectionMatrix(window);
 	}
 
 	void Camera::OnEvent(Event* pEvent)
@@ -120,9 +116,9 @@ namespace BetterThanNothing
 		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 	}
 
-	void Camera::CalculateProjectionMatrix()
+	void Camera::CalculateProjectionMatrix(Window* window)
 	{
-		f32 aspectRatio = (f32) WINDOW_WIDTH / (f32) WINDOW_HEIGHT;
+		f32 aspectRatio = (f32) window->GetWidth() / (f32) window->GetHeight();
 
 		m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov), aspectRatio, m_ZNear, m_ZFar);
 		m_ProjectionMatrix[1][1] *= -1;

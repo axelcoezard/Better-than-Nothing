@@ -119,7 +119,7 @@ namespace BetterThanNothing
 		 * @brief Called every frame.
 		 * @param deltatime The time between the current frame and the last frame.
 		 */
-		void Update(f32 deltatime);
+		void Update(Window* window, f32 deltatime);
 
 		/**
 		 * @brief Called when an Event is received.
@@ -141,7 +141,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief Calculate the projection matrix.
 		 */
-		void CalculateProjectionMatrix();
+		void CalculateProjectionMatrix(Window* window);
 
 	public:
 		/**

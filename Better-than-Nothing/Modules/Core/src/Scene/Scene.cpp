@@ -2,10 +2,11 @@
 
 namespace BetterThanNothing
 {
-	Scene::Scene(u32 id, std::string_view name, ModelPool* modelPool, TexturePool* texturePool)
+	Scene::Scene(u32 id, std::string_view name, Window* window, ModelPool* modelPool, TexturePool* texturePool)
 	{
 		m_Id = id;
 		m_Name = name;
+		m_Window = window;
 		m_ModelPool = modelPool;
 		m_TexturePool = texturePool;
 	}
@@ -23,7 +24,7 @@ namespace BetterThanNothing
 
 	void Scene::OnUpdate(f32 deltatime)
 	{
-		m_Camera->Update(deltatime);
+		m_Camera->Update(m_Window, deltatime);
 
 		f32 speed = 1.5f;
 		f32 rotation = glm::mod(speed * 30.0f * (f32) glfwGetTime() * 1.5f, 360.0f);

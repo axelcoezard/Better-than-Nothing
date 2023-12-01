@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Renderer/Device.hpp"
-
 namespace BetterThanNothing
 {
 	/**

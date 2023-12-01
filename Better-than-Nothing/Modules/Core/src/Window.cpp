@@ -1,6 +1,4 @@
-#include "Renderer/Window.hpp"
-#include "Handlers/Input.hpp"
-#include "Events/KeyEvent.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
@@ -37,10 +35,9 @@ namespace BetterThanNothing
 
 	void Window::ResizeCallback(GLFWwindow* window, int width, int height)
 	{
-		(void) width;
-		(void) height;
-
 		auto windowPtr = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		windowPtr->SetWidth(width);
+		windowPtr->SetHeight(height);
 		windowPtr->SetResized(true);
 	}
 
