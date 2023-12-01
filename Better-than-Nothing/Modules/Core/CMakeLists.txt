@@ -14,6 +14,8 @@ file(GLOB SOURCES
 	"src/*.h"
 	"src/Utils/*.cpp"
 	"src/Utils/*.hpp"
+	"src/Context/*.cpp"
+	"src/Context/*.hpp"
 	"src/Ressources/*.cpp"
 	"src/Ressources/*.hpp"
 	"src/Renderer/*.cpp"

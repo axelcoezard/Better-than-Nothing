@@ -2,8 +2,11 @@
 
 // Application
 #include "Application.hpp"
-#include "Device.hpp"
-#include "Window.hpp"
+
+// Context (classes used everywhere)
+#include "Context/Context.hpp"
+#include "Context/Device.hpp"
+#include "Context/Window.hpp"
 
 // Utils
 #include "Utils/ConfigManager.hpp"
