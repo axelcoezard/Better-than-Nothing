@@ -1,4 +1,4 @@
-#include "Handlers/Input.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {

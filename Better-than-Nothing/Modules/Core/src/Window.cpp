@@ -1,6 +1,4 @@
-#include "Renderer/Window.hpp"
-#include "Handlers/Input.hpp"
-#include "Events/KeyEvent.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {

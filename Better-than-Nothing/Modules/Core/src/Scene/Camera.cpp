@@ -1,8 +1,4 @@
-#include "Scene/Camera.hpp"
-#include "Handlers/Input.hpp"
-#include "Events/Event.hpp"
-#include "Events/EventDispatcher.hpp"
-#include "Events/KeyEvent.hpp"
+#include "BetterThanNothing.hpp"
 
 namespace BetterThanNothing
 {
