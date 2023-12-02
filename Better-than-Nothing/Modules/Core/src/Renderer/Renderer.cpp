@@ -22,7 +22,7 @@ namespace BetterThanNothing
 
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 	{
-		const std::string& basePath = "/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/";
+		const std::string& basePath = "../Better-than-Nothing/Shaders/";
 		auto pipeline = new Pipeline(id, m_Device, m_SwapChain, m_DescriptorPool, basePath + vertexShaderFilePath, basePath + fragmentShaderFilePath);
 		auto entry = std::pair<std::string, Pipeline*>(id, pipeline);
 

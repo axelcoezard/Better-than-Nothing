@@ -6,7 +6,7 @@ namespace BetterThanNothing
 	{
 		Context context{};
 
-		m_ConfigManager = new ConfigManager("/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Config/");
+		m_ConfigManager = new ConfigManager("../Better-than-Nothing/Config/");
 
 		ConfigReader config = m_ConfigManager->Read("Config.ini");
 		std::string windowTitle = config->Get("window", "title", "Application");
@@ -23,8 +23,8 @@ namespace BetterThanNothing
 		m_Device = new Device(m_Window);
 		context.device = m_Device;
 
-		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
-		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
+		m_ModelPool = new ModelPool("../Assets/Models/", m_Device);
+		m_TexturePool = new TexturePool("../Assets/Models/", m_Device);
 
 		m_Renderer = new Renderer(m_Window, m_Device);
 		m_Renderer->LoadPipeline("main", "main/main.vert.spv", "main/main.frag.spv");
