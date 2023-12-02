@@ -4,7 +4,7 @@ namespace BetterThanNothing
 {
 	Application::Application()
 	{
-		Context context{};
+		m_Context = new Context();
 
 		m_ConfigManager = new ConfigManager("../Better-than-Nothing/Config/");
 
@@ -13,15 +13,15 @@ namespace BetterThanNothing
 		u32 windowWidth = config->GetInteger("window", "width", 800);
 		u32 windowHeight = config->GetInteger("window", "height", 600);
 
-		context.configManager = m_ConfigManager;
-		context.name = windowTitle;
+		m_Context->configManager = m_ConfigManager;
+		m_Context->name = windowTitle;
 
 		m_Window = new Window(windowTitle, windowWidth, windowHeight);
 		m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));
-		context.window = m_Window;
+		m_Context->window = m_Window;
 
 		m_Device = new Device(m_Window);
-		context.device = m_Device;
+		m_Context->device = m_Device;
 
 		m_ModelPool = new ModelPool("../Assets/Models/", m_Device);
 		m_TexturePool = new TexturePool("../Assets/Models/", m_Device);
@@ -43,6 +43,7 @@ namespace BetterThanNothing
 		delete m_Device;
 		delete m_Window;
 		delete m_ConfigManager;
+		delete m_Context;
 	}
 
 	void Application::Run()

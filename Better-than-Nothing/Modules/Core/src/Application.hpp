@@ -2,6 +2,8 @@
 
 namespace BetterThanNothing
 {
+
+	class Context;
 	class ConfigManager;
 
 	class Window;
@@ -20,6 +22,8 @@ namespace BetterThanNothing
 	class Application
 	{
 	protected:
+		Context* m_Context;
+
 		/**
 		 * @brief A pointer to the ConfigManager
 		*/
