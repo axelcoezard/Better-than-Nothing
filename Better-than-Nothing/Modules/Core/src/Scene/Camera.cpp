@@ -2,8 +2,9 @@
 
 namespace BetterThanNothing
 {
-	Camera::Camera(f32 x, f32 y, f32 z, f64 yaw, f64 pitch)
+	Camera::Camera(CameraType type, f32 x, f32 y, f32 z, f64 yaw, f64 pitch)
 	{
+		m_Type = type;
 		m_Position = glm::vec3(x, y, z);
 		m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
 		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -101,19 +102,23 @@ namespace BetterThanNothing
 
 	void Camera::CalculateCameraVectors()
 	{
-		glm::vec3 front;
-		front.x = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
-		front.y = sin(glm::radians(m_Pitch));
-		front.z = -1 * cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		if (m_Type == CameraType::FirstPerson)
+		{
+			glm::vec3 front;
+			front.x = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+			front.y = sin(glm::radians(m_Pitch));
+			front.z = -1 * cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 
-		m_Front = glm::normalize(front);
-		m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
-		m_Up = glm::normalize(glm::cross(m_Right, m_Front));
+			m_Front = glm::normalize(front);
+			m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
+			m_Up = glm::normalize(glm::cross(m_Right, m_Front));
+		}
 	}
 
 	void Camera::CalculateViewMatrix()
 	{
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
+		if (m_Type == CameraType::FirstPerson)
+			m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 	}
 
 	void Camera::CalculateProjectionMatrix(Window* window)
