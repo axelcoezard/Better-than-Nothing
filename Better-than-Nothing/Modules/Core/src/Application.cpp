@@ -14,7 +14,6 @@ namespace BetterThanNothing
 		u32 windowHeight = config->GetInteger("window", "height", 600);
 
 		m_Context->configManager = m_ConfigManager;
-		m_Context->name = windowTitle;
 
 		m_Window = new Window(windowTitle, windowWidth, windowHeight);
 		m_Window->SetEventCallback(BIND_EVENT_LISTENER(OnEvent));

@@ -9,8 +9,6 @@ namespace BetterThanNothing
 
 	struct Context
 	{
-		std::string name;
-
 		ConfigManager* configManager;
 		Window* window;
 		Device* device;
