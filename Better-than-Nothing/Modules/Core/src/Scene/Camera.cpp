@@ -33,6 +33,10 @@ namespace BetterThanNothing
 		static f32 lastMouseX = 0;
 		static f32 lastMouseY = 0;
 
+		if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
+			return;
+		}
+
 		f32 velocity = 100.0f * deltatime;
 		f32 sensitivity = 10.0f * deltatime;
 
