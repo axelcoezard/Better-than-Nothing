@@ -114,7 +114,6 @@ namespace BetterThanNothing
 
 		ImGui::NewFrame();
 
-		//ImGui::SetNextWindowPos(ImVec2(0, 0), 0);
 		ImGui::SetNextWindowSize(ImVec2(350, 200), 0);
 
 		ImGuiWindowFlags windowFlags = 0;
