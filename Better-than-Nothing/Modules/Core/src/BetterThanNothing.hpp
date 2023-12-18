@@ -45,3 +45,8 @@
 
 #include "Scene/Components/ModelComponent.hpp"
 #include "Scene/Components/TransformComponent.hpp"
+
+// Maths
+#include "Maths/Vector2.hpp"
+#include "Maths/Vector3.hpp"
+#include "Maths/Vector4.hpp"
