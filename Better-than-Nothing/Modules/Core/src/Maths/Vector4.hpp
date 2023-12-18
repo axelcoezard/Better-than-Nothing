@@ -2,7 +2,7 @@
 
 #include "BetterThanNothing.hpp"
 
-namespace BetterThanNoting
+namespace BetterThanNothing
 {
 	struct Vector4
 	{

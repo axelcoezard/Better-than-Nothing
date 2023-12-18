@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BetterThanNoting
+namespace BetterThanNothing
 {
 	struct Vector2
 	{
