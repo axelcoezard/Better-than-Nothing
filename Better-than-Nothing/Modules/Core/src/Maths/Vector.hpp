@@ -2,125 +2,132 @@
 
 namespace BetterThanNoting
 {
-	typedef Vector<2, f32> Vector2;
-	typedef Vector<3, f32> Vector3;
-	typedef Vector<4, f32> Vector4;
-
-	template<u32 size, typename type>
-	class Vector
+	struct Vector2
 	{
-	protected:
-		type m_data[size];
+		float x;
+		float y;
 
-	public:
-		Vector()
+		static float Dot(const Vector2& left, const Vector2& right)
 		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] = 0;
+			return left.x * right.x + left.y * right.y;
 		}
 
-		Vector(type value)
+		static Vector2 Cross(const Vector2& left, const Vector2& right)
 		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] = value;
+			return { left.y * right.x - left.x * right.y, left.x * right.y - left.y * right.x };
 		}
 
-		Vector(type* data)
+		static f32 Magnitude(const Vector2& right)
 		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] = data[i];
+			return sqrtf(Dot(right, right));
 		}
 
-		Vector(const Vector<size, type>& vector)
+		static Vector2 Normalize(const Vector2& right)
 		{
-			this->operator=(vector);
+			f32 magnitude = Magnitude(right);
+			return { right.x / magnitude, right.y / magnitude };
 		}
-
-		Vector<size, type>& operator=(const Vector<size, type>& vector)
-		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] = vector.m_data[i];
-			return *this;
-		}
-
-		Vector<size, type>& operator+=(const Vector<size, type>& vector)
-		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] += vector.m_data[i];
-			return *this;
-		}
-
-		Vector<size, type>& operator-=(const Vector<size, type>& vector)
-		{
-			for (u32 i = 0; i < size; i++)
-				m_data[i] -= vector.m_data[i];
-			return *this;
-		}
-
-		f32 Length() const
-		{
-			f32 result = 0;
-			for (u32 i = 0; i < size; i++)
-				result += m_data[i] * m_data[i];
-			return sqrt(result);
-		}
-
-		Vector<size, type>& Normalize()
-		{
-			f32 length = Length();
-			for (u32 i = 0; i < size; i++)
-				m_data[i] /= length;
-			return *this;
-		}
-
-		static f32 Dot(const Vector<size, type>& left, const Vector<size, type>& right)
-		{
-			f32 result = 0;
-			for (u32 i = 0; i < size; i++)
-				result += left.m_data[i] * right.m_data[i];
-			return result;
-		}
-
-		static f32 Angle(const Vector<size, type>& left, const Vector<size, type>& right)
-		{
-			return acos(Dot(left, right) / (size * size));
-		}
-
-		static Vector<size, type> Cross(const Vector<size, type>& left, const Vector<size, type>& right)
-		{
-			Vector<size, type> result;
-			for (u32 i = 0; i < size; i++)
-				result.m_data[i] = left.m_data[(i + 1) % size] * right.m_data[(i + 2) % size] - left.m_data[(i + 2) % size] * right.m_data[(i + 1) % size];
-			return result;
-		}
-
-
 	};
 
-	template<u32 size, typename type>
-	Vector<size, type> operator+(const Vector<size, type>& left, const Vector<size, type>& right)
+	Vector2 operator*(float scale, const Vector2& vector)
 	{
-		return Vector<size, type>(left) += right;
+		return { vector.x * scale, vector.y * scale };
 	}
 
-	template<u32 size, typename type>
-	Vector<size, type> operator-(const Vector<size, type>& left, const Vector<size, type>& right)
+	Vector2 operator*(const Vector2& vector, float scale)
 	{
-		return Vector<size, type>(left) -= right;
+		return { vector.x * scale, vector.y * scale };
 	}
 
-	template<u32 size, typename type>
-	Vector<size, type> operator*(const Vector<size, type>& left, const Vector<size, type>& right)
+	Vector2 operator/(const Vector2& vector, float scale)
 	{
-		return Vector<size, type>(left) *= right;
+		return { vector.x / scale, vector.y / scale };
 	}
 
-	template<u32 size, typename type>
-	bool operator==(const Vector<size, type>& left, const Vector<size, type>& right)
+	Vector2 operator+(const Vector2& left, const Vector2& right)
 	{
-		for (u32 i = 0; i < size; i++)
-			if (left.m_data[i] != right.m_data[i])
-				return false;
-		return true;
+		return { left.x + right.x, left.y + right.y };
 	}
+
+	Vector2 operator-(const Vector2& left, const Vector2& right)
+	{
+		return { left.x - right.x, left.y - right.y };
+	}
+
+	struct Vector3
+	{
+		float x;
+		float y;
+		float z;
+
+		static float Dot(const Vector3& left, const Vector3& right)
+		{
+			return left.x * right.x + left.y * right.y + left.z * right.z;
+		}
+
+		static Vector3 Cross(const Vector3& left, const Vector3& right)
+		{
+			return { left.y * right.z - left.z * right.y, left.z * right.x - left.x * right.z, left.x * right.y - left.y * right.x };
+		}
+
+		static f32 Magnitude(const Vector3& right)
+		{
+			return sqrtf(Dot(right, right));
+		}
+
+		static Vector3 Normalize(const Vector3& right)
+		{
+			f32 magnitude = Magnitude(right);
+			return { right.x / magnitude, right.y / magnitude, right.z / magnitude };
+		}
+	};
+
+	Vector3 operator*(float scale, const Vector3& vector)
+	{
+		return { vector.x * scale, vector.y * scale, vector.z * scale };
+	}
+
+	Vector3 operator*(const Vector3& vector, float scale)
+	{
+		return { vector.x * scale, vector.y * scale, vector.z * scale };
+	}
+
+	Vector3 operator/(const Vector3& vector, float scale)
+	{
+		return { vector.x / scale, vector.y / scale, vector.z / scale };
+	}
+
+	Vector3 operator+(const Vector3& left, const Vector3& right)
+	{
+		return { left.x + right.x, left.y + right.y, left.z + right.z };
+	}
+
+	Vector3 operator-(const Vector3& left, const Vector3& right)
+	{
+		return { left.x - right.x, left.y - right.y, left.z - right.z };
+	}
+
+	struct Vector4
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+
+		static float Dot(const Vector4& left, const Vector4& right)
+		{
+			return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+		}
+
+		static f32 Magnitude(const Vector4& right)
+		{
+			return sqrtf(Dot(right, right));
+		}
+
+		static Vector4 Normalize(const Vector4& right)
+		{
+			f32 magnitude = Magnitude(right);
+			return { right.x / magnitude, right.y / magnitude, right.z / magnitude, right.w / magnitude };
+		}
+	};
 };
