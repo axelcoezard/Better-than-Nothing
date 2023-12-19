@@ -5,11 +5,11 @@ Everything is in the title, it is a better-than-nothing Game Engine
 
  - Support for Linux.
  - Support for Vulkan.
- - Rendering basic .obj 3D models with textures.
+ - Rendering of multiple .obj 3D models with textures.
 	- Mipmapping.
 	- Msaa multisampling.
- - First-person 3D camera.
- - In-house event system.
+ - First-person 3D camera (1rst iteration)
+ - In-house event system (1rst iteration)
 
 ## Road map
 
