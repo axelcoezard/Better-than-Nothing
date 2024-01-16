@@ -1,6 +1,8 @@
 # Better than Nothing
 Everything is in the title, it is a better-than-nothing Game Engine
 
+![image](https://github.com/axelcoezard/Better-than-Nothing/assets/9162303/4cf1ef9d-c0c8-46c4-99a1-2b9b6f2a27da)
+
 ## Features
 
  - Support for Linux.
