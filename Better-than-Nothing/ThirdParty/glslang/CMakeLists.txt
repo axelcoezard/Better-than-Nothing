@@ -78,11 +78,10 @@ if (IOS OR ANDROID)
     set(GLSLANG_TESTS OFF)
 endif()
 
-option(ENABLE_SPVREMAPPER "Enables building of SPVRemapper" ON)
+option(ENABLE_SPVREMAPPER "Enables building of SPVRemapper" OFF)
+option(ENABLE_GLSLANG_BINARIES "Builds glslang and spirv-remap" OFF)
 
-option(ENABLE_GLSLANG_BINARIES "Builds glslang and spirv-remap" ON)
-
-option(ENABLE_GLSLANG_JS "If using Emscripten, build glslang.js. Otherwise, builds a sample executable for binary-size testing.")
+option(ENABLE_GLSLANG_JS "If using Emscripten, build glslang.js. Otherwise, builds a sample executable for binary-size testing." OFF)
 CMAKE_DEPENDENT_OPTION(ENABLE_EMSCRIPTEN_SINGLE_FILE
     "If using Emscripten, enables SINGLE_FILE build"
     OFF "ENABLE_GLSLANG_JS AND EMSCRIPTEN"
