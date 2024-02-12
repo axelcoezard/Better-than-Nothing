@@ -2,7 +2,7 @@ all:
 	mkdir -p build
 	time { cd build; cmake ..; make -j$(shell nproc); }
 
-run:
+run: all
 	cd build; ./Runtime
 
 fclean:

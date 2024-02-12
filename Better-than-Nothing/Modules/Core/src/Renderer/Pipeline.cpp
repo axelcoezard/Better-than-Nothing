@@ -14,30 +14,37 @@ namespace BetterThanNothing
 		CreateGraphicsPipeline();
 	}
 
-	Pipeline::~Pipeline() {
+	Pipeline::~Pipeline()
+	{
 		auto device = m_Device->GetVkDevice();
 
 		vkDestroyPipeline(device, m_GraphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
-	std::vector<char> Pipeline::ReadFile(const std::string& filePath) {
-		std::ifstream file(filePath, std::ios::ate | std::ios::binary);
+	std::vector<char> Pipeline::ReadFile(const std::string& filePath)
+	{
+		std::ifstream file(filePath, std::ios::ate); //  | std::ios::binary for spv files
 
 		if (!file.is_open()) {
 			throw std::runtime_error("failed to open file!");
 		}
 
 		size_t fileSize = (size_t) file.tellg();
-		std::vector<char> buffer(fileSize);
+		std::vector<char> buffer;
+
+		buffer.resize(fileSize);
+		std::memset(buffer.data(), 0, fileSize);
 
 		file.seekg(0);
-		file.read(buffer.data(), fileSize);
+		file.read(buffer.data(), fileSize - 1);
 		file.close();
+
 		return buffer;
 	}
 
-	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
+	{
 		std::cout << vertexShaderFilePath << std::endl;
 		std::vector<char> vertexShaderCode = ReadFile(vertexShaderFilePath);
 		glslang_program_t* vertexShaderProgram = CompileShader(vertexShaderCode, GLSLANG_STAGE_VERTEX);
@@ -57,7 +64,7 @@ namespace BetterThanNothing
 			.client = GLSLANG_CLIENT_VULKAN,
 			.client_version = GLSLANG_TARGET_VULKAN_1_3,
 			.target_language = GLSLANG_TARGET_SPV,
-			.target_language_version = GLSLANG_TARGET_SPV_1_6,
+			.target_language_version = GLSLANG_TARGET_SPV_1_0,
 			.code = shaderCode.data(),
 			.default_version = 450,
 			.default_profile = GLSLANG_NO_PROFILE,
