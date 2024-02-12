@@ -33,7 +33,6 @@ better-than-nothing
 
 # Folders
 build/
-docs/
 cmake-build-debug/
 cmake-build-release/
 .idea/
