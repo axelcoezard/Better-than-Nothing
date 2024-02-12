@@ -28,25 +28,26 @@ add_subdirectory("Better-than-Nothing/ThirdParty/entt")
 add_subdirectory("Better-than-Nothing/ThirdParty/imgui")
 add_subdirectory("Better-than-Nothing/ThirdParty/stb")
 add_subdirectory("Better-than-Nothing/ThirdParty/inih")
+add_subdirectory("Better-than-Nothing/ThirdParty/glslang")
 
 # ==================================================================================================
 # Shaders
 # ==================================================================================================
 
-add_custom_target(
-	Shaders ALL
-	COMMAND ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}/compile_shaders.sh ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}
-	COMMENT "Running shader compilation script"
-)
+#add_custom_target(
+#	Shaders ALL
+#	COMMAND ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}/compile_shaders.sh ${CMAKE_SOURCE_DIR}/${SHADER_FOLDER}
+#	COMMENT "Running shader compilation script"
+#)
 
 # ==================================================================================================
 # Modules
 # ==================================================================================================
 add_subdirectory("Better-than-Nothing/Modules/Core")
-add_dependencies(Core Shaders)
+#add_dependencies(Core Shaders)
 
 add_subdirectory("Better-than-Nothing/Modules/Runtime")
-add_dependencies(Runtime Shaders)
+#add_dependencies(Runtime Shaders)
 
 
 
