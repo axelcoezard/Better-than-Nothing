@@ -28,6 +28,7 @@ add_subdirectory("Better-than-Nothing/ThirdParty/entt")
 add_subdirectory("Better-than-Nothing/ThirdParty/imgui")
 add_subdirectory("Better-than-Nothing/ThirdParty/stb")
 add_subdirectory("Better-than-Nothing/ThirdParty/inih")
+add_subdirectory("Better-than-Nothing/ThirdParty/glslang")
 
 # ==================================================================================================
 # Shaders

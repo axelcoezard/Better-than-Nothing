@@ -38,10 +38,10 @@ namespace BetterThanNothing
 	}
 
 	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
-		auto vertexShaderCode = ReadFile(vertexShaderFilePath);
+		std::vector<char> vertexShaderCode = ReadFile(vertexShaderFilePath);
 		m_VertexShaderModule = CreateShaderModule(vertexShaderCode);
 
-		auto fragmentShaderCode = ReadFile(fragmentShaderFilePath);
+		std::vector<char> fragmentShaderCode = ReadFile(fragmentShaderFilePath);
 		m_FragmentShaderModule = CreateShaderModule(fragmentShaderCode);
 	}
 
