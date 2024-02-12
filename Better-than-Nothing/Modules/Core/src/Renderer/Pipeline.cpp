@@ -38,27 +38,77 @@ namespace BetterThanNothing
 	}
 
 	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+		std::cout << "Compile " << vertexShaderFilePath << std::endl;
 		std::vector<char> vertexShaderCode = ReadFile(vertexShaderFilePath);
-		m_VertexShaderModule = CreateShaderModule(vertexShaderCode);
+		glslang_program_t* vertexShaderProgram = CompileShader(vertexShaderCode, GLSLANG_STAGE_VERTEX);
+		m_VertexShaderModule = CreateShaderModule(vertexShaderProgram);
 
+		std::cout << "Compile " << fragmentShaderFilePath << std::endl;
 		std::vector<char> fragmentShaderCode = ReadFile(fragmentShaderFilePath);
-		m_FragmentShaderModule = CreateShaderModule(fragmentShaderCode);
+		glslang_program_t* fragmentShaderProgram = CompileShader(fragmentShaderCode, GLSLANG_STAGE_FRAGMENT);
+		m_FragmentShaderModule = CreateShaderModule(fragmentShaderProgram);
 	}
 
-	VkShaderModule Pipeline::CreateShaderModule(const std::vector<char>& code) {
-		if (code.data() == nullptr || code.size() == 0) {
-			throw std::runtime_error("Invalid shader code");
-		}
+	glslang_program_t* Pipeline::CompileShader(std::vector<char> shaderCode, glslang_stage_t stage)
+	{
+		const glslang_input_t input = {
+			.language = GLSLANG_SOURCE_GLSL,
+			.stage = stage,
+			.client = GLSLANG_CLIENT_VULKAN,
+			.client_version = GLSLANG_TARGET_VULKAN_1_3,
+			.target_language = GLSLANG_TARGET_SPV,
+			.target_language_version = GLSLANG_TARGET_SPV_1_6,
+			.code = shaderCode.data(),
+			.default_version = 100,
+			.default_profile = GLSLANG_NO_PROFILE,
+			.force_default_version_and_profile = false,
+			.forward_compatible = false,
+			.messages = GLSLANG_MSG_DEFAULT_BIT,
+			.resource = glslang_default_resource(),
+			.callbacks = {},
+			.callbacks_ctx = nullptr
+		};
+
+		glslang_initialize_process();
+
+		glslang_shader_t* shader = glslang_shader_create(&input);
+
+		if (!glslang_shader_preprocess(shader, &input))
+			throw std::runtime_error("failed to preprocess shader: " + std::string(glslang_shader_get_info_log(shader)));
+
+		if (!glslang_shader_parse(shader, &input))
+			throw std::runtime_error("failed to parse shader: " + std::string(glslang_shader_get_info_log(shader)));
+
+		glslang_program_t* program = glslang_program_create();
+		glslang_program_add_shader(program, shader);
+
+		if (!glslang_program_link(program, GLSLANG_MSG_SPV_RULES_BIT | GLSLANG_MSG_VULKAN_RULES_BIT))
+			throw std::runtime_error("failed to compile shader program: " + std::string(glslang_program_get_info_log(program)));
+
+		glslang_program_SPIRV_generate(program, input.stage);
+
+		if (glslang_program_SPIRV_get_messages(program))
+			printf("%s", glslang_program_SPIRV_get_messages(program));
+
+		glslang_shader_delete( shader );
+
+		return program;
+	}
+
+	VkShaderModule Pipeline::CreateShaderModule(glslang_program_t* program) {
 
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = code.size();
-		createInfo.pCode = reinterpret_cast<const u32*>(code.data());
+		createInfo.codeSize = glslang_program_SPIRV_get_size(program) * sizeof(unsigned int);
+		createInfo.pCode = glslang_program_SPIRV_get_ptr(program);
 
 		VkShaderModule shaderModule;
 		if (vkCreateShaderModule(m_Device->GetVkDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
+
+		glslang_program_delete(program);
+
 		return shaderModule;
 	}
 

@@ -93,13 +93,15 @@ namespace BetterThanNothing
 		 */
 		void LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
+		glslang_program_t* CompileShader(std::vector<char> shaderCode, glslang_stage_t stage);
+
 		/**
 		 * @brief Create a shader module using the code of the shader
 		 *
 		 * @param code The code of the shader
 		 * @return VkShaderModule The shader module
 		 */
-		VkShaderModule CreateShaderModule(const std::vector<char>& code);
+		VkShaderModule CreateShaderModule(glslang_program_t* program);
 
 		/**
 		 * @brief Create the render pass
