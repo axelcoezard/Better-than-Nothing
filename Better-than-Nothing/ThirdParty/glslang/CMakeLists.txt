@@ -212,12 +212,14 @@ set(GLSLANG_GENERATED_INCLUDEDIR "${CMAKE_BINARY_DIR}/include")
 ################################################################################
 # Build version information generation
 ################################################################################
-include(parse_version.cmake)
 set(GLSLANG_CHANGES_FILE      "${CMAKE_CURRENT_SOURCE_DIR}/CHANGES.md")
 set(GLSLANG_BUILD_INFO_H_TMPL "${CMAKE_CURRENT_SOURCE_DIR}/build_info.h.tmpl")
 set(GLSLANG_BUILD_INFO_H      "${GLSLANG_GENERATED_INCLUDEDIR}/glslang/build_info.h")
 
-parse_version(${GLSLANG_CHANGES_FILE} GLSLANG)
+set(GLSLANG_VERSION_MAJOR 14)
+set(GLSLANG_VERSION_MINOR 0)
+set(GLSLANG_VERSION_PATCH 0)
+set(GLSLANG_VERSION_FLAVOR "2023-12-21")
 
 function(configurate_version)
     set(major ${GLSLANG_VERSION_MAJOR})
