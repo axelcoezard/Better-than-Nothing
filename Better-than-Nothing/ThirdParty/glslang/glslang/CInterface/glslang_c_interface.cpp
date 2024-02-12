@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "glslang/Include/glslang_c_interface.h"
 
-#include "StandAlone/DirStackFileIncluder.h"
+#include "glslang/Public/DirStackFileIncluder.h"
 #include "glslang/Public/ResourceLimits.h"
 #include "glslang/Include/ShHandle.h"
 
