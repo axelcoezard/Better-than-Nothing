@@ -48,7 +48,7 @@ include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries")
-option(BUILD_EXTERNAL "Build external dependencies in /External" ON)
+option(BUILD_EXTERNAL "Build external dependencies in /External" OFF)
 option(BUILD_WERROR "Enable warnings as errors (default is OFF)" OFF)
 
 set(LIB_TYPE STATIC)
@@ -95,7 +95,7 @@ CMAKE_DEPENDENT_OPTION(ENABLE_EMSCRIPTEN_ENVIRONMENT_NODE
 option(ENABLE_HLSL "Enables HLSL input support" ON)
 option(ENABLE_RTTI "Enables RTTI")
 option(ENABLE_EXCEPTIONS "Enables Exceptions")
-option(ENABLE_OPT "Enables spirv-opt capability if present" ON)
+option(ENABLE_OPT "Enables spirv-opt capability if present" OFF)
 
 if(MINGW OR (APPLE AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU"))
     # Workaround for CMake behavior on Mac OS with gcc, cmake generates -Xarch_* arguments
@@ -264,7 +264,7 @@ if(BUILD_EXTERNAL AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/External)
     add_subdirectory(External)
 endif()
 
-option(ALLOW_EXTERNAL_SPIRV_TOOLS "Allows to build against installed SPIRV-Tools-opt")
+option(ALLOW_EXTERNAL_SPIRV_TOOLS "Allows to build against installed SPIRV-Tools-opt" OFF)
 if(NOT TARGET SPIRV-Tools-opt)
     if(ALLOW_EXTERNAL_SPIRV_TOOLS)
         # Look for external SPIR-V Tools build, if not building in-tree

@@ -38,13 +38,14 @@ namespace BetterThanNothing
 	}
 
 	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+		std::cout << vertexShaderFilePath << std::endl;
 		std::vector<char> vertexShaderCode = ReadFile(vertexShaderFilePath);
-		std::vector<char> fragmentShaderCode = ReadFile(fragmentShaderFilePath);
-
 		glslang_program_t* vertexShaderProgram = CompileShader(vertexShaderCode, GLSLANG_STAGE_VERTEX);
-		glslang_program_t* fragmentShaderProgram = CompileShader(fragmentShaderCode, GLSLANG_STAGE_FRAGMENT);
-
 		m_VertexShaderModule = CreateShaderModule(vertexShaderProgram);
+
+		std::cout << fragmentShaderFilePath << std::endl;
+		std::vector<char> fragmentShaderCode = ReadFile(fragmentShaderFilePath);
+		glslang_program_t* fragmentShaderProgram = CompileShader(fragmentShaderCode, GLSLANG_STAGE_FRAGMENT);
 		m_FragmentShaderModule = CreateShaderModule(fragmentShaderProgram);
 	}
 
@@ -58,7 +59,7 @@ namespace BetterThanNothing
 			.target_language = GLSLANG_TARGET_SPV,
 			.target_language_version = GLSLANG_TARGET_SPV_1_6,
 			.code = shaderCode.data(),
-			.default_version = 100,
+			.default_version = 450,
 			.default_profile = GLSLANG_NO_PROFILE,
 			.force_default_version_and_profile = false,
 			.forward_compatible = false,
