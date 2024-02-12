@@ -92,7 +92,7 @@ CMAKE_DEPENDENT_OPTION(ENABLE_EMSCRIPTEN_ENVIRONMENT_NODE
     OFF "ENABLE_GLSLANG_JS AND EMSCRIPTEN"
     OFF)
 
-option(ENABLE_HLSL "Enables HLSL input support" ON)
+option(ENABLE_HLSL "Enables HLSL input support" OFF)
 option(ENABLE_RTTI "Enables RTTI")
 option(ENABLE_EXCEPTIONS "Enables Exceptions")
 option(ENABLE_OPT "Enables spirv-opt capability if present" OFF)
