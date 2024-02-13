@@ -26,9 +26,5 @@ namespace BetterThanNothing
 		Shader* GetShader(const std::string& path);
 		Model* GetModel(const std::string& path);
 		Texture* GetTexture(const std::string& path);
-
-		ShaderPool * GetShaderPool() const;
-		ModelPool * GetModelPool() const;
-		TexturePool * GetTexturePool() const;
 	};
 }
