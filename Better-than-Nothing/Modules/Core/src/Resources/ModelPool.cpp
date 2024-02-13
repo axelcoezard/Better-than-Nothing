@@ -7,14 +7,14 @@
 
 namespace BetterThanNothing
 {
-	ModelPool::ModelPool(const std::string& basePath, Device* device): RessourcePool(basePath)
+	ModelPool::ModelPool(const std::string& basePath, Device* device): ResourcePool(basePath)
 	{
 		m_Device = device;
 	}
 
 	ModelPool::~ModelPool()
 	{
-		for (auto& [path, model] : m_Ressources)
+		for (auto& [path, model] : m_Resources)
 		{
 			m_Device->DestroyBuffer(&model->indexBuffer);
 			m_Device->DestroyBuffer(&model->vertexBuffer);
@@ -23,10 +23,10 @@ namespace BetterThanNothing
 		}
 	}
 
-	Model* ModelPool::GetRessource(const std::string& filePath)
+	Model* ModelPool::GetResource(const std::string& filePath)
 	{
-		auto it = m_Ressources.find(filePath);
-		if (it != m_Ressources.end())
+		auto it = m_Resources.find(filePath);
+		if (it != m_Resources.end())
 			return it->second;
 
 		Model* model = new Model();
@@ -40,7 +40,7 @@ namespace BetterThanNothing
 		model->indexBuffer = indexBuffer;
 		model->indexCount = static_cast<u32>(indices.size());
 
-		m_Ressources[filePath] = model;
+		m_Resources[filePath] = model;
 		return model;
 	}
 

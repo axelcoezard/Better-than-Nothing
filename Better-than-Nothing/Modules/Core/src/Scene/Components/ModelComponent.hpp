@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Ressources/Model.hpp"
-#include "Ressources/Texture.hpp"
+#include "Resources/Model.hpp"
+#include "Resources/Texture.hpp"
 
 namespace BetterThanNothing
 {
