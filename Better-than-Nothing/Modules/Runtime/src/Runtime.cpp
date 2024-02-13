@@ -6,11 +6,16 @@ namespace BetterThanNothing
 {
 	void Runtime::OnEnable()
 	{
+		m_ShaderPool->GetResource("main/main.vert");
+		m_ShaderPool->GetResource("main/main.frag");
+
 		m_ModelPool->GetResource("robot/robot.obj");
 		m_TexturePool->GetResource("robot/robot.png");
 
 		m_ModelPool->GetResource("42/42.obj");
 		m_TexturePool->GetResource("42/42.jpg");
+
+		m_Renderer->LoadPipeline("main", "main/main.vert", "main/main.frag");
 
 		Scene* pScene = CreateScene("world");
 

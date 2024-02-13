@@ -39,6 +39,8 @@
 #include "Resources/Model.hpp"
 #include "Resources/TexturePool.hpp"
 #include "Resources/Texture.hpp"
+#include "Resources/ShaderPool.hpp"
+#include "Resources/Shader.hpp"
 
 // Scene
 #include "Scene/Scene.hpp"

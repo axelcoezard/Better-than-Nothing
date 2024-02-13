@@ -2,16 +2,10 @@
 
 namespace BetterThanNothing
 {
-	Pipeline::Pipeline(
-		const std::string& id,
-		Device* device,
-		SwapChain* swapChain,
-		DescriptorPool* descriptorPool,
-		const std::string& vertexShaderFilePath,
-		const std::string& fragmentShaderFilePath
-	) : m_Id(id), m_Device(device), m_SwapChain(swapChain), m_DescriptorPool(descriptorPool) {
-		LoadShader(vertexShaderFilePath, fragmentShaderFilePath);
-		CreateGraphicsPipeline();
+	Pipeline::Pipeline(const std::string& id, Device* device, SwapChain* swapChain, DescriptorPool* descriptorPool)
+		: m_Id(id), m_Device(device), m_SwapChain(swapChain), m_DescriptorPool(descriptorPool)
+	{
+
 	}
 
 	Pipeline::~Pipeline()
@@ -22,114 +16,18 @@ namespace BetterThanNothing
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
-	std::vector<char> Pipeline::ReadFile(const std::string& filePath)
+	void Pipeline::CreateGraphicsPipeline(Shader* vertexShader, Shader* fragmentShader)
 	{
-		std::ifstream file(filePath, std::ios::ate); //  | std::ios::binary for spv files
-
-		if (!file.is_open()) {
-			throw std::runtime_error("failed to open file!");
-		}
-
-		size_t fileSize = (size_t) file.tellg();
-		std::vector<char> buffer;
-
-		buffer.resize(fileSize);
-		std::memset(buffer.data(), 0, fileSize);
-
-		file.seekg(0);
-		file.read(buffer.data(), fileSize - 1);
-		file.close();
-
-		return buffer;
-	}
-
-	void Pipeline::LoadShader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
-	{
-		std::cout << vertexShaderFilePath << std::endl;
-		std::vector<char> vertexShaderCode = ReadFile(vertexShaderFilePath);
-		glslang_program_t* vertexShaderProgram = CompileShader(vertexShaderCode, GLSLANG_STAGE_VERTEX);
-		m_VertexShaderModule = CreateShaderModule(vertexShaderProgram);
-
-		std::cout << fragmentShaderFilePath << std::endl;
-		std::vector<char> fragmentShaderCode = ReadFile(fragmentShaderFilePath);
-		glslang_program_t* fragmentShaderProgram = CompileShader(fragmentShaderCode, GLSLANG_STAGE_FRAGMENT);
-		m_FragmentShaderModule = CreateShaderModule(fragmentShaderProgram);
-	}
-
-	glslang_program_t* Pipeline::CompileShader(std::vector<char> shaderCode, glslang_stage_t stage)
-	{
-		const glslang_input_t input = {
-			.language = GLSLANG_SOURCE_GLSL,
-			.stage = stage,
-			.client = GLSLANG_CLIENT_VULKAN,
-			.client_version = GLSLANG_TARGET_VULKAN_1_3,
-			.target_language = GLSLANG_TARGET_SPV,
-			.target_language_version = GLSLANG_TARGET_SPV_1_0,
-			.code = shaderCode.data(),
-			.default_version = 450,
-			.default_profile = GLSLANG_NO_PROFILE,
-			.force_default_version_and_profile = false,
-			.forward_compatible = false,
-			.messages = GLSLANG_MSG_DEFAULT_BIT,
-			.resource = glslang_default_resource(),
-			.callbacks = {},
-			.callbacks_ctx = nullptr
-		};
-
-		glslang_initialize_process();
-
-		glslang_shader_t* shader = glslang_shader_create(&input);
-
-		if (!glslang_shader_preprocess(shader, &input))
-			throw std::runtime_error("failed to preprocess shader: " + std::string(glslang_shader_get_info_log(shader)));
-
-		if (!glslang_shader_parse(shader, &input))
-			throw std::runtime_error("failed to parse shader: " + std::string(glslang_shader_get_info_log(shader)));
-
-		glslang_program_t* program = glslang_program_create();
-		glslang_program_add_shader(program, shader);
-
-		if (!glslang_program_link(program, GLSLANG_MSG_SPV_RULES_BIT | GLSLANG_MSG_VULKAN_RULES_BIT))
-			throw std::runtime_error("failed to compile shader program: " + std::string(glslang_program_get_info_log(program)));
-
-		glslang_program_SPIRV_generate(program, input.stage);
-
-		if (glslang_program_SPIRV_get_messages(program))
-			printf("%s", glslang_program_SPIRV_get_messages(program));
-
-		glslang_shader_delete( shader );
-
-		return program;
-	}
-
-	VkShaderModule Pipeline::CreateShaderModule(glslang_program_t* program) {
-
-		VkShaderModuleCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = glslang_program_SPIRV_get_size(program) * sizeof(unsigned int);
-		createInfo.pCode = glslang_program_SPIRV_get_ptr(program);
-
-		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(m_Device->GetVkDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create shader module!");
-		}
-
-		glslang_program_delete(program);
-
-		return shaderModule;
-	}
-
-	void Pipeline::CreateGraphicsPipeline() {
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vertShaderStageInfo.module = m_VertexShaderModule;
+		vertShaderStageInfo.module = vertexShader->module;
 		vertShaderStageInfo.pName = "main";
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		fragShaderStageInfo.module = m_FragmentShaderModule;
+		fragShaderStageInfo.module = fragmentShader->module;
 		fragShaderStageInfo.pName = "main";
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
@@ -234,8 +132,5 @@ namespace BetterThanNothing
 		if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
-
-		vkDestroyShaderModule(device, m_VertexShaderModule, nullptr);
-		vkDestroyShaderModule(device, m_FragmentShaderModule, nullptr);
 	}
 };

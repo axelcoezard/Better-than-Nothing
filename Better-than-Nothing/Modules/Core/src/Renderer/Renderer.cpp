@@ -2,7 +2,8 @@
 
 namespace BetterThanNothing
 {
-	Renderer::Renderer(Window* window, Device* device): m_Window(window), m_Device(device)
+	Renderer::Renderer(Window* window, Device* device, ShaderPool* shaderPool)
+		: m_Window(window), m_Device(device), m_ShaderPool(shaderPool)
 	{
 		m_UniformsPool = new UniformsPool(m_Device);
 		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
@@ -22,11 +23,14 @@ namespace BetterThanNothing
 
 	void Renderer::LoadPipeline(const std::string& id, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 	{
-		const std::string& basePath = "/home/acoezard/lab/better-than-nothing/Better-than-Nothing/Shaders/";
-		auto pipeline = new Pipeline(id, m_Device, m_SwapChain, m_DescriptorPool, basePath + vertexShaderFilePath, basePath + fragmentShaderFilePath);
-		auto entry = std::pair<std::string, Pipeline*>(id, pipeline);
+		Pipeline* pipeline = new Pipeline(id, m_Device, m_SwapChain, m_DescriptorPool);
 
-		m_PipeLines.insert(entry);
+		pipeline->CreateGraphicsPipeline(
+			m_ShaderPool->GetResource(vertexShaderFilePath),
+			m_ShaderPool->GetResource(fragmentShaderFilePath)
+		);
+
+		m_PipeLines.insert(std::pair<std::string, Pipeline*>(id, pipeline));
 	}
 
 	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
