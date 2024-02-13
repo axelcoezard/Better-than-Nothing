@@ -149,8 +149,7 @@ namespace BetterThanNothing
 		const size_t spirvSize = glslang_program_SPIRV_get_size(program);
 
 		spirv_cross::Compiler compiler(spirvCode, spirvSize);
-
-		auto shaderResources = compiler.get_shader_resources();
+		spirv_cross::ShaderResources shaderResources = compiler.get_shader_resources();
 
 		ShaderDetails details;
 		details.uniformBufferCount = shaderResources.uniform_buffers.size();
