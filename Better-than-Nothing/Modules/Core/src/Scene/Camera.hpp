@@ -5,6 +5,13 @@ namespace BetterThanNothing
 	class Event;
 	class KeyPressEvent;
 
+	enum class CameraType
+	{
+		FirstPerson,
+		// ThirdPerson,
+		Free
+	};
+
 	/**
 	 * @brief
 	 * The Camera class is used to represent a camera in the 3D world,
@@ -14,6 +21,12 @@ namespace BetterThanNothing
 	class Camera
 	{
 	protected:
+
+		/**
+		 * @brief The type of the camera.
+		 */
+		CameraType m_Type;
+
 		/**
 		 * @brief The position of the camera.
 		*/
@@ -91,7 +104,7 @@ namespace BetterThanNothing
 		 *
 		 * @note Also calculate all the camera vectors (front, right, up).
 		 */
-		Camera(f32 x, f32 y, f32 z, f64 yaw, f64 pitch);
+		Camera(CameraType type, f32 x, f32 y, f32 z, f64 yaw, f64 pitch);
 
 		/**
 		 * @brief Destroy the Camera object.
