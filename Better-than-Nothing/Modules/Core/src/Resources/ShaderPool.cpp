@@ -37,6 +37,9 @@ namespace BetterThanNothing
 		shader->details = shaderDetails;
 
 		LOG_SUCCESS("ShaderPool: " + filePath);
+		std::cout << "=> Uniform Buffers: " << shaderDetails.uniformBufferCount << std::endl;
+		std::cout << "=> Storage Buffers: " << shaderDetails.storageBufferCount << std::endl;
+		std::cout << "=> Samplers: " << shaderDetails.samplerCount << std::endl;
 
 		m_Resources[filePath] = shader;
 		return shader;
@@ -142,13 +145,16 @@ namespace BetterThanNothing
 
 	ShaderDetails ShaderPool::GetShaderDetails(glslang_program_t* program)
 	{
-		ShaderDetails details;
-		details.uniformBufferCount = 0;
-		details.storageBufferCount = 0;
-		details.samplerCount = 0;
+		const uint32_t* spirvCode = glslang_program_SPIRV_get_ptr(program);
+		const size_t spirvSize = glslang_program_SPIRV_get_size(program);
 
-		// TODO: use SPIRV-Cross or SPIRV-Reflect to get the details of the shader
-		(void) program;
+		spirv_cross::Compiler compiler(spirvCode, spirvSize);
+		spirv_cross::ShaderResources shaderResources = compiler.get_shader_resources();
+
+		ShaderDetails details;
+		details.uniformBufferCount = shaderResources.uniform_buffers.size();
+		details.storageBufferCount = shaderResources.storage_buffers.size();
+		details.samplerCount = shaderResources.sampled_images.size();
 
 		return details;
 	}
