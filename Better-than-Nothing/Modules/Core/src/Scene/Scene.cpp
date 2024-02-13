@@ -58,8 +58,8 @@ namespace BetterThanNothing
 	Entity Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
 	{
 		ModelComponent modelComponent;
-		modelComponent.model = m_ModelPool->GetRessource(modelPath);
-		modelComponent.texture = m_TexturePool->GetRessource(texturePath);
+		modelComponent.model = m_ModelPool->GetResource(modelPath);
+		modelComponent.texture = m_TexturePool->GetResource(texturePath);
 
 		TransformComponent transformComponent;
 		transformComponent.position = glm::vec3(0.0f, 0.0f, 0.0f);

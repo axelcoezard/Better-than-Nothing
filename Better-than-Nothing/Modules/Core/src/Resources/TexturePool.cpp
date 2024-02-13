@@ -4,7 +4,7 @@
 
 namespace BetterThanNothing
 {
-	TexturePool::TexturePool(const std::string& basePath, Device* device): RessourcePool(basePath)
+	TexturePool::TexturePool(const std::string& basePath, Device* device): ResourcePool(basePath)
 	{
 		m_Device = device;
 	}
@@ -13,7 +13,7 @@ namespace BetterThanNothing
 	{
 		VkDevice device = m_Device->GetVkDevice();
 
-		for (auto& [filePath, texture] : m_Ressources)
+		for (auto& [filePath, texture] : m_Resources)
 		{
 			vkDestroySampler(device, texture->sampler, nullptr);
 			vkDestroyImageView(device, texture->imageView, nullptr);
@@ -23,10 +23,10 @@ namespace BetterThanNothing
 		}
 	}
 
-	Texture* TexturePool::GetRessource(const std::string& filePath)
+	Texture* TexturePool::GetResource(const std::string& filePath)
 	{
-		auto it = m_Ressources.find(filePath);
-		if (it != m_Ressources.end())
+		auto it = m_Resources.find(filePath);
+		if (it != m_Resources.end())
 			return it->second;
 
 		Texture* texture = new Texture();
@@ -45,7 +45,7 @@ namespace BetterThanNothing
 
 		LOG_SUCCESS("TexturePool: " + filePath);
 
-		m_Ressources[filePath] = texture;
+		m_Resources[filePath] = texture;
 		return texture;
 	}
 

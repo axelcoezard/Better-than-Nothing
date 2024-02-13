@@ -175,7 +175,7 @@ namespace BetterThanNothing
 	{
 		auto device = m_Device->GetVkDevice();
 
-		// TODO: Cleanup all RenderPasses ressources
+		// TODO: Cleanup all RenderPasses resources
 		m_RenderPass->CleanDependencies();
 
 		vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
@@ -197,7 +197,7 @@ namespace BetterThanNothing
 		CleanupSwapChain();
 		CreateSwapChain();
 
-		// TODO: Recreate all RenderPasses ressources
+		// TODO: Recreate all RenderPasses resources
 		m_RenderPass->RecreateDependencies();
 	}
 
