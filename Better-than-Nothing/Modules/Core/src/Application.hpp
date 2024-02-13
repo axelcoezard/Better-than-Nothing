@@ -8,6 +8,7 @@ namespace BetterThanNothing
 	class Device;
 	class Renderer;
 
+	class ShaderPool;
 	class ModelPool;
 	class TexturePool;
 
@@ -39,6 +40,11 @@ namespace BetterThanNothing
 		 * @brief A pointer to the Renderer
 		*/
 		Renderer* m_Renderer;
+
+		/**
+		 * @brief A pointer to the ShaderPool
+		*/
+		ShaderPool* m_ShaderPool;
 
 		/**
 		 * @brief A pointer to the ModelPool

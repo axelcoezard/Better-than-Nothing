@@ -7,6 +7,7 @@ namespace BetterThanNothing
 	class Device;
 	class SwapChain;
 	class DescriptorPool;
+	class ShaderPool;
 	class Texture;
 	class Pipeline;
 	class Scene;
@@ -30,6 +31,11 @@ namespace BetterThanNothing
 		 * @brief The pointer to the device
 		 */
 		Device* m_Device;
+
+		/**
+		 * @brief The pointer to the shader pool
+		 */
+		ShaderPool* m_ShaderPool;
 
 		/**
 		 * @brief The pointer to the swap chain
@@ -57,8 +63,9 @@ namespace BetterThanNothing
 		 *
 		 * @param window The pointer to the window
 		 * @param device The pointer to the device
+		 * @param shaderPool The pointer to the shader pool
 		 */
-		Renderer(Window* window, Device* device);
+		Renderer(Window* window, Device* device, ShaderPool* shaderPool);
 
 		/**
 		 * @brief Destroy the Renderer object

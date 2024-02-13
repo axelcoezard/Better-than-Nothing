@@ -24,7 +24,7 @@ namespace BetterThanNothing
 			return it->second;
 		}
 
-		std::vector<char> shaderCode = ReadFile(filePath);
+		std::vector<char> shaderCode = ReadFile(m_BasePath + filePath);
 		glslang_stage_t shaderStage = GetShaderStage(filePath);
 		glslang_program_t* shaderProgram = GetShaderProgram(shaderCode, shaderStage);
 		ShaderDetails shaderDetails = GetShaderDetails(shaderProgram);

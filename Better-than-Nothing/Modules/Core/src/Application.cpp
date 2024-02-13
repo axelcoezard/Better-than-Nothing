@@ -16,11 +16,11 @@ namespace BetterThanNothing
 
 		m_Device = new Device(m_Window);
 
+		m_ShaderPool = new ShaderPool("/home/acoezard/lab/better-than-nothing/Assets/Shaders/", m_Device);
 		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
 		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
 
-		m_Renderer = new Renderer(m_Window, m_Device);
-		m_Renderer->LoadPipeline("main", "main/main.vert", "main/main.frag");
+		m_Renderer = new Renderer(m_Window, m_Device, m_ShaderPool);
 	}
 
 	Application::~Application()
@@ -29,10 +29,12 @@ namespace BetterThanNothing
 			delete scene;
 		}
 
+		delete m_Renderer;
+
 		delete m_TexturePool;
 		delete m_ModelPool;
+		delete m_ShaderPool;
 
-		delete m_Renderer;
 		delete m_Device;
 		delete m_Window;
 		delete m_ConfigManager;
