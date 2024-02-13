@@ -4,19 +4,19 @@ namespace BetterThanNothing
 {
 	struct DescriptorLayoutInfo
 	{
+		std::string name;
 		u32 binding;
 		VkDescriptorType descriptorType;
 		u32 descriptorCount;
 		VkShaderStageFlags stageFlags;
-
 		std::string pipelineId;
 
 		bool operator==(const DescriptorLayoutInfo& other) const
 		{
-			return binding == other.binding
+			return name == name
+				&& binding == other.binding
 				&& descriptorType == other.descriptorType
 				&& descriptorCount == other.descriptorCount
-				&& stageFlags == other.stageFlags
 				&& pipelineId == other.pipelineId;
 		}
 	};

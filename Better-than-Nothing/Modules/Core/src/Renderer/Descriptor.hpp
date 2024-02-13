@@ -15,5 +15,7 @@ namespace BetterThanNothing
 		Descriptor(Device* device, VkDescriptorSet descriptorSet);
 
 		void Update(u32 binding, VkDescriptorType type, VkDescriptorBufferInfo* bufferInfo, VkDescriptorImageInfo* imageInfo);
+
+		VkDescriptorSet& GetDescriptorSet();
 	};
 };

@@ -30,9 +30,12 @@ namespace BetterThanNothing
 
 	public:
 		u32 CreateDescriptorLayout(DescriptorLayoutInfo layoutInfo);
-		void CreateDescriptor(u32 descriptorLayoutId);
+		u32 CreateDescriptor(u32 descriptorLayoutId);
 
-		std::vector<DescriptorLayout> GetAllDescriptorLayouts();
+		DescriptorLayout FindDescriptorLayoutByName(const std::string& name);
+
+		std::vector<DescriptorLayout>& GetAllDescriptorLayouts();
+		std::vector<Descriptor>& GetDescriptors(u32 frameIndex);
 
 	};
 };

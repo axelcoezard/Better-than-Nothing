@@ -16,42 +16,48 @@ namespace BetterThanNothing
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
-	void Pipeline::CreateDescriptorLayoutsForShader(Shader* shader)
+	void Pipeline::CreateDescriptorLayoutsForShaders(Shader* vertexShader, Shader* fragmentShader)
 	{
-		u32 binding = 0;
+		std::unordered_map<std::string, DescriptorLayoutInfo> descriptorLayouts;
 
-		for (u32 i = 0; i < shader->details.uniformBufferCount; i++, binding++)
+		// TODO: remove code duplication and clean up
+
+		for (ShaderResource& resource : vertexShader->resources)
 		{
-			m_DescriptorPool->CreateDescriptorLayout({
-				.binding = binding,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			std::string key = resource.name + "_" + std::to_string(resource.binding) + "_" + std::to_string(resource.type);
+
+			descriptorLayouts[key] = {
+				.name = resource.name,
+				.binding = resource.binding,
+				.descriptorType = resource.type,
 				.descriptorCount = 1,
-				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT, // VK_SHADER_STAGE_FRAGMENT_BIT
 				.pipelineId = m_Id
-			});
+			};
 		}
 
-		for (u32 i = 0; i < shader->details.storageBufferCount; i++, binding++)
+		for (ShaderResource& resource : fragmentShader->resources)
 		{
-			m_DescriptorPool->CreateDescriptorLayout({
-				.binding = binding,
-				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			std::string key = resource.name + "_" + std::to_string(resource.binding) + "_" + std::to_string(resource.type);
+
+			if (descriptorLayouts.find(key) != descriptorLayouts.end())
+			{
+				descriptorLayouts[key].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+				continue;
+			}
+
+			descriptorLayouts[key] = {
+				.name = resource.name,
+				.binding = resource.binding,
+				.descriptorType = resource.type,
 				.descriptorCount = 1,
-				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT, // VK_SHADER_STAGE_FRAGMENT_BIT
 				.pipelineId = m_Id
-			});
+			};
 		}
 
-		for (u32 i = 0; i < shader->details.samplerCount; i++, binding++)
-		{
-			m_DescriptorPool->CreateDescriptorLayout({
-				.binding = binding,
-				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = 1,
-				.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-				.pipelineId = m_Id
-			});
-		}
+		for (auto& [key, value] : descriptorLayouts)
+			m_DescriptorPool->CreateDescriptorLayout(value);
 	}
 
 	std::vector<VkDescriptorSetLayout> Pipeline::GetPipelineDescriptorLayouts()
@@ -60,27 +66,29 @@ namespace BetterThanNothing
 		for (DescriptorLayout& descriptorLayout : m_DescriptorPool->GetAllDescriptorLayouts())
 		{
 			if (descriptorLayout.m_LayoutInfo.pipelineId == m_Id)
+			{
 				descriptorSetLayouts.push_back(descriptorLayout.m_Instance);
+				LOG_SUCCESS("used layout: " + descriptorLayout.m_LayoutInfo.name + " | binding: " + std::to_string(descriptorLayout.m_LayoutInfo.binding) + " | type: " + std::to_string(descriptorLayout.m_LayoutInfo.descriptorType) + " | stageFlags: " + std::to_string(descriptorLayout.m_LayoutInfo.stageFlags));
+			}
 		}
 		return descriptorSetLayouts;
 	}
 
 	void Pipeline::CreateGraphicsPipeline(Shader* vertexShader, Shader* fragmentShader)
 	{
-		CreateDescriptorLayoutsForShader(vertexShader);
-		CreateDescriptorLayoutsForShader(fragmentShader);
+		CreateDescriptorLayoutsForShaders(vertexShader, fragmentShader);
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
 		vertShaderStageInfo.module = vertexShader->module;
-		vertShaderStageInfo.pName = "main";
+		vertShaderStageInfo.pName = m_Id.c_str();
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 		fragShaderStageInfo.module = fragmentShader->module;
-		fragShaderStageInfo.pName = "main";
+		fragShaderStageInfo.pName = m_Id.c_str();
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
@@ -154,6 +162,8 @@ namespace BetterThanNothing
 		dynamicState.pDynamicStates = dynamicStates.data();
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts = GetPipelineDescriptorLayouts();
+
+		LOG_SUCCESS("descriptorSetLayouts.size(): " + std::to_string(descriptorSetLayouts.size()));
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

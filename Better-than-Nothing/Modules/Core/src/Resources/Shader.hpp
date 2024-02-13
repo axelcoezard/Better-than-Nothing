@@ -3,25 +3,34 @@
 namespace BetterThanNothing
 {
 	/**
-	 * @brief The details of a shader.
-	 * It contains the number of uniform buffers, storage buffers and samplers
+	 * @brief A resource of a shader (uniform buffer, storage buffer, sampler, etc.)
 	 */
-	struct ShaderDetails
+	struct ShaderResource
 	{
 		/**
-		 * @brief The number of uniform buffers in the shader
+		 * @brief The name of the resource
 		 */
-		uint32_t uniformBufferCount;
+		std::string name;
 
 		/**
-		 * @brief The number of storage buffers in the shader
+		 * @brief The descriptor set of the resource
 		 */
-		uint32_t storageBufferCount;
+		u32 set;
 
 		/**
-		 * @brief The number of samplers in the shader
+		 * @brief The binding of the resource
 		 */
-		uint32_t samplerCount;
+		u32 binding;
+
+		/**
+		 * @brief The size of the resource
+		 */
+		u64 size;
+
+		/**
+		 * @brief The type of the resource
+		 */
+		VkDescriptorType type;
 	};
 
 	/**
@@ -47,6 +56,6 @@ namespace BetterThanNothing
 		/**
 		 * @brief The details of the shader
 		 */
-		ShaderDetails details;
+		std::vector<ShaderResource> resources;
 	};
 };

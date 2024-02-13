@@ -27,19 +27,18 @@ namespace BetterThanNothing
 		std::vector<char> shaderCode = ReadFile(m_BasePath + filePath);
 		glslang_stage_t shaderStage = GetShaderStage(filePath);
 		glslang_program_t* shaderProgram = GetShaderProgram(shaderCode, shaderStage);
-		ShaderDetails shaderDetails = GetShaderDetails(shaderProgram);
+		std::vector<ShaderResource> shaderResources = GetShaderDetails(shaderProgram);
 		VkShaderModule shaderModule = CreateShaderModule(shaderProgram);
 
 		Shader* shader = new Shader();
 		shader->filePath = filePath;
 		shader->stage = shaderStage;
 		shader->module = shaderModule;
-		shader->details = shaderDetails;
+		shader->resources = shaderResources;
 
 		LOG_SUCCESS("ShaderPool: " + filePath);
-		std::cout << "=> Uniform Buffers: " << shaderDetails.uniformBufferCount << std::endl;
-		std::cout << "=> Storage Buffers: " << shaderDetails.storageBufferCount << std::endl;
-		std::cout << "=> Samplers: " << shaderDetails.samplerCount << std::endl;
+		for (auto& resource : shaderResources)
+			std::cout << " => Resource[" << resource.binding << "]: " << resource.name << std::endl;
 
 		m_Resources[filePath] = shader;
 		return shader;
@@ -143,7 +142,7 @@ namespace BetterThanNothing
 		throw std::runtime_error("unknown shader stage");
 	}
 
-	ShaderDetails ShaderPool::GetShaderDetails(glslang_program_t* program)
+	std::vector<ShaderResource> ShaderPool::GetShaderDetails(glslang_program_t* program)
 	{
 		const uint32_t* spirvCode = glslang_program_SPIRV_get_ptr(program);
 		const size_t spirvSize = glslang_program_SPIRV_get_size(program);
@@ -151,11 +150,41 @@ namespace BetterThanNothing
 		spirv_cross::Compiler compiler(spirvCode, spirvSize);
 		spirv_cross::ShaderResources shaderResources = compiler.get_shader_resources();
 
-		ShaderDetails details;
-		details.uniformBufferCount = shaderResources.uniform_buffers.size();
-		details.storageBufferCount = shaderResources.storage_buffers.size();
-		details.samplerCount = shaderResources.sampled_images.size();
+		std::vector<ShaderResource> resources;
 
-		return details;
+		for (auto& resource : shaderResources.uniform_buffers)
+		{
+			resources.push_back({
+				.name = compiler.get_name(resource.id),
+				.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet),
+				.binding = compiler.get_decoration(resource.id, spv::DecorationBinding),
+				.size = compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)),
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+			});
+		}
+
+		for (auto& resource : shaderResources.storage_buffers)
+		{
+			resources.push_back({
+				.name = compiler.get_name(resource.id),
+				.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet),
+				.binding = compiler.get_decoration(resource.id, spv::DecorationBinding),
+				.size = compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)),
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+			});
+		}
+
+		for (auto& resource : shaderResources.sampled_images)
+		{
+			resources.push_back({
+				.name = compiler.get_name(resource.id),
+				.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet),
+				.binding = compiler.get_decoration(resource.id, spv::DecorationBinding),
+				.size = 0,
+				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+			});
+		}
+
+		return resources;
 	}
 };

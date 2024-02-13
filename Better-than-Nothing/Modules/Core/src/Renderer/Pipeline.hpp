@@ -60,7 +60,7 @@ namespace BetterThanNothing
 		~Pipeline();
 
 	private:
-		void CreateDescriptorLayoutsForShader(Shader* shader);
+		void CreateDescriptorLayoutsForShaders(Shader* vertexShader, Shader* fragmentShader);
 
 		std::vector<VkDescriptorSetLayout> GetPipelineDescriptorLayouts();
 

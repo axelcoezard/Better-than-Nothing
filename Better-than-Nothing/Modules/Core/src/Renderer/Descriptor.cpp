@@ -20,6 +20,14 @@ namespace BetterThanNothing
 		descriptorWrite.pBufferInfo = bufferInfo;
 		descriptorWrite.pImageInfo = imageInfo;
 
+		std::cout << "descriptorWrite.dstBinding: " << descriptorWrite.dstBinding << std::endl;
+		std::cout << "descriptorWrite.descriptorType: " << descriptorWrite.descriptorType << std::endl;
+
 		vkUpdateDescriptorSets(m_Device->GetVkDevice(), 1, &descriptorWrite, 0, nullptr);
+	}
+
+	VkDescriptorSet& Descriptor::GetDescriptorSet()
+	{
+		return m_DescriptorSets;
 	}
 };

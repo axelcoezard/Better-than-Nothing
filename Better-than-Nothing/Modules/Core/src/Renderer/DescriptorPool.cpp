@@ -6,13 +6,6 @@ namespace BetterThanNothing
 		: m_Device(device)
 	{
 		CreateDescriptorPool(10000);
-
-		CreateDescriptorLayout({
-			.binding = 0,
-			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 1,
-			.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT
-		});
 	}
 
 	DescriptorPool::~DescriptorPool()
@@ -22,15 +15,21 @@ namespace BetterThanNothing
 
 	void DescriptorPool::CreateDescriptorPool(u32 maxSize)
 	{
-		VkDescriptorPoolSize poolSize{};
-		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = maxSize * MAX_FRAMES_IN_FLIGHT;
+		std::array<VkDescriptorPoolSize, 3> poolSizes{};
+		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSizes[0].descriptorCount = static_cast<u32>(maxSize * MAX_FRAMES_IN_FLIGHT);
+
+		poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSizes[1].descriptorCount = static_cast<u32>(maxSize * MAX_FRAMES_IN_FLIGHT);
+
+		poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes[2].descriptorCount = static_cast<u32>(maxSize * MAX_FRAMES_IN_FLIGHT);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;
-		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = maxSize * MAX_FRAMES_IN_FLIGHT;
+		poolInfo.poolSizeCount = static_cast<u32>(poolSizes.size());
+		poolInfo.pPoolSizes = poolSizes.data();
+		poolInfo.maxSets = static_cast<u32>(maxSize * MAX_FRAMES_IN_FLIGHT);
 
 		if (vkCreateDescriptorPool(m_Device->GetVkDevice(), &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS)
 		{
@@ -68,7 +67,7 @@ namespace BetterThanNothing
 		VkDescriptorSetLayoutBinding layoutBinding{};
 		layoutBinding.binding = descriptorLayoutInfo.binding;
 		layoutBinding.descriptorType = descriptorLayoutInfo.descriptorType;
-		layoutBinding.descriptorCount = descriptorLayoutInfo.descriptorCount;
+		layoutBinding.descriptorCount = 1;
 		layoutBinding.stageFlags = descriptorLayoutInfo.stageFlags;
 		layoutBinding.pImmutableSamplers = nullptr;
 
@@ -85,7 +84,7 @@ namespace BetterThanNothing
 		return layoutId;
 	}
 
-	void DescriptorPool::CreateDescriptor(u32 descriptorLayoutId)
+	u32 DescriptorPool::CreateDescriptor(u32 descriptorLayoutId)
 	{
 		if (descriptorLayoutId >= m_DescriptorLayouts.size())
 			throw std::runtime_error("Descriptor layout id out of range!");
@@ -98,6 +97,7 @@ namespace BetterThanNothing
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &layout.m_Instance;
 
+		u32 descriptorId = m_Descriptors[0].size();
 		for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
 			VkDescriptorSet descriptorSet;
@@ -106,10 +106,26 @@ namespace BetterThanNothing
 
 			m_Descriptors[i].push_back({ m_Device, descriptorSet });
 		}
+		return descriptorId;
 	}
 
-	std::vector<DescriptorLayout> DescriptorPool::GetAllDescriptorLayouts()
+	DescriptorLayout DescriptorPool::FindDescriptorLayoutByName(const std::string& name)
+	{
+		for (u32 i = 0; i < m_DescriptorLayouts.size(); i++)
+		{
+			if (m_DescriptorLayouts[i].m_LayoutInfo.name == name)
+				return m_DescriptorLayouts[i];
+		}
+		return {};
+	}
+
+	std::vector<DescriptorLayout>& DescriptorPool::GetAllDescriptorLayouts()
 	{
 		return m_DescriptorLayouts;
+	}
+
+	std::vector<Descriptor>& DescriptorPool::GetDescriptors(u32 frameIndex)
+	{
+		return m_Descriptors[frameIndex];
 	}
 };

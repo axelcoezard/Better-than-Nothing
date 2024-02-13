@@ -6,7 +6,7 @@ namespace BetterThanNothing
 		: m_Window(window), m_Device(device), m_ResourceManager(resourceManager)
 	{
 		m_UniformsPool = new UniformsPool(m_Device);
-		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
+		m_DescriptorPool = new DescriptorPool(m_Device);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
 	}
 
@@ -38,24 +38,79 @@ namespace BetterThanNothing
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
-		while (scene->HasPendingEntities()) {
+		while (scene->HasPendingEntities())
+		{
 			Entity newEntity = scene->NextPendingEntity();
 
-			if (m_UniformsPool->ShouldExtends()) {
+			if (m_UniformsPool->ShouldExtends())
 				m_UniformsPool->ExtendUniformsPool();
-			}
+
 			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
 			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
 
+			std::cout << "newGU size: " << newGU.size() << std::endl;
+			std::cout << "newDU size: " << newDU.size() << std::endl;
+
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
-			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
+
+			DescriptorLayout globalUniformsLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("globalUniforms");
+			u32 guIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayoutId.m_Id);
+
+			std::cout << "globalUniforms: " << globalUniformsLayoutId.m_LayoutInfo.name << " | binding: " << globalUniformsLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "guIndex: " << guIndex << std::endl;
+
+			DescriptorLayout dynamicUniformsLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("dynamicUniforms");
+			u32 duIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayoutId.m_Id);
+
+			std::cout << "dynamicUniforms: " << dynamicUniformsLayoutId.m_LayoutInfo.name << " | binding: " << dynamicUniformsLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "duIndex: " << duIndex << std::endl;
+
+			DescriptorLayout samplerLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("texSampler");
+			u32 samplerIndex = m_DescriptorPool->CreateDescriptor(samplerLayoutId.m_Id);
+
+			std::cout << "sampler: " << samplerLayoutId.m_LayoutInfo.name << " | binding: " << samplerLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "samplerIndex: " << samplerIndex << std::endl;
+
+			for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+			{
+				VkDescriptorBufferInfo bufferInfo = { .buffer = newGU[i]->m_Buffer, .offset = 0, .range = sizeof(GlobalUniforms) };
+				m_DescriptorPool->GetDescriptors(i)[guIndex].Update(
+					globalUniformsLayoutId.m_LayoutInfo.binding,
+					globalUniformsLayoutId.m_LayoutInfo.descriptorType,
+					&bufferInfo,
+					nullptr
+				);
+			}
+
+			for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+			{
+				VkDescriptorBufferInfo bufferInfo = { .buffer = newDU[i]->m_Buffer, .offset = 0, .range = sizeof(DynamicUniforms) };
+				m_DescriptorPool->GetDescriptors(i)[duIndex].Update(
+					dynamicUniformsLayoutId.m_LayoutInfo.binding,
+					dynamicUniformsLayoutId.m_LayoutInfo.descriptorType,
+					&bufferInfo,
+					nullptr
+				);
+			}
+
+			for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+			{
+				VkDescriptorImageInfo imageInfo = { .sampler = modelComp.texture->sampler, .imageView = modelComp.texture->imageView, .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+				m_DescriptorPool->GetDescriptors(i)[samplerIndex].Update(
+					samplerLayoutId.m_LayoutInfo.binding,
+					samplerLayoutId.m_LayoutInfo.descriptorType,
+					nullptr,
+					&imageInfo
+				);
+			}
+
+			exit(1);
 		}
 
 		RenderDebugInfo(debugInfo);
 
-		if (!m_SwapChain->BeginRecordCommandBuffer()) {
+		if (!m_SwapChain->BeginRecordCommandBuffer())
 			throw std::runtime_error("Failed to record command buffer!");
-		}
 
 		// Create a GlobalUniforms with camera data
 		GlobalUniforms* globalUniforms = m_UniformsPool->GetGlobalUniforms(currentFrame);
@@ -70,7 +125,8 @@ namespace BetterThanNothing
 		// Append all the usefull Model's data to create a sorted DrawStream
 		DrawStreamBuilder drawStreamBuilder(scene->GetEntitiesCount());
 		auto view = scene->GetView<ModelComponent, TransformComponent>();
-		for (auto entity : view) {
+		for (auto entity : view)
+		{
 			ModelComponent& modelComp = view.get<ModelComponent>(entity);
 			TransformComponent& transformComp = view.get<TransformComponent>(entity);
 
@@ -90,10 +146,12 @@ namespace BetterThanNothing
 		// Draw all the DrawPacket in the DrawStream ordered by pipeline
 		// and bind the pipeline only when it changes
 		// TODO: Use multiple threads to draw the DrawStream
-		for (u32 i = 0; i < drawStream->size; i++) {
+		for (u32 i = 0; i < drawStream->size; i++)
+		{
 			DrawPacket drawPacket = drawStream->drawPackets[i];
 
-			if (drawPacket.pipeline != currentPipeline) {
+			if (drawPacket.pipeline != currentPipeline)
+			{
 				currentPipeline = drawPacket.pipeline;
 				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
 			}
