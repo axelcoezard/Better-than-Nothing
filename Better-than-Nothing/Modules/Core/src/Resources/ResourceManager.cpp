@@ -31,19 +31,4 @@ namespace BetterThanNothing
 	{
 		return m_TexturePool->GetResource(path);
 	}
-
-	ShaderPool* ResourceManager::GetShaderPool() const
-	{
-		return m_ShaderPool;
-	}
-
-	ModelPool* ResourceManager::GetModelPool() const
-	{
-		return m_ModelPool;
-	}
-
-	TexturePool* ResourceManager::GetTexturePool() const
-	{
-		return m_TexturePool;
-	}
 };
