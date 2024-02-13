@@ -28,6 +28,8 @@ file(GLOB SOURCES
 	"src/Layers/*.cpp"
 	"src/Events/*.hpp"
 	"src/Events/*.cpp"
+	"src/Maths/*.hpp"
+	"src/Maths/*.cpp"
 )
 
 include_directories(src)
