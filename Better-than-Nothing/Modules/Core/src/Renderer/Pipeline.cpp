@@ -16,8 +16,60 @@ namespace BetterThanNothing
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
+	void Pipeline::CreateDescriptorLayoutsForShader(Shader* shader)
+	{
+		u32 binding = 0;
+
+		for (u32 i = 0; i < shader->details.uniformBufferCount; i++, binding++)
+		{
+			m_DescriptorPool->CreateDescriptorLayout({
+				.binding = binding,
+				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.pipelineId = m_Id
+			});
+		}
+
+		for (u32 i = 0; i < shader->details.storageBufferCount; i++, binding++)
+		{
+			m_DescriptorPool->CreateDescriptorLayout({
+				.binding = binding,
+				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.pipelineId = m_Id
+			});
+		}
+
+		for (u32 i = 0; i < shader->details.samplerCount; i++, binding++)
+		{
+			m_DescriptorPool->CreateDescriptorLayout({
+				.binding = binding,
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+				.pipelineId = m_Id
+			});
+		}
+	}
+
+	std::vector<VkDescriptorSetLayout> Pipeline::GetPipelineDescriptorLayouts()
+	{
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+		for (DescriptorLayout& descriptorLayout : m_DescriptorPool->GetAllDescriptorLayouts())
+		{
+			if (descriptorLayout.m_LayoutInfo.pipelineId == m_Id)
+				descriptorSetLayouts.push_back(descriptorLayout.m_Instance);
+		}
+		return descriptorSetLayouts;
+	}
+
 	void Pipeline::CreateGraphicsPipeline(Shader* vertexShader, Shader* fragmentShader)
 	{
+		CreateDescriptorLayoutsForShader(vertexShader);
+		CreateDescriptorLayoutsForShader(fragmentShader);
+
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -101,10 +153,12 @@ namespace BetterThanNothing
 		dynamicState.dynamicStateCount = static_cast<u32>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts = GetPipelineDescriptorLayouts();
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &m_DescriptorPool->GetVkDescriptorSetLayout();
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 
 		auto device = m_Device->GetVkDevice();
 		if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {

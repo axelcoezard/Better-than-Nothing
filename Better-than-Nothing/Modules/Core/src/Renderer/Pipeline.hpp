@@ -59,21 +59,10 @@ namespace BetterThanNothing
 		 */
 		~Pipeline();
 
-		Pipeline(const Pipeline&) = delete;
-		Pipeline& operator=(const Pipeline&) = delete;
-		Pipeline(Pipeline&&) = delete;
-		Pipeline& operator=(Pipeline&&) = delete;
-
 	private:
-		/**
-		 * @brief Create the render pass
-		 */
-		void CreateRenderPass();
+		void CreateDescriptorLayoutsForShader(Shader* shader);
 
-		/**
-		 * @brief Create the descriptor set layout
-		 */
-		void CreateDescriptorSetLayout();
+		std::vector<VkDescriptorSetLayout> GetPipelineDescriptorLayouts();
 
 	public:
 		/**
