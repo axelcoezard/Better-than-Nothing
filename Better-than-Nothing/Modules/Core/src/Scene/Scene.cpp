@@ -2,13 +2,12 @@
 
 namespace BetterThanNothing
 {
-	Scene::Scene(u32 id, std::string_view name, Window* window, ModelPool* modelPool, TexturePool* texturePool)
+	Scene::Scene(u32 id, std::string_view name, Window* window, ResourceManager* resourceManager)
 	{
 		m_Id = id;
 		m_Name = name;
 		m_Window = window;
-		m_ModelPool = modelPool;
-		m_TexturePool = texturePool;
+		m_ResourceManager = resourceManager;
 	}
 
 	Scene::~Scene()
@@ -58,8 +57,8 @@ namespace BetterThanNothing
 	Entity Scene::CreateEntity(const std::string& modelPath, const std::string& texturePath)
 	{
 		ModelComponent modelComponent;
-		modelComponent.model = m_ModelPool->GetResource(modelPath);
-		modelComponent.texture = m_TexturePool->GetResource(texturePath);
+		modelComponent.model = m_ResourceManager->GetModel(modelPath);
+		modelComponent.texture = m_ResourceManager->GetTexture(texturePath);
 
 		TransformComponent transformComponent;
 		transformComponent.position = glm::vec3(0.0f, 0.0f, 0.0f);

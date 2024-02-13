@@ -41,6 +41,7 @@
 #include "Resources/Texture.hpp"
 #include "Resources/ShaderPool.hpp"
 #include "Resources/Shader.hpp"
+#include "Resources/ResourceManager.hpp"
 
 // Scene
 #include "Scene/Scene.hpp"

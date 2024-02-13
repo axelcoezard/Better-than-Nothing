@@ -3,14 +3,11 @@
 namespace BetterThanNothing
 {
 	class ConfigManager;
+	class ResourceManager;
 
 	class Window;
 	class Device;
 	class Renderer;
-
-	class ShaderPool;
-	class ModelPool;
-	class TexturePool;
 
 	class Scene;
 	class Event;
@@ -37,24 +34,14 @@ namespace BetterThanNothing
 		Device* m_Device;
 
 		/**
+		 * @brief A pointer to the ResourceManager
+		*/
+		ResourceManager* m_ResourceManager;
+
+		/**
 		 * @brief A pointer to the Renderer
 		*/
 		Renderer* m_Renderer;
-
-		/**
-		 * @brief A pointer to the ShaderPool
-		*/
-		ShaderPool* m_ShaderPool;
-
-		/**
-		 * @brief A pointer to the ModelPool
-		*/
-		ModelPool* m_ModelPool;
-
-		/**
-		 * @brief A pointer to the TexturePool
-		*/
-		TexturePool* m_TexturePool;
 
 		/**
 		 * @brief The Scenes of the Application
