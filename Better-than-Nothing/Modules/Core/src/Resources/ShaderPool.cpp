@@ -36,8 +36,9 @@ namespace BetterThanNothing
 		shader->module = shaderModule;
 		shader->details = shaderDetails;
 
-		m_Resources[filePath] = shader;
+		LOG_SUCCESS("ShaderPool: " + filePath);
 
+		m_Resources[filePath] = shader;
 		return shader;
 	}
 
