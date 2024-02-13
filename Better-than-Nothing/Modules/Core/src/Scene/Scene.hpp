@@ -6,8 +6,7 @@ namespace BetterThanNothing
 	class Event;
 
 	class Window;
-	class ModelPool;
-	class TexturePool;
+	class ResourceManager;
 
 	typedef entt::entity Entity;
 	typedef entt::registry Registry;
@@ -32,14 +31,9 @@ namespace BetterThanNothing
 		Window* m_Window;
 
 		/**
-		 * @brief A pointer to the model pool.
+		 * @brief A pointer to the resource manager.
 		 */
-		ModelPool* m_ModelPool;
-
-		/**
-		 * @brief A pointer to the texture pool.
-		 */
-		TexturePool* m_TexturePool;
+		ResourceManager* m_ResourceManager;
 
 		/**
 		 * @brief A pointer to the camera.
@@ -65,7 +59,7 @@ namespace BetterThanNothing
 		 * @param modelPool A pointer to the model pool.
 		 * @param texturePool A pointer to the texture pool.
 		 */
- 		Scene(u32 id, std::string_view name, Window* window, ModelPool* modelPool, TexturePool* texturePool);
+ 		Scene(u32 id, std::string_view name, Window* window, ResourceManager* resourceManager);
 
 		/**
 		 * @brief Destroy the Scene object

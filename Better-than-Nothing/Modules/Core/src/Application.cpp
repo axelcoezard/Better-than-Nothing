@@ -16,11 +16,9 @@ namespace BetterThanNothing
 
 		m_Device = new Device(m_Window);
 
-		m_ShaderPool = new ShaderPool("/home/acoezard/lab/better-than-nothing/Assets/Shaders/", m_Device);
-		m_ModelPool = new ModelPool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
-		m_TexturePool = new TexturePool("/home/acoezard/lab/better-than-nothing/Assets/Models/", m_Device);
+		m_ResourceManager = new ResourceManager(m_Device, "/home/acoezard/lab/better-than-nothing/Assets/");
 
-		m_Renderer = new Renderer(m_Window, m_Device, m_ShaderPool);
+		m_Renderer = new Renderer(m_Window, m_Device, m_ResourceManager);
 	}
 
 	Application::~Application()
@@ -31,9 +29,7 @@ namespace BetterThanNothing
 
 		delete m_Renderer;
 
-		delete m_TexturePool;
-		delete m_ModelPool;
-		delete m_ShaderPool;
+		delete m_ResourceManager;
 
 		delete m_Device;
 		delete m_Window;
@@ -87,7 +83,7 @@ namespace BetterThanNothing
 
 	Scene* Application::CreateScene(const std::string& name)
 	{
-		auto scene = new Scene(m_Scenes.size(), name, m_Window, m_ModelPool, m_TexturePool);
+		auto scene = new Scene(m_Scenes.size(), name, m_Window, m_ResourceManager);
 		m_Scenes.push_back(scene);
 		m_CurrentSceneId = scene->GetId();
 		return scene;
