@@ -36,4 +36,5 @@ Contributions are welcome. Both new features and bug fixes. Just open a pull req
 - [stb](https://github.com/nothings/stb) : Single-file public domain (or MIT licensed) libraries for C/C++.
 - [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader) : Tiny but powerful single file wavefront obj loader.
 - [glm](https://github.com/g-truc/glm) : OpenGL Mathematics: An header only C++ mathematics library for graphics software based on the OpenGL Shading Language (GLSL) specifications.
-- [glslang](https://github.com/KhronosGroup/glslang) : Kronos library used for JIT shader compilation from OpenGL Shading Language (GLSL) to SPIR-V format.
+- [glslang](https://github.com/KhronosGroup/glslang) : A library used for JIT shader compilation from OpenGL Shading Language (GLSL) to SPIR-V format.
+- [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross) : A practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.
