@@ -25,6 +25,11 @@ namespace BetterThanNothing
 		Buffer vertexBuffer;
 
 		/**
+		 * @brief The number of vertices.
+		 */
+		u32 vertexCount;
+
+		/**
 		 * @brief The index buffer.
 		 */
 		Buffer indexBuffer;

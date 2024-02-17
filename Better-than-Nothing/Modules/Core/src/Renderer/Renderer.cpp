@@ -52,6 +52,7 @@ namespace BetterThanNothing
 		}
 
 		RenderDebugInfo(debugInfo);
+		debugInfo->drawCalls = 0;
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");
@@ -78,6 +79,7 @@ namespace BetterThanNothing
 				.pipeline = pPipeline,
 				.texture = modelComp.texture,
 				.vertexBuffer = modelComp.model->vertexBuffer,
+				.vertexCount = modelComp.model->vertexCount,
 				.indexBuffer = modelComp.model->indexBuffer,
 				.indicesCount = modelComp.model->indexCount,
 				.model = TransformComponent::GetModelMatrix(transformComp)
@@ -103,7 +105,13 @@ namespace BetterThanNothing
 			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
 			m_SwapChain->Draw(&drawPacket, i);
+
+			debugInfo->drawCalls++;
+			debugInfo->totalDrawCalls++;
 		}
+
+		delete[] drawStream->drawPackets;
+		delete drawStream;
 
 		m_SwapChain->EndRecordCommandBuffer();
 	}
@@ -117,7 +125,7 @@ namespace BetterThanNothing
 
 		ImGui::NewFrame();
 
-		ImGui::SetNextWindowSize(ImVec2(350, 200), 0);
+		ImGui::SetNextWindowSize(ImVec2(350, 250), 0);
 
 		ImGuiWindowFlags windowFlags = 0;
 		windowFlags |= ImGuiWindowFlags_NoResize;
@@ -133,6 +141,11 @@ namespace BetterThanNothing
 		ImGui::Text("Frame: %d", debugInfo->frameCount);
 		ImGui::Text("Frame time: %f ms", debugInfo->frameTime * 1000);
 		ImGui::Text("Frame per second (fps): %f fps", 1.0f / debugInfo->frameTime);
+
+		ImGui::Separator();
+
+		ImGui::Text("Draw calls (per frame): %d", debugInfo->drawCalls);
+		ImGui::Text("Total draw calls: %d", debugInfo->totalDrawCalls);
 
 		ImGui::Separator();
 

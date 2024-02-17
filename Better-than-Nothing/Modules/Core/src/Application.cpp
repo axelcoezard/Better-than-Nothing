@@ -45,6 +45,15 @@ namespace BetterThanNothing
 		f32 frameTime = 1.0f / 240.0f;
 		u32 frameCount = 0;
 
+		RendererDebugInfo debugInfo{};
+		debugInfo.vendorName = m_Device->GetVendorName();
+		debugInfo.deviceName = m_Device->GetDeviceName();
+		debugInfo.apiVersion = m_Device->GetApiVersion();
+		debugInfo.drawCalls = 0;
+		debugInfo.totalDrawCalls = 0;
+		debugInfo.sceneName = m_Scenes[m_CurrentSceneId]->GetName();
+		debugInfo.sceneEntitiesCount = m_Scenes[m_CurrentSceneId]->GetEntitiesCount();
+
 		while (!m_Window->ShouldClose()) {
 			m_Window->Poll();
 
@@ -53,14 +62,8 @@ namespace BetterThanNothing
 			lastFrame = currentFrame;
 			frameCount += 1;
 
-			RendererDebugInfo debugInfo{};
-			debugInfo.vendorName = m_Device->GetVendorName();
-			debugInfo.deviceName = m_Device->GetDeviceName();
-			debugInfo.apiVersion = m_Device->GetApiVersion();
 			debugInfo.frameCount = frameCount;
 			debugInfo.frameTime = deltatime;
-			debugInfo.sceneName = m_Scenes[m_CurrentSceneId]->GetName();
-			debugInfo.sceneEntitiesCount = m_Scenes[m_CurrentSceneId]->GetEntitiesCount();
 
 			m_Scenes[m_CurrentSceneId]->OnUpdate(deltatime);
 			m_Renderer->Render(m_Scenes[m_CurrentSceneId], &debugInfo);
