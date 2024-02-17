@@ -22,6 +22,8 @@
 #include "Renderer/CommandPool.hpp"
 #include "Renderer/CommandBuffer.hpp"
 #include "Renderer/DescriptorPool.hpp"
+#include "Renderer/Descriptor.hpp"
+#include "Renderer/DescriptorLayout.hpp"
 #include "Renderer/ImGuiDescriptorPool.hpp"
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/RenderPass.hpp"

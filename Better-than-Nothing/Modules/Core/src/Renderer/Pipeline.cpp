@@ -16,19 +16,79 @@ namespace BetterThanNothing
 		vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
 	}
 
+	void Pipeline::CreateDescriptorLayoutsForShaders(Shader* vertexShader, Shader* fragmentShader)
+	{
+		std::unordered_map<std::string, DescriptorLayoutInfo> descriptorLayouts;
+
+		// TODO: remove code duplication and clean up
+
+		for (ShaderResource& resource : vertexShader->resources)
+		{
+			std::string key = resource.name + "_" + std::to_string(resource.binding) + "_" + std::to_string(resource.type);
+
+			descriptorLayouts[key] = {
+				.name = resource.name,
+				.binding = resource.binding,
+				.descriptorType = resource.type,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT, // VK_SHADER_STAGE_FRAGMENT_BIT
+				.pipelineId = m_Id
+			};
+		}
+
+		for (ShaderResource& resource : fragmentShader->resources)
+		{
+			std::string key = resource.name + "_" + std::to_string(resource.binding) + "_" + std::to_string(resource.type);
+
+			if (descriptorLayouts.find(key) != descriptorLayouts.end())
+			{
+				descriptorLayouts[key].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+				continue;
+			}
+
+			descriptorLayouts[key] = {
+				.name = resource.name,
+				.binding = resource.binding,
+				.descriptorType = resource.type,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT, // VK_SHADER_STAGE_FRAGMENT_BIT
+				.pipelineId = m_Id
+			};
+		}
+
+		for (auto& [key, value] : descriptorLayouts)
+			m_DescriptorPool->CreateDescriptorLayout(value);
+	}
+
+	std::vector<VkDescriptorSetLayout> Pipeline::GetPipelineDescriptorLayouts()
+	{
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+		for (DescriptorLayout& descriptorLayout : m_DescriptorPool->GetAllDescriptorLayouts())
+		{
+			if (descriptorLayout.m_LayoutInfo.pipelineId == m_Id)
+			{
+				descriptorSetLayouts.push_back(descriptorLayout.m_Instance);
+				LOG_SUCCESS("used layout: " + descriptorLayout.m_LayoutInfo.name + " | binding: " + std::to_string(descriptorLayout.m_LayoutInfo.binding) + " | type: " + std::to_string(descriptorLayout.m_LayoutInfo.descriptorType) + " | stageFlags: " + std::to_string(descriptorLayout.m_LayoutInfo.stageFlags));
+			}
+		}
+		return descriptorSetLayouts;
+	}
+
 	void Pipeline::CreateGraphicsPipeline(Shader* vertexShader, Shader* fragmentShader)
 	{
+		CreateDescriptorLayoutsForShaders(vertexShader, fragmentShader);
+
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
 		vertShaderStageInfo.module = vertexShader->module;
-		vertShaderStageInfo.pName = "main";
+		vertShaderStageInfo.pName = m_Id.c_str();
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 		fragShaderStageInfo.module = fragmentShader->module;
-		fragShaderStageInfo.pName = "main";
+		fragShaderStageInfo.pName = m_Id.c_str();
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
@@ -101,10 +161,14 @@ namespace BetterThanNothing
 		dynamicState.dynamicStateCount = static_cast<u32>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts = GetPipelineDescriptorLayouts();
+
+		LOG_SUCCESS("descriptorSetLayouts.size(): " + std::to_string(descriptorSetLayouts.size()));
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &m_DescriptorPool->GetVkDescriptorSetLayout();
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 
 		auto device = m_Device->GetVkDevice();
 		if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {

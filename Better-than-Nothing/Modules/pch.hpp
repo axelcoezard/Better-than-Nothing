@@ -30,7 +30,7 @@
 
 #include <spirv_cross.hpp>
 
-#define MAX_FRAMES_IN_FLIGHT 30
+#define MAX_FRAMES_IN_FLIGHT 2
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720

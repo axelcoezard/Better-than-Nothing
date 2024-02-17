@@ -10,11 +10,11 @@ namespace BetterThanNothing
 	class ShaderPool: public ResourcePool<Shader>
 	{
 	private:
-		Device*			m_Device;
+		Device* m_Device;
 
 	public:
-						ShaderPool(const std::string& basePath, Device* device);
-						~ShaderPool();
+		ShaderPool(const std::string& basePath, Device* device);
+ 		~ShaderPool();
 
 		/**
 		 * @brief Get a shader from the pool. If the shader is not in the pool, it will be loaded.
@@ -22,7 +22,7 @@ namespace BetterThanNothing
 		 * @param filePath The file path of the shader
 		 * @return Shader* The shader
 		 */
-		Shader*			GetResource(const std::string& filePath) override;
+		Shader* GetResource(const std::string& filePath) override;
 
 	private:
 		/**
@@ -63,8 +63,8 @@ namespace BetterThanNothing
 		 * @brief Get the details of a shader
 		 *
 		 * @param program The program of the shader
-		 * @return ShaderDetails The details of the shader
+		 * @return std::vector<ShaderResource> The resources of the shader
 		 */
-		ShaderDetails GetShaderDetails(glslang_program_t* program);
+		std::vector<ShaderResource> GetShaderDetails(glslang_program_t* program);
 	};
 };

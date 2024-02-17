@@ -77,12 +77,13 @@ namespace BetterThanNothing
 		u32 oldSize = m_Size;
 		u32 newSize = m_Size + 1;
 
-		for (u32 frameIndex = 0; frameIndex < MAX_FRAMES_IN_FLIGHT; frameIndex++) {
+		for (u32 frameIndex = 0; frameIndex < MAX_FRAMES_IN_FLIGHT; frameIndex++)
+		{
 			m_DynamicUniforms[m_Size][frameIndex] = new Buffer();
 
 			m_Device->CreateBuffer(
 				m_DynamicUniforms[m_Size][frameIndex],
-				sizeof(GlobalUniforms),
+				sizeof(DynamicUniforms),
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 

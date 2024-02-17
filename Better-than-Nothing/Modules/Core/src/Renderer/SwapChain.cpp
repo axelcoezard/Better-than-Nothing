@@ -264,7 +264,7 @@ namespace BetterThanNothing
 		commandBuffer->BindIndexBuffer(drawPacket->indexBuffer.m_Buffer);
 
 		commandBuffer->BindDescriptorSets(
-			m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
+			m_DescriptorPool->GetDescriptors(m_CurrentFrame)[index].GetDescriptorSet(),
 			pipeline->GetVkPipelineLayout());
 
 		commandBuffer->DrawIndexed(drawPacket->indicesCount);
