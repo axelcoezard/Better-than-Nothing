@@ -1,6 +1,10 @@
 #pragma once
 
+// Standard Library
+
 #include <bits/stdc++.h>
+
+// Dependencies
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -29,6 +33,10 @@
 #include <resource_limits_c.h>
 
 #include <spirv_cross.hpp>
+
+#include "vk_mem_alloc.h"
+
+// Defines
 
 #define MAX_FRAMES_IN_FLIGHT 30
 
