@@ -13,7 +13,7 @@ namespace BetterThanNothing
 	class Scene;
 	class DrawStreamBuilder;
 	class Buffer;
-	class UniformsPool;
+	class DrawStreamBufferPool;
 	class RendererDebugInfo;
 
 	/**
@@ -50,7 +50,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief The pointer to the uniform pool
 		 */
-		UniformsPool* m_UniformsPool;
+		DrawStreamBufferPool* m_DrawStreamBuffers;
 
 		/**
 		 * @brief All the pipelines
@@ -91,12 +91,16 @@ namespace BetterThanNothing
 		 */
 		void LoadPipeline(const std::string& pipelineID, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
+		void BeforeRender();
+
 		/**
 		 * @brief Render the scene
 		 * @param scene The scene to render
 		 * @param debugInfo The debug info to display
 		 */
 		void Render(Scene* scene, RendererDebugInfo* debugInfo);
+
+		void AfterRender();
 
 	private:
 		/**

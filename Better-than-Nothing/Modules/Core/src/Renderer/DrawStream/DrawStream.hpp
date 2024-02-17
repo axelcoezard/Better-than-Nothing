@@ -46,7 +46,7 @@ namespace BetterThanNothing
 	};
 
 	/**
-	 * @brief A DrawStream is a collection of DrawPackets.
+	 * @brief A DrawStream is used to draw multiple objects at once.
 	 */
 	struct DrawStream
 	{
@@ -56,9 +56,39 @@ namespace BetterThanNothing
 		u32 size;
 
 		/**
-		 * @brief The DrawPackets.
+		 * @brief The pipeline used to draw each model in the DrawStream.
 		 */
-		DrawPacket* drawPackets;
+		void* pipeline;
+
+		/**
+		 * @brief The textures used to draw each model in the DrawStream.
+		 */
+		std::vector<void*> textures;
+
+		/**
+		 * @brief The model matrices used to draw each model in the DrawStream.
+		 */
+		std::vector<glm::mat4> models;
+
+		/**
+		 * @brief The vertex buffer that contains all the vertices of each model in the DrawStream.
+		 */
+		Buffer globalVertexBuffer;
+
+		/**
+		 * @brief The number of vertices in the globalVertexBuffer.
+		 */
+		u32 globalVertexCount;
+
+		/**
+		 * @brief The index buffer that contains all the indices of each model in the DrawStream.
+		 */
+		Buffer globalIndexBuffer;
+
+		/**
+		 * @brief The number of indices in the globalIndexBuffer.
+		 */
+		u32 globalIndicesCount;
 	};
 
 	/**
@@ -78,9 +108,11 @@ namespace BetterThanNothing
 		u32 m_Capacity;
 
 		/**
-		 * @brief The DrawPackets.
+		 * @brief The DrawPackets for each pipeline.
+		 * @note We use a vector of pairs to keep the order of the DrawPackets.
 		 */
-		std::vector<DrawPacket> m_DrawPackets;
+		std::map<std::string, std::vector<DrawPacket>> m_DrawPacketsPerPipeline;
+		std::vector<Pipeline*> m_PipelinesByIndex;
 
 	public:
 		/**
@@ -105,6 +137,9 @@ namespace BetterThanNothing
 		 * @return A pointer to the new DrawStream.
 		 * @note The DrawPackets are sorted by pipeline while building the DrawStream.
 		 */
-		DrawStream* GetStream();
+		std::vector<DrawStream>& GetStreams();
+
+	private:
+
 	};
 };

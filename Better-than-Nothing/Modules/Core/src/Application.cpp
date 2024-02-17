@@ -54,7 +54,10 @@ namespace BetterThanNothing
 		debugInfo.sceneName = m_Scenes[m_CurrentSceneId]->GetName();
 		debugInfo.sceneEntitiesCount = m_Scenes[m_CurrentSceneId]->GetEntitiesCount();
 
-		while (!m_Window->ShouldClose()) {
+		m_Renderer->BeforeRender();
+
+		while (!m_Window->ShouldClose())
+		{
 			m_Window->Poll();
 
 			f32 currentFrame = glfwGetTime();
@@ -71,10 +74,13 @@ namespace BetterThanNothing
 
 			useconds_t frameTimeMicroseconds = static_cast<useconds_t>(frameTime * 1000000);
 			f32 elapsedTime = glfwGetTime() - currentFrame;
-			if (elapsedTime < frameTime) {
+			if (elapsedTime < frameTime)
+			{
 				usleep(frameTimeMicroseconds - static_cast<useconds_t>(elapsedTime * 1000000));
 			}
 		}
+
+		m_Renderer->AfterRender();
 
 		OnDisable();
 	}

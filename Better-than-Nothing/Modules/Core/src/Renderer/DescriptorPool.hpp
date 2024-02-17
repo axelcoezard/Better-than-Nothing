@@ -4,7 +4,7 @@ namespace BetterThanNothing
 {
 	class Device;
 	class Buffer;
-	class UniformsPool;
+	class DrawStreamBufferPool;
 	class ModelComponent;
 
 	/**
@@ -23,7 +23,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief The uniforms pool
 		 */
-		UniformsPool* m_UniformsPool;
+		DrawStreamBufferPool* m_UniformsPool;
 
 		/**
 		 * @brief The VkDescriptorSetLayout
@@ -56,7 +56,7 @@ namespace BetterThanNothing
 		 * @param device The device that owns this descriptor pool
 		 * @param uniformsPool The uniforms pool
 		 */
-		DescriptorPool(Device* device, UniformsPool* uniformsPool);
+		DescriptorPool(Device* device, DrawStreamBufferPool* uniformsPool);
 
 		/**
 		 * @brief Destroy the Descriptor Pool object
@@ -105,7 +105,13 @@ namespace BetterThanNothing
 		 * @param entity The entity that needs a descriptor set
 		 * @param uniformBuffers All the uniform buffers
 		 */
-		void CreateDescriptorSets(ModelComponent* modelComponent , std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms);
+		void CreateDescriptorSets(
+			ModelComponent* modelComponent,
+			std::vector<Buffer*>& globalData,
+			std::vector<Buffer*>& vertexData,
+			std::vector<Buffer*>& indexData,
+			std::vector<Buffer*>& materialData,
+			std::vector<Buffer*>& transformData);
 
 		/**
 		 * @brief Get the VkDescriptorSetLayout object

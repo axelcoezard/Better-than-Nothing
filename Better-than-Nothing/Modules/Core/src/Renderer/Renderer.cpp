@@ -5,8 +5,8 @@ namespace BetterThanNothing
 	Renderer::Renderer(Window* window, Device* device, ResourceManager* resourceManager)
 		: m_Window(window), m_Device(device), m_ResourceManager(resourceManager)
 	{
-		m_UniformsPool = new UniformsPool(m_Device);
-		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
+		m_DrawStreamBuffers = new DrawStreamBufferPool(m_Device);
+		m_DescriptorPool = new DescriptorPool(m_Device, m_DrawStreamBuffers);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
 	}
 
@@ -16,7 +16,7 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		delete m_UniformsPool;
+		delete m_DrawStreamBuffers;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
 	}
@@ -34,21 +34,33 @@ namespace BetterThanNothing
 
 	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
 	{
+		// Generate all uniform buffer for global data (one for each frame)
+		m_DrawStreamBuffers->AllocateAllGlobalData();
+
+		// Generate all storage buffer for vertices and indices (one for each frame and pipeline)
+		m_DrawStreamBuffers->AllocateAllVertexAndIndexData(m_PipeLines.size());
+	}
+
+	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
+	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
-		while (scene->HasPendingEntities()) {
+		while (scene->HasPendingEntities())
+		{
 			Entity newEntity = scene->NextPendingEntity();
 
-			if (m_UniformsPool->ShouldExtends()) {
-				m_UniformsPool->ExtendUniformsPool();
-			}
-			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
-			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
+			std::vector<Buffer*> allGlobalData = m_DrawStreamBuffers->GetAllGlobalData();
+
+			std::vector<Buffer*> allVertexData = m_DrawStreamBuffers->GetAllVertexData(0);
+			std::vector<Buffer*> allIndexData = m_DrawStreamBuffers->GetAllIndexData(0);
+
+			std::vector<Buffer*> newMaterialData = m_DrawStreamBuffers->CreateMaterialData();
+			std::vector<Buffer*> newTransformData = m_DrawStreamBuffers->CreateTransformData();
 
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
-			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
+			m_DescriptorPool->CreateDescriptorSets(&modelComp, allGlobalData, allVertexData, allIndexData, newMaterialData, newTransformData);
 		}
 
 		RenderDebugInfo(debugInfo);
@@ -59,7 +71,7 @@ namespace BetterThanNothing
 		}
 
 		// Create a GlobalUniforms with camera data
-		GlobalUniforms* globalUniforms = m_UniformsPool->GetGlobalUniforms(currentFrame);
+		GlobalData* globalUniforms = m_DrawStreamBuffers->GetGlobalData(currentFrame);
 		globalUniforms->projection = scene->GetCamera()->GetProjectionMatrix();
 		globalUniforms->view = scene->GetCamera()->GetViewMatrix();
 		globalUniforms->cameraPosition = scene->GetCamera()->GetPosition();
@@ -86,32 +98,23 @@ namespace BetterThanNothing
 			});
 		};
 
-		DrawStream* drawStream = drawStreamBuilder.GetStream();
-		void* currentPipeline = nullptr;
+		std::vector<DrawStream>& drawStream = drawStreamBuilder.GetStreams();
 
-		// Draw all the DrawPacket in the DrawStream ordered by pipeline
-		// and bind the pipeline only when it changes
-		// TODO: Use multiple threads to draw the DrawStream
-		for (u32 i = 0; i < drawStream->size; i++) {
-			DrawPacket drawPacket = drawStream->drawPackets[i];
+		for (u32 i = 0; i < drawStream.size(); i++)
+		{
+			DrawStream& currentDrawStream = drawStream.at(i);
 
-			if (drawPacket.pipeline != currentPipeline) {
-				currentPipeline = drawPacket.pipeline;
-				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
-			}
+			m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentDrawStream.pipeline));
 
-			DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
-			dynamicUniforms->model = drawPacket.model;
-			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
+			//DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
+			//dynamicUniforms->model = drawPacket.model;
+			//dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
-			m_SwapChain->Draw(&drawPacket, i);
+			//m_SwapChain->Draw(&drawPacket, i);
 
 			debugInfo->drawCalls++;
 			debugInfo->totalDrawCalls++;
 		}
-
-		delete[] drawStream->drawPackets;
-		delete drawStream;
 
 		m_SwapChain->EndRecordCommandBuffer();
 	}

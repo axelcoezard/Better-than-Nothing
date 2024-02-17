@@ -2,7 +2,7 @@
 
 namespace BetterThanNothing
 {
-	DescriptorPool::DescriptorPool(Device* device, UniformsPool* uniformsPool)
+	DescriptorPool::DescriptorPool(Device* device, DrawStreamBufferPool* uniformsPool)
 		: m_Device(device), m_UniformsPool(uniformsPool)
 	{
 		m_DescriptorPoolSize = 0;
@@ -117,8 +117,14 @@ namespace BetterThanNothing
 		m_DescriptorPoolCapacity = 0;
 	}
 
-	void DescriptorPool::CreateDescriptorSets(ModelComponent* modelComponent, std::vector<Buffer*>& globalUniforms, std::vector<Buffer*>& dynamicUniforms)
-	{
+	void DescriptorPool::CreateDescriptorSets(
+		ModelComponent* modelComponent,
+		std::vector<Buffer*>& globalData,
+		std::vector<Buffer*>& vertexData,
+		std::vector<Buffer*>& indexData,
+		std::vector<Buffer*>& materialData,
+		std::vector<Buffer*>& transformData,
+	) {
 		VkDevice device = m_Device->GetVkDevice();
 
 		if (m_DescriptorPoolSize >= m_DescriptorPoolCapacity) {
@@ -138,9 +144,9 @@ namespace BetterThanNothing
 			}
 
 			VkDescriptorBufferInfo globalUniformsInfo{};
-			globalUniformsInfo.buffer = globalUniforms[i]->m_Buffer;
+			globalUniformsInfo.buffer = globalData[i]->m_Buffer;
 			globalUniformsInfo.offset = 0;
-			globalUniformsInfo.range = sizeof(GlobalUniforms);
+			globalUniformsInfo.range = sizeof(GlobalData);
 
 			VkDescriptorBufferInfo dynamicUniformsInfo{};
 			dynamicUniformsInfo.buffer = dynamicUniforms[i]->m_Buffer;

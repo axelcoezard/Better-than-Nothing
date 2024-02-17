@@ -8,7 +8,7 @@ namespace BetterThanNothing
 	/**
 	 * @brief The global uniforms
 	 */
-	struct GlobalUniforms
+	struct GlobalData
 	{
 		/**
 		 * @brief The camera view matrix
@@ -29,10 +29,5 @@ namespace BetterThanNothing
 		 * @brief The directional light
 		 */
 		DirectionalLight directionalLight;
-
-		/**
-		 * @brief The point lights
-		 */
-		std::vector<PointLight> pointLights;
 	};
 };

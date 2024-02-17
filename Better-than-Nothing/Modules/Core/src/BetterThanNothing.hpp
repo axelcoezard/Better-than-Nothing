@@ -26,12 +26,17 @@
 #include "Renderer/Pipeline.hpp"
 #include "Renderer/RenderPass.hpp"
 #include "Renderer/SwapChain.hpp"
-#include "Renderer/GlobalUniforms.hpp"
-#include "Renderer/UniformsPool.hpp"
 #include "Renderer/Vertex.hpp"
-#include "Renderer/DrawStream.hpp"
 #include "Renderer/Material.hpp"
 #include "Renderer/Buffer.hpp"
+
+#include "Renderer/DrawStream/DrawStream.hpp"
+#include "Renderer/DrawStream/DrawStreamBufferPool.hpp"
+#include "Renderer/DrawStream/GlobalData.hpp"
+#include "Renderer/DrawStream/MaterialData.hpp"
+#include "Renderer/DrawStream/TransformData.hpp"
+#include "Renderer/DrawStream/VertexData.hpp"
+#include "Renderer/DrawStream/IndexData.hpp"
 
 // Resources
 #include "Resources/ResourcePool.hpp"
