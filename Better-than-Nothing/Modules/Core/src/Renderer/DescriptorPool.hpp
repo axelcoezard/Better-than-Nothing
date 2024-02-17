@@ -30,6 +30,8 @@ namespace BetterThanNothing
 
 	public:
 		u32 CreateDescriptorLayout(DescriptorLayoutInfo layoutInfo);
+
+		u32 CreateDescriptor(DescriptorLayout& descriptorLayout);
 		u32 CreateDescriptor(u32 descriptorLayoutId);
 
 		DescriptorLayout FindDescriptorLayoutByName(const std::string& name);

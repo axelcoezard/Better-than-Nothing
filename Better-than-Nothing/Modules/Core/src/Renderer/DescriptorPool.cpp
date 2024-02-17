@@ -64,17 +64,17 @@ namespace BetterThanNothing
 		if (FindDescriptorLayout(descriptorLayoutInfo, &layoutId))
 			return layoutId;
 
-		VkDescriptorSetLayoutBinding layoutBinding{};
-		layoutBinding.binding = descriptorLayoutInfo.binding;
-		layoutBinding.descriptorType = descriptorLayoutInfo.descriptorType;
-		layoutBinding.descriptorCount = 1;
-		layoutBinding.stageFlags = descriptorLayoutInfo.stageFlags;
-		layoutBinding.pImmutableSamplers = nullptr;
+		VkDescriptorSetLayoutBinding layoutBinding[1];
+		layoutBinding[0].binding = descriptorLayoutInfo.binding;
+		layoutBinding[0].descriptorType = descriptorLayoutInfo.descriptorType;
+		layoutBinding[0].descriptorCount = 1;
+		layoutBinding[0].stageFlags = descriptorLayoutInfo.stageFlags;
+		layoutBinding[0].pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutCreateInfo layoutCreateInfo{};
 		layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutCreateInfo.bindingCount = 1;
-		layoutCreateInfo.pBindings = &layoutBinding;
+		layoutCreateInfo.pBindings = layoutBinding;
 
 		VkDescriptorSetLayout descriptorLayout;
 		if (vkCreateDescriptorSetLayout(m_Device->GetVkDevice(), &layoutCreateInfo, nullptr, &descriptorLayout) != VK_SUCCESS)
@@ -82,6 +82,11 @@ namespace BetterThanNothing
 
 		m_DescriptorLayouts.push_back({ layoutId, descriptorLayoutInfo, descriptorLayout });
 		return layoutId;
+	}
+
+	u32 DescriptorPool::CreateDescriptor(DescriptorLayout& descriptorLayout)
+	{
+		return CreateDescriptor(descriptorLayout.m_Id);
 	}
 
 	u32 DescriptorPool::CreateDescriptor(u32 descriptorLayoutId)

@@ -83,7 +83,7 @@ namespace BetterThanNothing
 
 			m_Device->CreateBuffer(
 				m_DynamicUniforms[m_Size][frameIndex],
-				sizeof(GlobalUniforms),
+				sizeof(DynamicUniforms),
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 

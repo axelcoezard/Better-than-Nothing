@@ -53,30 +53,30 @@ namespace BetterThanNothing
 
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
 
-			DescriptorLayout globalUniformsLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("globalUniforms");
-			u32 guIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayoutId.m_Id);
+			DescriptorLayout globalUniformsLayout = m_DescriptorPool->FindDescriptorLayoutByName("globalUniforms");
+			u32 guIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayout.m_Id);
 
-			std::cout << "globalUniforms: " << globalUniformsLayoutId.m_LayoutInfo.name << " | binding: " << globalUniformsLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "globalUniforms: " << globalUniformsLayout.m_LayoutInfo.name << " | binding: " << globalUniformsLayout.m_LayoutInfo.binding <<  std::endl;
 			std::cout << "guIndex: " << guIndex << std::endl;
 
-			DescriptorLayout dynamicUniformsLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("dynamicUniforms");
-			u32 duIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayoutId.m_Id);
+			DescriptorLayout dynamicUniformsLayout = m_DescriptorPool->FindDescriptorLayoutByName("dynamicUniforms");
+			u32 duIndex = m_DescriptorPool->CreateDescriptor(globalUniformsLayout.m_Id);
 
-			std::cout << "dynamicUniforms: " << dynamicUniformsLayoutId.m_LayoutInfo.name << " | binding: " << dynamicUniformsLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "dynamicUniforms: " << dynamicUniformsLayout.m_LayoutInfo.name << " | binding: " << dynamicUniformsLayout.m_LayoutInfo.binding <<  std::endl;
 			std::cout << "duIndex: " << duIndex << std::endl;
 
-			DescriptorLayout samplerLayoutId = m_DescriptorPool->FindDescriptorLayoutByName("texSampler");
-			u32 samplerIndex = m_DescriptorPool->CreateDescriptor(samplerLayoutId.m_Id);
+			DescriptorLayout samplerLayout = m_DescriptorPool->FindDescriptorLayoutByName("texSampler");
+			u32 samplerIndex = m_DescriptorPool->CreateDescriptor(samplerLayout.m_Id);
 
-			std::cout << "sampler: " << samplerLayoutId.m_LayoutInfo.name << " | binding: " << samplerLayoutId.m_LayoutInfo.binding <<  std::endl;
+			std::cout << "sampler: " << samplerLayout.m_LayoutInfo.name << " | binding: " << samplerLayout.m_LayoutInfo.binding <<  std::endl;
 			std::cout << "samplerIndex: " << samplerIndex << std::endl;
 
 			for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 			{
 				VkDescriptorBufferInfo bufferInfo = { .buffer = newGU[i]->m_Buffer, .offset = 0, .range = sizeof(GlobalUniforms) };
 				m_DescriptorPool->GetDescriptors(i)[guIndex].Update(
-					globalUniformsLayoutId.m_LayoutInfo.binding,
-					globalUniformsLayoutId.m_LayoutInfo.descriptorType,
+					globalUniformsLayout.m_LayoutInfo.binding,
+					globalUniformsLayout.m_LayoutInfo.descriptorType,
 					&bufferInfo,
 					nullptr
 				);
@@ -86,8 +86,8 @@ namespace BetterThanNothing
 			{
 				VkDescriptorBufferInfo bufferInfo = { .buffer = newDU[i]->m_Buffer, .offset = 0, .range = sizeof(DynamicUniforms) };
 				m_DescriptorPool->GetDescriptors(i)[duIndex].Update(
-					dynamicUniformsLayoutId.m_LayoutInfo.binding,
-					dynamicUniformsLayoutId.m_LayoutInfo.descriptorType,
+					dynamicUniformsLayout.m_LayoutInfo.binding,
+					dynamicUniformsLayout.m_LayoutInfo.descriptorType,
 					&bufferInfo,
 					nullptr
 				);
@@ -97,8 +97,8 @@ namespace BetterThanNothing
 			{
 				VkDescriptorImageInfo imageInfo = { .sampler = modelComp.texture->sampler, .imageView = modelComp.texture->imageView, .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 				m_DescriptorPool->GetDescriptors(i)[samplerIndex].Update(
-					samplerLayoutId.m_LayoutInfo.binding,
-					samplerLayoutId.m_LayoutInfo.descriptorType,
+					samplerLayout.m_LayoutInfo.binding,
+					samplerLayout.m_LayoutInfo.descriptorType,
 					nullptr,
 					&imageInfo
 				);
