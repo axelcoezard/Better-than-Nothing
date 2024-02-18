@@ -90,10 +90,21 @@ namespace BetterThanNothing
 		void BindVertexBuffer(VkBuffer& vertexBuffer);
 
 		/**
+		 * @brief Bind vertex buffers.
+		 * @param firstBinding The first binding.
+		 * @param bindingCount The binding count.
+		 * @param vertexBuffers The vertex buffers.
+		 * @param offsets The offsets.
+		 */
+		void BindVertexBuffers(u32 firstBinding, u32 bindingCount, VkBuffer* vertexBuffers, VkDeviceSize* offsets);
+
+		/**
 		 * @brief Bind an index buffer.
 		 * @param indexBuffer The index buffer.
 		 */
 		void BindIndexBuffer(VkBuffer& indexBuffer);
+
+		void BindIndexBuffer(VkBuffer& indexBuffer, VkDeviceSize offset);
 
 		/**
 		 * @brief Bind descriptor sets.
@@ -107,6 +118,8 @@ namespace BetterThanNothing
 		 * @param indexCount The index count.
 		 */
 		void DrawIndexed(u32 indexCount);
+
+		void DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, u32 vertexOffset, u32 firstInstance);
 
 		/**
 		 * @brief A wrapper around vkCmdPipelineBarrier.

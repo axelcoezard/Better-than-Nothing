@@ -12,6 +12,9 @@ namespace BetterThanNothing
 		f32 frameTime;
 		f32 deltaTime;
 
+		u32 drawCalls;
+		u32 totalDrawCalls;
+
 		std::string sceneName;
 		u32 sceneEntitiesCount;
 	};

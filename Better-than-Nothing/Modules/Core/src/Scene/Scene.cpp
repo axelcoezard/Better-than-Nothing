@@ -60,8 +60,12 @@ namespace BetterThanNothing
 		modelComponent.model = m_ResourceManager->GetModel(modelPath);
 		modelComponent.texture = m_ResourceManager->GetTexture(texturePath);
 
+		float x = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 5.0f;
+		float y = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 5.0f;
+		float z = static_cast<float>(rand()) / static_cast<float>(RAND_MAX)	* 5.0f;
+
 		TransformComponent transformComponent;
-		transformComponent.position = glm::vec3(0.0f, 0.0f, 0.0f);
+		transformComponent.position = glm::vec3(x, y, z);
 		transformComponent.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		transformComponent.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 

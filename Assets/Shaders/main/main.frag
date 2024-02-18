@@ -5,15 +5,6 @@ struct DirectionalLight {
 	vec3 direction;
 };
 
-struct PointLight {
-	vec3 color;
-	vec3 position;
-
-	float constant;
-	float linear;
-	float quadratic;
-};
-
 struct Material {
 	float ambient;
 	float diffuse;
@@ -27,7 +18,6 @@ layout(binding = 0) uniform GlobalUniforms {
 	vec3 cameraPosition;
 
 	DirectionalLight directionalLight;
-	PointLight pointLights[4];
 } globalUniforms;
 
 

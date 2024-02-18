@@ -4,6 +4,8 @@
 
 namespace BetterThanNothing
 {
+	class Pipeline;
+
 	/**
 	 * @brief A DrawPacket is a collection of data that is used to draw a single object.
 	 */
@@ -25,6 +27,11 @@ namespace BetterThanNothing
 		Buffer vertexBuffer;
 
 		/**
+		 * @brief The number of vertices.
+		 */
+		u32 vertexCount;
+
+		/**
 		 * @brief The index buffer.
 		 */
 		Buffer indexBuffer;
@@ -41,7 +48,7 @@ namespace BetterThanNothing
 	};
 
 	/**
-	 * @brief A DrawStream is a collection of DrawPackets.
+	 * @brief A DrawStream is used to draw multiple objects at once.
 	 */
 	struct DrawStream
 	{
@@ -51,9 +58,40 @@ namespace BetterThanNothing
 		u32 size;
 
 		/**
-		 * @brief The DrawPackets.
+		 * @brief The pipeline used to draw each model in the DrawStream.
 		 */
-		DrawPacket* drawPackets;
+		void* pipeline;
+
+		/**
+		 * @brief The textures used to draw each model in the DrawStream.
+		 */
+		std::vector<void*> textures;
+
+		/**
+		 * @brief The model matrices used to draw each model in the DrawStream.
+		 */
+		std::vector<glm::mat4> models;
+
+		/**
+		 * @brief The vertex buffer that contains all the vertices of each model in the DrawStream.
+		 */
+		std::vector<VkBuffer> vertexBuffers;
+
+		/**
+		 * @brief The number of vertices in the globalVertexBuffer.
+		 */
+		std::vector<VkDeviceSize> vertexOffsets;
+
+		/**
+		 * @brief The number of vertices in the globalVertexBuffer.
+		 */
+		u32 vertexCount;
+
+		std::vector<Buffer> indexBuffers;
+
+		std::vector<VkDeviceSize> indexOffsets;
+
+		u32 indicesCount;
 	};
 
 	/**
@@ -68,21 +106,17 @@ namespace BetterThanNothing
 		u32 m_Size;
 
 		/**
-		 * @brief The capacity of the DrawStream.
+		 * @brief The DrawPackets for each pipeline.
+		 * @note We use a vector of pairs to keep the order of the DrawPackets.
 		 */
-		u32 m_Capacity;
-
-		/**
-		 * @brief The DrawPackets.
-		 */
-		std::vector<DrawPacket> m_DrawPackets;
+		std::map<std::string, std::vector<DrawPacket>> m_DrawPacketsPerPipeline;
+		std::vector<Pipeline*> m_PipelinesByIndex;
 
 	public:
 		/**
 		 * @brief Construct a new DrawStreamBuilder.
-		 * @param capacity The maximum capacity of the DrawStream.
 		 */
-		DrawStreamBuilder(u32 capacity);
+		DrawStreamBuilder();
 
 		/**
 		 * @brief Destroy the DrawStreamBuilder and clear DrawPackets.
@@ -100,6 +134,9 @@ namespace BetterThanNothing
 		 * @return A pointer to the new DrawStream.
 		 * @note The DrawPackets are sorted by pipeline while building the DrawStream.
 		 */
-		DrawStream* GetStream();
+		std::vector<DrawStream> GetStreams();
+
+	private:
+
 	};
 };

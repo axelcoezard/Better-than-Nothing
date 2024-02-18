@@ -36,7 +36,10 @@ namespace BetterThanNothing
 		Buffer indexBuffer = CreateIndexBuffer(indices);
 
 		model->filePath = filePath;
+		model->vertices = vertices;
 		model->vertexBuffer = vertexBuffer;
+		model->vertexCount = static_cast<u32>(vertices.size());
+		model->indices = indices;
 		model->indexBuffer = indexBuffer;
 		model->indexCount = static_cast<u32>(indices.size());
 

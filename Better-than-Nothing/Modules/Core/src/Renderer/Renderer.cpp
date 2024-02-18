@@ -5,8 +5,8 @@ namespace BetterThanNothing
 	Renderer::Renderer(Window* window, Device* device, ResourceManager* resourceManager)
 		: m_Window(window), m_Device(device), m_ResourceManager(resourceManager)
 	{
-		m_UniformsPool = new UniformsPool(m_Device);
-		m_DescriptorPool = new DescriptorPool(m_Device, m_UniformsPool);
+		m_DrawStreamBuffers = new DrawStreamBufferPool(m_Device);
+		m_DescriptorPool = new DescriptorPool(m_Device, m_DrawStreamBuffers);
 		m_SwapChain = new SwapChain(m_Window, m_Device, m_DescriptorPool);
 	}
 
@@ -16,7 +16,7 @@ namespace BetterThanNothing
 			delete entry.second;
 		}
 
-		delete m_UniformsPool;
+		delete m_DrawStreamBuffers;
 		delete m_DescriptorPool;
 		delete m_SwapChain;
 	}
@@ -32,33 +32,40 @@ namespace BetterThanNothing
 		m_PipeLines.insert(std::pair<std::string, Pipeline*>(id, pipeline));
 	}
 
+	void Renderer::BeforeRender()
+	{
+		// Generate all uniform buffer for global data (one for each frame)
+		m_DrawStreamBuffers->AllocateAllGlobalData();
+	}
+
 	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
 	{
 		Pipeline* pPipeline = m_PipeLines.at("main");
 		u32 currentFrame = m_SwapChain->GetCurrentFrame();
 
 		// Create a new uniform buffer and a new descriptor set for each new entity
-		while (scene->HasPendingEntities()) {
+		while (scene->HasPendingEntities())
+		{
 			Entity newEntity = scene->NextPendingEntity();
 
-			if (m_UniformsPool->ShouldExtends()) {
-				m_UniformsPool->ExtendUniformsPool();
-			}
-			std::vector<Buffer*> newGU = m_UniformsPool->GetAllGlobalUniforms();
-			std::vector<Buffer*> newDU = m_UniformsPool->CreateDynamicUniforms();
+			std::vector<Buffer*> allGlobalData = m_DrawStreamBuffers->GetAllGlobalData();
+
+			std::vector<Buffer*> newMaterialData = m_DrawStreamBuffers->CreateMaterialData();
+			std::vector<Buffer*> newTransformData = m_DrawStreamBuffers->CreateTransformData();
 
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
-			m_DescriptorPool->CreateDescriptorSets(&modelComp, newGU, newDU);
+			m_DescriptorPool->CreateDescriptorSets(&modelComp, allGlobalData, newMaterialData, newTransformData);
 		}
 
 		RenderDebugInfo(debugInfo);
+		debugInfo->drawCalls = 0;
 
 		if (!m_SwapChain->BeginRecordCommandBuffer()) {
 			throw std::runtime_error("Failed to record command buffer!");
 		}
 
 		// Create a GlobalUniforms with camera data
-		GlobalUniforms* globalUniforms = m_UniformsPool->GetGlobalUniforms(currentFrame);
+		GlobalData* globalUniforms = m_DrawStreamBuffers->GetGlobalData(currentFrame);
 		globalUniforms->projection = scene->GetCamera()->GetProjectionMatrix();
 		globalUniforms->view = scene->GetCamera()->GetViewMatrix();
 		globalUniforms->cameraPosition = scene->GetCamera()->GetPosition();
@@ -68,7 +75,7 @@ namespace BetterThanNothing
 		};
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(scene->GetEntitiesCount());
+		DrawStreamBuilder drawStreamBuilder;
 		auto view = scene->GetView<ModelComponent, TransformComponent>();
 		for (auto entity : view) {
 			ModelComponent& modelComp = view.get<ModelComponent>(entity);
@@ -78,34 +85,57 @@ namespace BetterThanNothing
 				.pipeline = pPipeline,
 				.texture = modelComp.texture,
 				.vertexBuffer = modelComp.model->vertexBuffer,
+				.vertexCount = modelComp.model->vertexCount,
 				.indexBuffer = modelComp.model->indexBuffer,
 				.indicesCount = modelComp.model->indexCount,
 				.model = TransformComponent::GetModelMatrix(transformComp)
 			});
 		};
 
-		DrawStream* drawStream = drawStreamBuilder.GetStream();
-		void* currentPipeline = nullptr;
+		std::vector<DrawStream> drawStreams = drawStreamBuilder.GetStreams();
 
-		// Draw all the DrawPacket in the DrawStream ordered by pipeline
-		// and bind the pipeline only when it changes
-		// TODO: Use multiple threads to draw the DrawStream
-		for (u32 i = 0; i < drawStream->size; i++) {
-			DrawPacket drawPacket = drawStream->drawPackets[i];
+		for (u32 i = 0; i < drawStreams.size(); i++)
+		{
+			std::cout << "DrawStream " << i << " size: " << drawStreams.at(i).size << std::endl;
 
-			if (drawPacket.pipeline != currentPipeline) {
-				currentPipeline = drawPacket.pipeline;
-				m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentPipeline));
+			DrawStream& currentDrawStream = drawStreams.at(i);
+
+			m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentDrawStream.pipeline));
+
+			MaterialData* materialData = m_DrawStreamBuffers->GetMaterialData(currentFrame, i);
+			TransformData* transformData = m_DrawStreamBuffers->GetTransformData(currentFrame, i);
+
+			for (u32 j = 0; j < currentDrawStream.size; j++)
+			{
+				std::cout << " => MaterialData " << j << std::endl;
+
+				materialData->materialCount++;
+				materialData->materials.push_back({ 0.5f, 0.1f, 0.5f, 1.0f });
+
+				std::cout << " => Model " << j << " vertexCount: " << currentDrawStream.vertexCount << std::endl;
+
+				transformData->modelCount++;
+				transformData->models.push_back(currentDrawStream.models.at(j));
 			}
 
-			DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
-			dynamicUniforms->model = drawPacket.model;
-			dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
+			//DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
+			//dynamicUniforms->model = drawPacket.model;
+			//dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
-			m_SwapChain->Draw(&drawPacket, i);
+			m_SwapChain->Draw(&currentDrawStream);
+
+			exit(0);
+
+			debugInfo->drawCalls++;
+			debugInfo->totalDrawCalls++;
 		}
 
 		m_SwapChain->EndRecordCommandBuffer();
+	}
+
+	void Renderer::AfterRender()
+	{
+		exit(0);
 	}
 
 	void Renderer::RenderDebugInfo(RendererDebugInfo* debugInfo)
@@ -117,7 +147,7 @@ namespace BetterThanNothing
 
 		ImGui::NewFrame();
 
-		ImGui::SetNextWindowSize(ImVec2(350, 200), 0);
+		ImGui::SetNextWindowSize(ImVec2(350, 250), 0);
 
 		ImGuiWindowFlags windowFlags = 0;
 		windowFlags |= ImGuiWindowFlags_NoResize;
@@ -133,6 +163,11 @@ namespace BetterThanNothing
 		ImGui::Text("Frame: %d", debugInfo->frameCount);
 		ImGui::Text("Frame time: %f ms", debugInfo->frameTime * 1000);
 		ImGui::Text("Frame per second (fps): %f fps", 1.0f / debugInfo->frameTime);
+
+		ImGui::Separator();
+
+		ImGui::Text("Draw calls (per frame): %d", debugInfo->drawCalls);
+		ImGui::Text("Total draw calls: %d", debugInfo->totalDrawCalls);
 
 		ImGui::Separator();
 

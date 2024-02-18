@@ -77,12 +77,22 @@ namespace BetterThanNothing
 	{
 		VkBuffer vertexBuffers[] = {vertexBuffer};
 		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(m_CommandBuffer, 0, 1, vertexBuffers, offsets);
+		BindVertexBuffers(0, 1, vertexBuffers, offsets);
+	}
+
+	void CommandBuffer::BindVertexBuffers(u32 firstBinding, u32 bindingCount, VkBuffer* vertexBuffers, VkDeviceSize* offsets)
+	{
+		vkCmdBindVertexBuffers(m_CommandBuffer, firstBinding, bindingCount, vertexBuffers, offsets);
 	}
 
 	void CommandBuffer::BindIndexBuffer(VkBuffer& indexBuffer)
 	{
-		vkCmdBindIndexBuffer(m_CommandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		BindIndexBuffer(indexBuffer, 0);
+	}
+
+	void CommandBuffer::BindIndexBuffer(VkBuffer& indexBuffer, VkDeviceSize offset)
+	{
+		vkCmdBindIndexBuffer(m_CommandBuffer, indexBuffer, offset, VK_INDEX_TYPE_UINT32);
 	}
 
 	void CommandBuffer::BindDescriptorSets(VkDescriptorSet& descriptorSet, VkPipelineLayout& pipelineLayout)
@@ -92,7 +102,12 @@ namespace BetterThanNothing
 
 	void CommandBuffer::DrawIndexed(u32 indexCount)
 	{
-		vkCmdDrawIndexed(m_CommandBuffer, indexCount, 1, 0, 0, 0);
+		DrawIndexed(indexCount, 1, 0, 0, 0);
+	}
+
+	void CommandBuffer::DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, u32 vertexOffset, u32 firstInstance)
+	{
+		vkCmdDrawIndexed(m_CommandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 	}
 
 	void CommandBuffer::CmdPipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkImageMemoryBarrier& imageMemoryBarriers)

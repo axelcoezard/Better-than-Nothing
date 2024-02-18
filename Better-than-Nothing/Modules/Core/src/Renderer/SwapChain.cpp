@@ -255,19 +255,32 @@ namespace BetterThanNothing
 		m_CommandBuffers[m_CurrentFrame]->BindPipeline(pipeline->GetVkGraphicsPipeline());
 	}
 
-	void SwapChain::Draw(DrawPacket* drawPacket, u32 index)
+
+
+	void SwapChain::Draw(DrawStream* drawStream)
 	{
 		CommandBuffer* commandBuffer = m_CommandBuffers[m_CurrentFrame];
-		Pipeline* pipeline = static_cast<Pipeline*>(drawPacket->pipeline);
 
-		commandBuffer->BindVertexBuffer(drawPacket->vertexBuffer.m_Buffer);
-		commandBuffer->BindIndexBuffer(drawPacket->indexBuffer.m_Buffer);
+		std::cout << " => VertexBuffers size: " << drawStream->vertexBuffers.size() << std::endl;
+		commandBuffer->BindVertexBuffers(0, 1, drawStream->vertexBuffers.data(), drawStream->vertexOffsets.data());
+		//commandBuffer->BindVertexBuffer(drawPacket->vertexBuffer.m_Buffer);
 
-		commandBuffer->BindDescriptorSets(
-			m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
-			pipeline->GetVkPipelineLayout());
+		u32 offset = 0;
+		for (u32 i = 0; i < drawStream->size; i++)
+		{
+			std::cout << " => IndexBuffer size: " << drawStream->indexBuffers[i].m_Size << std::endl;
+			commandBuffer->BindIndexBuffer(drawStream->indexBuffers[i].m_Buffer, 0);
 
-		commandBuffer->DrawIndexed(drawPacket->indicesCount);
+			std::cout << " => DrawIndexed: " << drawStream->indicesCount << " offset: " << offset << std::endl;
+			commandBuffer->DrawIndexed(drawStream->indicesCount, 1, offset, 0, 0); // TODO: fix vertex offset
+
+			offset += drawStream->indicesCount;
+		}
+
+		//commandBuffer->BindDescriptorSets(
+		//	m_DescriptorPool->GetVkDescriptorSets()[m_CurrentFrame][index],
+		//	pipeline->GetVkPipelineLayout());
+
 	}
 
 	void SwapChain::EndRecordCommandBuffer()
