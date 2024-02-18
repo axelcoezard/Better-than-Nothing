@@ -32,13 +32,10 @@ namespace BetterThanNothing
 		m_PipeLines.insert(std::pair<std::string, Pipeline*>(id, pipeline));
 	}
 
-	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
+	void Renderer::BeforeRender()
 	{
 		// Generate all uniform buffer for global data (one for each frame)
 		m_DrawStreamBuffers->AllocateAllGlobalData();
-
-		// Generate all storage buffer for vertices and indices (one for each frame and pipeline)
-		m_DrawStreamBuffers->AllocateAllVertexAndIndexData(m_PipeLines.size());
 	}
 
 	void Renderer::Render(Scene* scene, RendererDebugInfo* debugInfo)
@@ -53,14 +50,11 @@ namespace BetterThanNothing
 
 			std::vector<Buffer*> allGlobalData = m_DrawStreamBuffers->GetAllGlobalData();
 
-			std::vector<Buffer*> allVertexData = m_DrawStreamBuffers->GetAllVertexData(0);
-			std::vector<Buffer*> allIndexData = m_DrawStreamBuffers->GetAllIndexData(0);
-
 			std::vector<Buffer*> newMaterialData = m_DrawStreamBuffers->CreateMaterialData();
 			std::vector<Buffer*> newTransformData = m_DrawStreamBuffers->CreateTransformData();
 
 			ModelComponent modelComp = scene->GetComponent<ModelComponent>(newEntity);
-			m_DescriptorPool->CreateDescriptorSets(&modelComp, allGlobalData, allVertexData, allIndexData, newMaterialData, newTransformData);
+			m_DescriptorPool->CreateDescriptorSets(&modelComp, allGlobalData, newMaterialData, newTransformData);
 		}
 
 		RenderDebugInfo(debugInfo);
@@ -81,7 +75,7 @@ namespace BetterThanNothing
 		};
 
 		// Append all the usefull Model's data to create a sorted DrawStream
-		DrawStreamBuilder drawStreamBuilder(scene->GetEntitiesCount());
+		DrawStreamBuilder drawStreamBuilder;
 		auto view = scene->GetView<ModelComponent, TransformComponent>();
 		for (auto entity : view) {
 			ModelComponent& modelComp = view.get<ModelComponent>(entity);
@@ -98,25 +92,50 @@ namespace BetterThanNothing
 			});
 		};
 
-		std::vector<DrawStream>& drawStream = drawStreamBuilder.GetStreams();
+		std::vector<DrawStream> drawStreams = drawStreamBuilder.GetStreams();
 
-		for (u32 i = 0; i < drawStream.size(); i++)
+		for (u32 i = 0; i < drawStreams.size(); i++)
 		{
-			DrawStream& currentDrawStream = drawStream.at(i);
+			std::cout << "DrawStream " << i << " size: " << drawStreams.at(i).size << std::endl;
+
+			DrawStream& currentDrawStream = drawStreams.at(i);
 
 			m_SwapChain->BindPipeline(static_cast<Pipeline*>(currentDrawStream.pipeline));
+
+			MaterialData* materialData = m_DrawStreamBuffers->GetMaterialData(currentFrame, i);
+			TransformData* transformData = m_DrawStreamBuffers->GetTransformData(currentFrame, i);
+
+			for (u32 j = 0; j < currentDrawStream.size; j++)
+			{
+				std::cout << " => MaterialData " << j << std::endl;
+
+				materialData->materialCount++;
+				materialData->materials.push_back({ 0.5f, 0.1f, 0.5f, 1.0f });
+
+				std::cout << " => Model " << j << " vertexCount: " << currentDrawStream.vertexCount << std::endl;
+
+				transformData->modelCount++;
+				transformData->models.push_back(currentDrawStream.models.at(j));
+			}
 
 			//DynamicUniforms* dynamicUniforms = m_UniformsPool->GetDynamicUniforms(currentFrame, i);
 			//dynamicUniforms->model = drawPacket.model;
 			//dynamicUniforms->material = { 0.5f, 0.1f, 0.5f, 1.0f };
 
-			//m_SwapChain->Draw(&drawPacket, i);
+			m_SwapChain->Draw(&currentDrawStream);
+
+			exit(0);
 
 			debugInfo->drawCalls++;
 			debugInfo->totalDrawCalls++;
 		}
 
 		m_SwapChain->EndRecordCommandBuffer();
+	}
+
+	void Renderer::AfterRender()
+	{
+		exit(0);
 	}
 
 	void Renderer::RenderDebugInfo(RendererDebugInfo* debugInfo)

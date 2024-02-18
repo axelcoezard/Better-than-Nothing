@@ -8,6 +8,11 @@ namespace BetterThanNothing
 	struct Buffer
 	{
 		/**
+		 * @brief The size of the buffer
+		 */
+		u32 size;
+
+		/**
 		 * @brief The buffer
 		 */
 		VkBuffer m_Buffer;

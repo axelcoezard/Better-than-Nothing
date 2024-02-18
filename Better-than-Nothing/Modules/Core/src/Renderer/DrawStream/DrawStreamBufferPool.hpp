@@ -32,7 +32,6 @@ namespace BetterThanNothing
 
 	public:
 		void AllocateAllGlobalData();
-		void AllocateAllVertexAndIndexData(u32 count);
 
 		std::vector<Buffer*>& CreateMaterialData();
 		std::vector<Buffer*>& CreateTransformData();
@@ -42,11 +41,5 @@ namespace BetterThanNothing
 
 		MaterialData* GetMaterialData(u32 frame, u32 index);
 		TransformData* GetTransformData(u32 frame, u32 index);
-
-		std::vector<Buffer*>& GetAllVertexData(u32 pipelineIndex);
-		VertexData* GetVertexData(u32 frame, u32 index);
-
-		std::vector<Buffer*>& GetAllIndexData(u32 pipelineIndex);
-		IndexData* GetIndexData(u32 frame, u32 index);
 	};
 };

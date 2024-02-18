@@ -4,6 +4,8 @@
 
 namespace BetterThanNothing
 {
+	class Pipeline;
+
 	/**
 	 * @brief A DrawPacket is a collection of data that is used to draw a single object.
 	 */
@@ -73,22 +75,23 @@ namespace BetterThanNothing
 		/**
 		 * @brief The vertex buffer that contains all the vertices of each model in the DrawStream.
 		 */
-		Buffer globalVertexBuffer;
+		std::vector<VkBuffer> vertexBuffers;
 
 		/**
 		 * @brief The number of vertices in the globalVertexBuffer.
 		 */
-		u32 globalVertexCount;
+		std::vector<VkDeviceSize> vertexOffsets;
 
 		/**
-		 * @brief The index buffer that contains all the indices of each model in the DrawStream.
+		 * @brief The number of vertices in the globalVertexBuffer.
 		 */
-		Buffer globalIndexBuffer;
+		u32 vertexCount;
 
-		/**
-		 * @brief The number of indices in the globalIndexBuffer.
-		 */
-		u32 globalIndicesCount;
+		std::vector<Buffer> indexBuffers;
+
+		std::vector<VkDeviceSize> indexOffsets;
+
+		u32 indicesCount;
 	};
 
 	/**
@@ -103,11 +106,6 @@ namespace BetterThanNothing
 		u32 m_Size;
 
 		/**
-		 * @brief The capacity of the DrawStream.
-		 */
-		u32 m_Capacity;
-
-		/**
 		 * @brief The DrawPackets for each pipeline.
 		 * @note We use a vector of pairs to keep the order of the DrawPackets.
 		 */
@@ -117,9 +115,8 @@ namespace BetterThanNothing
 	public:
 		/**
 		 * @brief Construct a new DrawStreamBuilder.
-		 * @param capacity The maximum capacity of the DrawStream.
 		 */
-		DrawStreamBuilder(u32 capacity);
+		DrawStreamBuilder();
 
 		/**
 		 * @brief Destroy the DrawStreamBuilder and clear DrawPackets.
@@ -137,7 +134,7 @@ namespace BetterThanNothing
 		 * @return A pointer to the new DrawStream.
 		 * @note The DrawPackets are sorted by pipeline while building the DrawStream.
 		 */
-		std::vector<DrawStream>& GetStreams();
+		std::vector<DrawStream> GetStreams();
 
 	private:
 

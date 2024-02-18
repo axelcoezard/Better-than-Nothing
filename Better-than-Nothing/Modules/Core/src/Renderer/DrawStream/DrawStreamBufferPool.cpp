@@ -43,7 +43,7 @@ namespace BetterThanNothing
 	void DrawStreamBufferPool::AllocateAllGlobalData()
 	{
 		for (u32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			m_GlobalData[i] = new Buffer();
+			m_GlobalData.push_back(new Buffer());
 
 			m_Device->CreateBuffer(
 				m_GlobalData[i],
@@ -52,41 +52,6 @@ namespace BetterThanNothing
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 			m_Device->MapBuffer(m_GlobalData[i], 0, 0, &m_GlobalData[i]->m_Mapped);
-		}
-	}
-
-	void DrawStreamBufferPool::AllocateAllVertexAndIndexData(u32 count)
-	{
-		for (u32 i = 0; i < count; i++)
-		{
-			std::vector<Buffer*> vertexBuffers;
-			std::vector<Buffer*> indexBuffers;
-
-			for (u32 j = 0; j < MAX_FRAMES_IN_FLIGHT; j++) {
-				Buffer* vertexBuffer = new Buffer();
-				Buffer* indexBuffer = new Buffer();
-
-				m_Device->CreateBuffer(
-					vertexBuffer,
-					sizeof(VertexData),
-					VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-				m_Device->CreateBuffer(
-					indexBuffer,
-					sizeof(IndexData),
-					VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-				m_Device->MapBuffer(vertexBuffer, 0, 0, &vertexBuffer->m_Mapped);
-				m_Device->MapBuffer(indexBuffer, 0, 0, &indexBuffer->m_Mapped);
-
-				vertexBuffers.push_back(vertexBuffer);
-				indexBuffers.push_back(indexBuffer);
-			}
-
-			m_VertexData.push_back(vertexBuffers);
-			m_IndexData.push_back(indexBuffers);
 		}
 	}
 
@@ -152,25 +117,5 @@ namespace BetterThanNothing
 	TransformData* DrawStreamBufferPool::GetTransformData(u32 frame, u32 index)
 	{
 		return static_cast<TransformData*>(m_TransformData[index][frame]->m_Mapped);
-	}
-
-	std::vector<Buffer*>& DrawStreamBufferPool::GetAllVertexData(u32 pipelineIndex)
-	{
-		return m_VertexData[pipelineIndex];
-	}
-
-	VertexData* DrawStreamBufferPool::GetVertexData(u32 frame, u32 index)
-	{
-		return static_cast<VertexData*>(m_VertexData[index][frame]->m_Mapped);
-	}
-
-	std::vector<Buffer*>& DrawStreamBufferPool::GetAllVertexData(u32 pipelineIndex)
-	{
-		return m_VertexData[pipelineIndex];
-	}
-
-	IndexData* DrawStreamBufferPool::GetIndexData(u32 frame, u32 index)
-	{
-		return static_cast<IndexData*>(m_IndexData[index][frame]->m_Mapped);
 	}
 };

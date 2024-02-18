@@ -108,8 +108,6 @@ namespace BetterThanNothing
 		void CreateDescriptorSets(
 			ModelComponent* modelComponent,
 			std::vector<Buffer*>& globalData,
-			std::vector<Buffer*>& vertexData,
-			std::vector<Buffer*>& indexData,
 			std::vector<Buffer*>& materialData,
 			std::vector<Buffer*>& transformData);
 

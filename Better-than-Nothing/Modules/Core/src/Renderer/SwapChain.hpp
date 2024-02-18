@@ -10,7 +10,8 @@ namespace BetterThanNothing
 	class Texture;
 	class Vertex;
 	class Scene;
-	struct DrawPacket;
+	class DrawPacket;
+	class DrawStream;
 
 	class RenderPass;
 	class ImGuiDescriptorPool;
@@ -176,7 +177,7 @@ namespace BetterThanNothing
 		/**
 		 * @brief Draw using a draw packet
 		 */
-		void Draw(DrawPacket* drawPacket, u32 index);
+		void Draw(DrawStream* drawStream);
 
 		/**
 		 * @brief End to record the commands in the command buffer

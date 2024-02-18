@@ -3,7 +3,7 @@
 
 namespace BetterThanNothing
 {
-	DrawStreamBuilder::DrawStreamBuilder(u32 capacity)
+	DrawStreamBuilder::DrawStreamBuilder()
 	{
 		m_Size = 0;
 	}
@@ -16,11 +16,6 @@ namespace BetterThanNothing
 
 	void DrawStreamBuilder::Draw(DrawPacket drawPacket)
 	{
-		if (m_Size == m_Capacity)
-		{
-			throw std::runtime_error("DrawStreamBuilder: no more space in draw stream");
-		}
-
 		Pipeline* pipeline = static_cast<Pipeline*>(drawPacket.pipeline);
 
 		if (m_DrawPacketsPerPipeline.find(pipeline->GetId()) == m_DrawPacketsPerPipeline.end())
@@ -34,12 +29,12 @@ namespace BetterThanNothing
 		m_Size++;
 	}
 
-	std::vector<DrawStream>& DrawStreamBuilder::GetStreams()
+	std::vector<DrawStream> DrawStreamBuilder::GetStreams()
 	{
 		u32 pipelineCount = m_PipelinesByIndex.size();
 
 		std::vector<DrawStream> drawStream(pipelineCount);
-		std::memset(drawStream.data(), 0, pipelineCount * sizeof(DrawStream));
+		//std::memset(drawStream.data(), 0, pipelineCount * sizeof(DrawStream));
 
 		for (u32 i = 0; i < pipelineCount; i++)
 		{
@@ -50,21 +45,24 @@ namespace BetterThanNothing
 
 			currentStream.size = currentPackets.size();
 			currentStream.pipeline = currentPipeline;
-			currentStream.globalVertexCount = 0;
-			currentStream.globalIndicesCount = 0;
+			currentStream.vertexCount = 0;
+			currentStream.indicesCount = 0;
 
 			for (u32 j = 0; j < currentStream.size; j++)
 			{
-				currentStream.textures.push_back(currentPackets[j].texture);
-				currentStream.models.push_back(currentPackets[j].model);
-				currentStream.globalVertexCount += currentPackets[j].vertexCount;
-				currentStream.globalIndicesCount += currentPackets[j].indicesCount;
+				DrawPacket& currentPacket = currentPackets[j];
 
+				currentStream.textures.push_back(currentPacket.texture);
+				currentStream.models.push_back(currentPacket.model);
 
+				currentStream.vertexBuffers.push_back(currentPacket.vertexBuffer.m_Buffer);
+				currentStream.vertexOffsets.push_back(currentStream.vertexCount);
+				currentStream.vertexCount += currentPacket.vertexCount;
+
+				currentStream.indexBuffers.push_back(currentPacket.indexBuffer);
+				currentStream.indexOffsets.push_back(currentStream.indicesCount);
+				currentStream.indicesCount += currentPacket.indicesCount;
 			}
-
-			//currentStream.globalVertexBuffer = globalVertexBuffer;
-			//currentStream.globalIndexBuffer = globalIndexBuffer;
 		}
 
 		return drawStream;

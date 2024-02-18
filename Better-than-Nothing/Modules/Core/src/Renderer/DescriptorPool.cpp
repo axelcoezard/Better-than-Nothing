@@ -120,12 +120,13 @@ namespace BetterThanNothing
 	void DescriptorPool::CreateDescriptorSets(
 		ModelComponent* modelComponent,
 		std::vector<Buffer*>& globalData,
-		std::vector<Buffer*>& vertexData,
-		std::vector<Buffer*>& indexData,
 		std::vector<Buffer*>& materialData,
-		std::vector<Buffer*>& transformData,
+		std::vector<Buffer*>& transformData
 	) {
 		VkDevice device = m_Device->GetVkDevice();
+
+		(void)materialData;
+		(void)transformData;
 
 		if (m_DescriptorPoolSize >= m_DescriptorPoolCapacity) {
 			ExtendDescriptorPool();
@@ -143,15 +144,15 @@ namespace BetterThanNothing
 				throw std::runtime_error("failed to allocate descriptor sets!");
 			}
 
-			VkDescriptorBufferInfo globalUniformsInfo{};
-			globalUniformsInfo.buffer = globalData[i]->m_Buffer;
-			globalUniformsInfo.offset = 0;
-			globalUniformsInfo.range = sizeof(GlobalData);
+			VkDescriptorBufferInfo globalDataBufferInfo{};
+			globalDataBufferInfo.buffer = globalData[i]->m_Buffer;
+			globalDataBufferInfo.offset = 0;
+			globalDataBufferInfo.range = sizeof(GlobalData);
 
 			VkDescriptorBufferInfo dynamicUniformsInfo{};
-			dynamicUniformsInfo.buffer = dynamicUniforms[i]->m_Buffer;
-			dynamicUniformsInfo.offset = 0;
-			dynamicUniformsInfo.range = sizeof(DynamicUniforms);
+			//dynamicUniformsInfo.buffer = dynamicUniforms[i]->m_Buffer;
+			//dynamicUniformsInfo.offset = 0;
+			//dynamicUniformsInfo.range = sizeof(DynamicUniforms);
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -166,7 +167,7 @@ namespace BetterThanNothing
 			descriptorWrites[0].dstArrayElement = 0;
 			descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			descriptorWrites[0].descriptorCount = 1;
-			descriptorWrites[0].pBufferInfo = &globalUniformsInfo;
+			descriptorWrites[0].pBufferInfo = &globalDataBufferInfo;
 
 			descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[1].dstSet = m_DescriptorSets[i][m_DescriptorPoolSize];
