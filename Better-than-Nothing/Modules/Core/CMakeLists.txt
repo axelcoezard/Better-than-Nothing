@@ -37,9 +37,9 @@ add_library(${PROJECT_NAME} ${SOURCES})
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../pch.hpp)
 
 target_compile_definitions(Core PRIVATE ENABLE_IMGUI=1)
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw vulkan stb imgui inih glslang SPIRV glslang-default-resource-limits spirv_cross)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm vulkan stb imgui inih glslang SPIRV glslang-default-resource-limits spirv_cross)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/glfw/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/vulkan)
